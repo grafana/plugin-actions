@@ -6,10 +6,19 @@ if [ "$1" = "" ]; then
 	exit 1
 fi
 
+install_pnpm_if_not_present() {
+    if ! command -v pnpm &> /dev/null
+    then
+        echo "pnpm could not be found, installing..."
+        npm install -g pnpm
+    fi
+}
+
 # Detect the package manager
 if [ -f yarn.lock ]; then
 	pm="yarn"
 elif [ -f pnpm-lock.yaml ]; then
+	install_pnpm_if_not_present
 	pm="pnpm"
 elif [ -f package-lock.json ]; then
 	pm="npm"

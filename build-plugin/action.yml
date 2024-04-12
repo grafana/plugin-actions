@@ -22,18 +22,26 @@ inputs:
     description: "[deprecated] Grafana API Key to sign a plugin. Prefer `policy_token`."
     required: false
     default: ""
+  go-version:
+    description: "Version of go"
+    required: false
+    default: "1.21"
+  node-version:
+    description: "Version of node"
+    required: false
+    default: "20"
 
 runs:
   using: "composite"
   steps:
     - uses: actions/setup-node@v4
       with:
-        node-version: 20
+        node-version: "${{ inputs.node-version }}"
 
     - name: Setup Go environment
       uses: actions/setup-go@v5
       with:
-        go-version: "1.21"
+        go-version: "${{ inputs.go-version }}"
 
     - name: Install dependencies
       run: ${{ github.action_path }}/pm.sh install

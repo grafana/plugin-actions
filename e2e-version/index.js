@@ -1,6 +1,8 @@
 const core = require('@actions/core');
 const semver = require('semver');
 const npmToDockerImage = require('./npm-to-docker-image');
+const fs = require('fs/promises');
+const path = require('path');
 
 const SkipGrafanaDevImageInput = 'skip-grafana-dev-image';
 const VersionResolverTypeInput = 'version-resolver-type';
@@ -43,7 +45,7 @@ async function run() {
         }
         break;
       default:
-        const pluginDependency = grafanaDependency ?? (await getPluginGrafanaDependencyFromPluginJson());
+        const pluginDependency = grafanaDependency === '' ? (await getPluginGrafanaDependencyFromPluginJson()) : grafanaDependency;
         console.log(`Found version requirement ${pluginDependency}`);
         for (const grafanaVersion of availableGrafanaVersions) {
           if (semver.satisfies(grafanaVersion.version, pluginDependency)) {

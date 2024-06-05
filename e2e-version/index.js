@@ -44,6 +44,7 @@ async function run() {
         break;
       default:
         const pluginDependency = grafanaDependency ?? (await getPluginGrafanaDependencyFromPluginJson());
+        console.log(`Found version requirement ${pluginDependency}`);
         for (const grafanaVersion of availableGrafanaVersions) {
           if (semver.satisfies(grafanaVersion.version, pluginDependency)) {
             versions.push(grafanaVersion.version);

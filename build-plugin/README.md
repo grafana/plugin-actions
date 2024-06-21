@@ -36,7 +36,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: grafana/plugin-actions/build-plugin@main
         with:

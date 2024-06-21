@@ -25,9 +25,9 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: actions/setup-node@v3
+    - uses: actions/setup-node@v4
       with:
-        node-version: 16
+        node-version: 20
     - id: run-levitate
       run: |
         # RUN levitate is-compatible. Save the output to .levitate_output

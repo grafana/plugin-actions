@@ -14,6 +14,8 @@ install_pnpm_if_not_present() {
     fi
 }
 
+corepack enable
+
 # Detect the package manager
 if [ -f yarn.lock ]; then
 	pm="yarn"

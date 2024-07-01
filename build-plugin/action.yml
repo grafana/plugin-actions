@@ -81,7 +81,7 @@ runs:
       with:
         version: latest
         args: buildAll
-        working-directory: ${{ inputs.working-directory }}
+        workdir: ${{ inputs.working-directory }}
 
     - name: Warn missing Grafana access policy token
       run: |

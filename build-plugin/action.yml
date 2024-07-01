@@ -65,7 +65,8 @@ runs:
           echo "has-backend=true" >> $GITHUB_OUTPUT
         fi
       shell: bash
-      working-directory: ${{ inputs.working-directory }}
+      with:
+        working-directory: ${{ inputs.working-directory }}
 
     - name: Test backend
       if: steps.check-for-backend.outputs.has-backend == 'true'

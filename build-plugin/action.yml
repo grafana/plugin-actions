@@ -59,7 +59,7 @@ runs:
       shell: bash
 
     - name: Check package version UPDATED
-      run: if [ "v${{ steps.package-plugin.plugin-version }}" != "${{ steps.metadata.outputs.github-tag }}" ]; then printf "\033[0;31mPlugin version doesn't match tag name. The tag should be v${{ steps.metadata.outputs.plugin-version }} \033[0m\n"; exit 1; fi
+      run: if [ "v${{ steps.package-plugin.plugin-version }}" != "${{ steps.metadata.outputs.github-tag }}" ]; then printf "\033[0;31mPlugin version doesn't match tag name (UPDATE). The tag should be v${{ steps.metadata.outputs.plugin-version }} \033[0m\n"; exit 1; fi
       shell: bash
 
     - name: Create Github release

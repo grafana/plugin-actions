@@ -4,10 +4,10 @@ description: "Builds a Grafana plugin"
 outputs:
   archive:
     description: "The path to the plugin archive (zip)."
-    value: ${{ steps.metadata.outputs.archive }}
+    value: ${{ steps.package-plugin.outputs.archive }}
   archive-sha1sum:
     description: "The path to the plugin archive sha1sum."
-    value: ${{ steps.metadata.outputs.archive-sha1sum }}
+    value: ${{ steps.package-plugin.outputs.archive-sha1sum }}
 
 inputs:
   token:
@@ -36,7 +36,7 @@ runs:
   steps:
     - name: Package plugin
       id: "package-plugin"
-      uses: grafana/plugin-actions/package-plugin@academo/build-action-use-package-action
+      uses: grafana/plugin-actions/package-plugin@main
       with:
         policy_token: ${{ inputs.policy_token }}
         node-version: "${{ inputs.node-version }}"
@@ -64,7 +64,7 @@ runs:
       shell: bash
 
     - name: Check package version
-      run: if [ "v${{ steps.package-plugin.outputs.plugin-version }}" != "${{ steps.metadata.outputs.github-tag }}" ]; then printf "\033[0;31mPlugin version doesn't match tag name. The tag should be v${{ steps.metadata.outputs.plugin-version }} \033[0m\n"; exit 1; fi
+      run: if [ "v${{ steps.package-plugin.outputs.plugin-version }}" != "${{ steps.metadata.outputs.github-tag }}" ]; then printf "\033[0;31mPlugin version doesn't match tag name. The tag should be v${{ steps.package-plugin.outputs.plugin-version }} \033[0m\n"; exit 1; fi
       shell: bash
 
     - name: Create Github release
@@ -84,6 +84,7 @@ runs:
           If you would like to submit this release to Grafana please consider the following steps:
 
           - Check the Validate plugin step in the [release workflow](https://github.com/${{github.repository}}/commit/${{github.sha}}/checks/${{github.run_id}}) for any warnings that need attention
+          - **Edit this draft release**, adjust these notes accordingly and click **Publish Release**
           - Navigate to https://grafana.com/auth/sign-in/ to sign into your account
           - Once logged in click **My Plugins** in the admin navigation
           - Click the **Submit Plugin** button
@@ -91,4 +92,4 @@ runs:
             - Paste this [.zip asset link](https://github.com/${{ github.repository }}/releases/download/v${{ steps.package-plugin.outputs.plugin-version }}/${{ steps.package-plugin.outputs.archive }}) in the Plugin URL field
             - Paste this [.zip.sha1 link](https://github.com/${{ github.repository }}/releases/download/v${{ steps.package-plugin.outputs.plugin-version }}/${{ steps.package-plugin.outputs.archive-sha1sum }}) in the SHA1 field
 
-          Once done please remove these instructions and publish this release.
+          If the links above are not working, you must first edit this draft release and publish it.

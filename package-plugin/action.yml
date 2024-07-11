@@ -32,6 +32,10 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: "hello world"
+      run: echo "hello world"
+      shell: bash
+
     - uses: actions/setup-node@v4
       with:
         node-version: "${{ inputs.node-version }}"

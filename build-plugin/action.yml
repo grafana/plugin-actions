@@ -36,7 +36,7 @@ runs:
   steps:
     - name: Package plugin
       id: "package-plugin"
-      uses: grafana/plugin-actions/package-plugin@academo/build-action-use-package-action
+      uses: grafana/plugin-actions/package-plugin@master
       with:
         policy_token: ${{ inputs.policy_token }}
         node-version: "${{ inputs.node-version }}"

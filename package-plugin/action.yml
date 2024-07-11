@@ -12,7 +12,7 @@ outputs:
     description: "The ID of the plugin."
     value: ${{ steps.metadata.outputs.plugin-id }}
   plugin-version:
-    description: "The ID of the plugin."
+    description: "The plugin version."
     value: ${{ steps.metadata.outputs.plugin-version }}
 
 inputs:

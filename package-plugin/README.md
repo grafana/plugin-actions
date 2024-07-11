@@ -22,7 +22,7 @@ This workflow will trigger on pushes to the `main` branch. Use this workflow if 
 To build, package and release in a single action use [build-plugin](https://github.com/grafana/plugin-actions/tree/main/build-plugin)
 
 ```yaml
-name: Package and upload main
+name: Package plugin and upload artifact
 
 on:
   workflow_dispatch:

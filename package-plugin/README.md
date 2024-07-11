@@ -17,7 +17,9 @@ This GitHub Action automates the process of packaging Grafana plugins. It takes 
 
 ### Package and upload the plugin
 
-This workflow will trigger on pushes to the `main` branch. Since this is not a versioned tag, the `build-plugin` workflow will not execute release steps, such as creating a GitHub release. Make use of this workflow, if you want to provide built plugins directly from your `main` branch.
+This workflow will trigger on pushes to the `main` branch. Use this workflow if you want to build plugins from your `main` branch as artifacts without creating a release.
+
+To build, package and release in a single action use [build-plugin](https://github.com/grafana/plugin-actions/tree/main/build-plugin)
 
 ```yaml
 name: Package and upload main

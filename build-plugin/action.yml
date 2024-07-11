@@ -41,7 +41,7 @@ runs:
       id: "package-plugin"
       uses: grafana/plugin-actions/package-plugin@main
       with:
-        policy_token: ${{ secrets.GRAFANA_ACCESS_POLICY_TOKEN }}
+        policy_token: ${{ inputs.policy_token }}
         node-version: "${{ inputs.node-version }}"
         go-version: "${{ inputs.go-version }}"
 

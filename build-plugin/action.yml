@@ -39,7 +39,7 @@ runs:
 
     - name: Package plugin
       id: "package-plugin"
-      uses: grafana/plugin-actions/package-plugin@main
+      uses: grafana/plugin-actions/package-plugin@academo/build-action-use-package-action
       with:
         policy_token: ${{ inputs.policy_token }}
         node-version: "${{ inputs.node-version }}"
@@ -48,18 +48,6 @@ runs:
     - name: Get plugin metadata
       id: metadata
       run: |
-        sudo apt-get install jq
-
-        export GRAFANA_PLUGIN_ID=$(cat dist/plugin.json | jq -r .id)
-        export GRAFANA_PLUGIN_VERSION=$(cat dist/plugin.json | jq -r .info.version)
-        export GRAFANA_PLUGIN_ARTIFACT=${GRAFANA_PLUGIN_ID}-${GRAFANA_PLUGIN_VERSION}.zip
-        export GRAFANA_PLUGIN_ARTIFACT_SHA1SUM=${GRAFANA_PLUGIN_ARTIFACT}.sha1
-
-        echo "plugin-id=${GRAFANA_PLUGIN_ID}" >> $GITHUB_OUTPUT
-        echo "plugin-version=${GRAFANA_PLUGIN_VERSION}" >> $GITHUB_OUTPUT
-        echo "archive=${GRAFANA_PLUGIN_ARTIFACT}" >> $GITHUB_OUTPUT
-        echo "archive-sha1sum=${GRAFANA_PLUGIN_ARTIFACT_SHA1SUM}" >> $GITHUB_OUTPUT
-
         echo "github-tag=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
       shell: bash
 
@@ -71,7 +59,7 @@ runs:
       shell: bash
 
     - name: Check package version
-      run: if [ "v${{ steps.metadata.outputs.plugin-version }}" != "${{ steps.metadata.outputs.github-tag }}" ]; then printf "\033[0;31mPlugin version doesn't match tag name. The tag should be v${{ steps.metadata.outputs.plugin-version }} \033[0m\n"; exit 1; fi
+      run: if [ "v${{ steps.metadata.package-plugin.plugin-version }}" != "${{ steps.metadata.outputs.github-tag }}" ]; then printf "\033[0;31mPlugin version doesn't match tag name. The tag should be v${{ steps.metadata.outputs.plugin-version }} \033[0m\n"; exit 1; fi
       shell: bash
 
     - name: Create Github release
@@ -95,7 +83,7 @@ runs:
           - Once logged in click **My Plugins** in the admin navigation
           - Click the **Submit Plugin** button
           - Fill in the Plugin Submission form:
-            - Paste this [.zip asset link](https://github.com/${{ github.repository }}/releases/download/v${{ steps.metadata.outputs.plugin-version }}/${{ steps.metadata.outputs.archive }}) in the Plugin URL field
-            - Paste this [.zip.sha1 link](https://github.com/${{ github.repository }}/releases/download/v${{ steps.metadata.outputs.plugin-version }}/${{ steps.metadata.outputs.archive-sha1sum }}) in the SHA1 field
+            - Paste this [.zip asset link](https://github.com/${{ github.repository }}/releases/download/v${{ steps.package-plugin.outputs.plugin-version }}/${{ steps.package-plugin.outputs.archive }}) in the Plugin URL field
+            - Paste this [.zip.sha1 link](https://github.com/${{ github.repository }}/releases/download/v${{ steps.package-plugin.outputs.plugin-version }}/${{ steps.package-plugin.outputs.archive-sha1sum }}) in the SHA1 field
 
           Once done please remove these instructions and publish this release.

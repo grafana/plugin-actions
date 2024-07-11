@@ -8,7 +8,7 @@ outputs:
   archive-sha1sum:
     description: "The path to the plugin archive sha1sum."
     value: ${{ steps.metadata.outputs.archive-sha1sum }}
- plugin-id:
+  plugin-id:
     description: "The ID of the plugin."
     value: ${{ steps.metadata.outputs.plugin-id }}
 

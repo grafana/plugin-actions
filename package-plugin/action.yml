@@ -117,9 +117,5 @@ runs:
 
     - name: Validate plugin
       run: |
-        git clone https://github.com/grafana/plugin-validator
-        pushd ./plugin-validator/pkg/cmd/plugincheck2
-        go install
-        popd
-        plugincheck2 -config ./plugin-validator/config/default.yaml ${{ steps.metadata.outputs.archive }}
+        npx -y @grafana/plugin-validator@latest ${{ steps.metadata.outputs.archive }}
       shell: bash

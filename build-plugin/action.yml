@@ -51,6 +51,14 @@ runs:
         echo "github-tag=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
       shell: bash
 
+    - name: Print outputs from package-plugin
+      shell: bash
+      run: |
+        printf "archive=%s\n" "${{ steps.package-plugin.outputs.archive }}"
+        printf "archive-sha1sum=%s\n" "${{ steps.package-plugin.outputs.archive-sha1sum }}"
+        printf "plugin-id=%s\n" "${{ steps.package-plugin.outputs.plugin-id }}"
+        printf "plugin-version=%s\n" "${{ steps.package-plugin.outputs.plugin-version }}"
+
     - name: Read changelog
       id: changelog
       run: |

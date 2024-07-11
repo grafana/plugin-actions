@@ -13,7 +13,7 @@ outputs:
     value: ${{ steps.metadata.outputs.plugin-id }}
   plugin-version:
     description: "The ID of the plugin."
-    value: ${{ steps.metadata.outputs.plugin-id }}
+    value: ${{ steps.metadata.outputs.plugin-version }}
 
 inputs:
   policy_token:

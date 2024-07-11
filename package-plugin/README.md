@@ -37,29 +37,19 @@ jobs:
       - uses: actions/checkout@v4
 
       - uses: grafana/plugin-actions/package-plugin@main
+        id: 'package-plugin'
         with:
           # see https://grafana.com/developers/plugin-tools/publish-a-plugin/sign-a-plugin#generate-an-access-policy-token to generate it
           # save the value in your repository secrets
           policy_token: ${{ secrets.GRAFANA_ACCESS_POLICY_TOKEN }}
-
-      - name: Get plugin metadata
-        id: metadata
-        run: |
-          sudo apt-get install jq
-
-          export GRAFANA_PLUGIN_ID=$(cat src/plugin.json | jq -r .id)
-          export GRAFANA_PLUGIN_ARTIFACT=${GRAFANA_PLUGIN_ID}-main.zip
-
-          echo "plugin-id=${GRAFANA_PLUGIN_ID}" >> $GITHUB_OUTPUT
-          echo "archive=${GRAFANA_PLUGIN_ARTIFACT}" >> $GITHUB_OUTPUT
 
       - id: 'auth'
         uses: 'google-github-actions/auth@v2'
         with:
           credentials_json: ${{ env.GCP_UPLOAD_ARTIFACTS_KEY }}
 
-      - name: 'move release to main'
-        run: mv ${{ steps.build-release.outputs.archive }} ${{ steps.metadata.outputs.archive }}
+      - name: 'rename versioned archive to main-archive'
+        run: mv ${{ steps.package-plugin.outputs.archive }} ${{ steps.package-plugin.outputs.plugin-id }}-main.zip
 
       - id: 'upload-to-gcs'
         name: 'Upload assets to main'

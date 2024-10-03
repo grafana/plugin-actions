@@ -1,12 +1,11 @@
-# Build plugin action
+# Bundle plugin action
 
-This GitHub Action automates the process of building Grafana plugins. It takes the source code of a Grafana plugin and transforms it into an archive file, preparing it for distribution. It creates a github draft release for the plugin, allowing for easy management.
+This GitHub Action automates the process of bundling Grafana plugins typescript types for sharing with other plugins. It takes the source code of a Grafana plugin and outputs a typescript declaration file.
 
 ## Features
 
-- Builds Grafana plugin source code into an archive for distribution.
-- Generates a draft Github release for the plugin.
-- Supports signing the plugin if a Grafana access token policy is provided.
+- Builds a Grafana plugin source typescript file into a single typescript declaration file.
+- Supports bundling and treeshaking imported types.
 
 ## Usage
 
@@ -38,14 +37,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: grafana/plugin-actions/build-plugin@main
-        with:
-          # see https://grafana.com/developers/plugin-tools/publish-a-plugin/sign-a-plugin#generate-an-access-policy-token to generate it
-          # save the value in your repository secrets
-          policy_token: ${{ secrets.GRAFANA_ACCESS_POLICY_TOKEN }}
+      - uses: grafana/plugin-actions/bundle-types@main
 ```
 
 ## Options
 
-- `policy_token`: Grafana access policy token. https://grafana.com/developers/plugin-tools/publish-a-plugin/sign-a-plugin#generate-an-access-policy-token
-- `grafana_token`: [deprecated] Grafana API Key to sign a plugin. Prefer `policy_token`. See https://grafana.com/developers/plugin-tools/publish-a-plugin/sign-a-plugin
+- `entryPoint`: Location of types file to bundle.
+- `tsConfig`: A path to the tsconfig file to use when bundling types.
+- `outDir`: A directory to output the types file to. Defaults to ./dist.

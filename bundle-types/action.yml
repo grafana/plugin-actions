@@ -1,0 +1,42 @@
+name: "Grafana Bundle Types"
+description: "Bundles a Grafana plugins types and pushes them to npm."
+
+outputs:
+  typesFilePath:
+    description: "The path to the built types file."
+    value: ${{ steps.set-outputs.outputs.typesFilePath }}
+
+inputs:
+  entryPoint:
+    description: "Location of types file to bundle."
+    required: false
+    default: "./src/types/index.ts"
+  tsConfig:
+    description: "A path to the tsconfig file to use when bundling types."
+    required: false
+    default: ""
+  outDir:
+    description: "A directory to output the types file to. Defaults to ./dist."
+    required: false
+    default: "./dist"
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: "${{ inputs.node-version }}"
+
+    - name: Install dependencies
+      run: ${{ github.action_path }}/pm.sh install
+      shell: bash
+
+    - name: Bundle types
+      run: npx -y @grafana/plugin-types-bundler@latest --entry-point ${{ inputs.entryPoint }} --tsConfig ${{ inputs.tsConfig }} --outDir ${{ inputs.outDir }}
+      shell: bash
+
+    - name: Set outputs
+      id: set-outputs
+      run: |
+        echo "typesFilePath=${{ inputs.outDir }}/index.d.ts" >> $GITHUB_OUTPUT
+      shell: bash

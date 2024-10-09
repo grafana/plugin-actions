@@ -14,6 +14,10 @@ inputs:
     description: "Token for the repository. Can be passed in using `{{ secrets.GITHUB_TOKEN }}`."
     required: false
     default: "${{ github.token }}"
+  base:
+    description: "Sets the pull request base branch"
+    required: false
+    default: "main"
   node-version:
     description: "Version of node"
     required: false
@@ -66,6 +70,7 @@ runs:
       if: steps.compare-versions.outputs.update_needed == 'true'
       with:
         token: ${{ inputs.token }}
+        base: ${{ inputs.base }}
         branch: update-grafana-create-plugin
         delete-branch: true
         commit-message: "chore: update configuration to create-plugin ${{ env.LATEST_VERSION }}"

@@ -44,6 +44,6 @@ fi
 echo "Running '$1' with $pm..."
 if [ "$1" = "install" ]; then
 	"$pm" install
-else if [ "$1" = "update" ]; then
+elif [ "$1" = "update" ]; then
 	"$pmx"
 fi

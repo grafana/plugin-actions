@@ -41,7 +41,6 @@ else
 fi
 
 # Run the provided command with the detected package manager
-
 if [ "$1" = "install" ]; then
   echo "Running '$1' with $pm..."
 	"$pm" install

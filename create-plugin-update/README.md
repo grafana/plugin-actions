@@ -4,12 +4,14 @@ This GitHub Action automates the process of running `create-plugin update` withi
 
 ## Features
 
-- Checks if
+- Checks the latest version of create-plugin against the current create-plugin configs in the repository
+- If changes are required opens a PR which contains the updates from create-plugin along with lock file changes.
+- Will update and rebase any open PR whenever a newer version of create-plugin is released.
 
 ## Usage
 
-- Add this workflow to your Github repository as in the example.
-- Set up the necessary environment variables and secrets. You must supply a custom GH token for this action as it will open a PR in your plugins repository.
+- Add a workflow to your Github repository as in the example below.
+- Set up the necessary secrets. As this action will push to and open a PR in the plugins repository make sure the token you supply has the correct privileges.
 
 ## Workflow example
 
@@ -19,7 +21,7 @@ name: Create Plugin Update
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "0 0 * * 0"
 
 jobs:
   release:
@@ -32,4 +34,21 @@ jobs:
 
 ## Options
 
-- `token`: A github . https://grafana.com/developers/plugin-tools/publish-a-plugin/sign-a-plugin#generate-an-access-policy-token
+- `token`: A github token with write access to pull requests and content (defaults to `github.token`).
+- `base`: The base branch to open the pull request against (defaults to `main`).
+- `node-version`: The version of node to use (defaults to `20`).
+
+## Issues
+
+**Error: GitHub Actions is not permitted to create or approve pull requests.**
+
+If you're seeing this error it means the GH token passes to the action doesn't have the necessary privileges to create the pull request. To resolve this you can either:
+
+- Create a Personal Access Token which has the permission to write to both pull-requests and contents for your repository.
+- Go to https://github.com/organizations/YOUR_ORG/settings/actions and check **Allow GitHub Actions to create and approve pull requests** then add the following to your workflow to elevate the token permissions:
+
+  ```yaml
+  permissions:
+    contents: write
+    pull-requests: write
+  ```

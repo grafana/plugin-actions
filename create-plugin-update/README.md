@@ -45,7 +45,7 @@ jobs:
 If you're seeing this error it means the GH token passes to the action doesn't have the necessary privileges to create the pull request. To resolve this you can either:
 
 - Create a Personal Access Token which has the permission to write to both pull-requests and contents for your repository.
-- Go to https://github.com/organizations/YOUR_ORG/settings/actions and check **Allow GitHub Actions to create and approve pull requests** then add the following to your workflow to elevate the token permissions:
+- Go to https://github.com/USER_NAME/REPO_NAME/settings/actions and check **Allow GitHub Actions to create and approve pull requests** then add the following to your workflow to elevate the token permissions:
 
   ```yaml
   permissions:

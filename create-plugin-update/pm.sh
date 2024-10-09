@@ -29,21 +29,23 @@ fi
 
 # Detect the exec command to run create-plugin update
 if [ -f yarn.lock ]; then
-	pmx="yarn create @grafana/plugin"
+  pmx=("yarn" "create" "@grafana/plugin")
 elif [ -f pnpm-lock.yaml ]; then
-	install_pnpm_if_not_present
-	pmx="pnpm dlx @grafana/create-plugin@latest"
+  install_pnpm_if_not_present
+  pmx=("pnpm" "dlx" "@grafana/create-plugin@latest")
 elif [ -f package-lock.json ]; then
-	pmx="npx -y @grafana/create-plugin@latest"
+  pmx=("npx" "-y" "@grafana/create-plugin@latest")
 else
-	echo "No recognized package manager found in this project."
-	exit 1
+  echo "No recognized package manager found in this project."
+  exit 1
 fi
 
 # Run the provided command with the detected package manager
-echo "Running '$1' with $pm..."
+
 if [ "$1" = "install" ]; then
+  echo "Running '$1' with $pm..."
 	"$pm" install
 elif [ "$1" = "update" ]; then
-	"$pmx" update
+  echo "Running '$1' with ${pmx[0]}..."
+	"${pmx[@]}" update
 fi

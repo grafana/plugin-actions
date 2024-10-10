@@ -30,8 +30,8 @@ runs:
 
     - name: Checkout Repository
       uses: actions/checkout@v4
-      env:
-        GITHUB_TOKEN: ${{ inputs.token }}
+      with:
+        persist-credentials: false
 
     - name: Get version from .config/.cprc.json
       id: get-config-version
@@ -60,12 +60,12 @@ runs:
     - name: Create branch
       if: steps.compare-versions.outputs.update_needed == 'true'
       run: |
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git checkout -b update-grafana-create-plugin
         git add .
         git commit -m "chore: update configuration to create-plugin ${{ env.LATEST_VERSION }}"
-        git push origin update-grafana-create-plugin --force
+        git push --force https://x-access-token:${{ inputs.token }}@github.com/${{ github.repository }} update-grafana-create-plugin
       shell: bash
 
     - name: Create or Update PR
@@ -73,7 +73,7 @@ runs:
       env:
         GH_TOKEN: ${{ inputs.token }}
       run: |
-        PR_NUMBER=$(gh pr list --base main --head update-grafana-create-plugin --json number -q '.[0].number')
+        PR_NUMBER=$(gh pr list --base ${{ inputs.base }} --head update-grafana-create-plugin --json number -q '.[0].number')
 
         PR_BODY=$(cat <<EOF
         Bumps [\`@grafana/create-plugin\`](https://github.com/grafana/plugin-tools/tree/main/packages/create-plugin) configuration from ${{ env.CONFIG_VERSION }} to ${{ env.LATEST_VERSION }}.
@@ -86,7 +86,7 @@ runs:
         )
 
         if [ -z "$PR_NUMBER" ]; then
-          gh pr create --base main --head update-grafana-create-plugin --title "Chore: Bump @grafana/create-plugin configuration to ${{ env.LATEST_VERSION }}" --body "$PR_BODY"
+          gh pr create --base ${{ inputs.base }} --head update-grafana-create-plugin --title "Chore: Bump @grafana/create-plugin configuration to ${{ env.LATEST_VERSION }}" --body "$PR_BODY"
         else
           gh pr edit $PR_NUMBER --title "Chore: Bump @grafana/create-plugin configuration to ${{ env.LATEST_VERSION }}" --body "$PR_BODY"
         fi

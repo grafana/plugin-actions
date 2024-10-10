@@ -1,13 +1,5 @@
-name: "Grafana Build Plugin"
-description: "Builds a Grafana plugin"
-
-outputs:
-  archive:
-    description: "The path to the plugin archive (zip)."
-    value: ${{ steps.package-plugin.outputs.archive }}
-  archive-sha1sum:
-    description: "The path to the plugin archive sha1sum."
-    value: ${{ steps.package-plugin.outputs.archive-sha1sum }}
+name: "Grafana Create Plugin Update"
+description: "Runs create-plugin update within a Grafana plugin"
 
 inputs:
   token:
@@ -65,21 +57,37 @@ runs:
         ${{ github.action_path }}/pm.sh install
       shell: bash
 
-    - name: Create PR
-      uses: peter-evans/create-pull-request@v7
+    - name: Create branch
       if: steps.compare-versions.outputs.update_needed == 'true'
-      with:
-        token: ${{ inputs.token }}
-        base: ${{ inputs.base }}
-        branch: update-grafana-create-plugin
-        delete-branch: true
-        commit-message: "chore: update configuration to create-plugin ${{ env.LATEST_VERSION }}"
-        title: "Chore: Bump @grafana/create-plugin configuration to ${{ env.LATEST_VERSION }}"
-        author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
-        body: |
-          Bumps [`@grafana/create-plugin`](https://github.com/grafana/plugin-tools/tree/main/packages/create-plugin) configuration from ${{ env.CONFIG_VERSION }} to ${{ env.LATEST_VERSION }}.
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git checkout -b update-grafana-create-plugin
+        git add .
+        git commit -m "chore: update configuration to create-plugin ${{ env.LATEST_VERSION }}"
+        git push origin update-grafana-create-plugin --force
+      shell: bash
 
-          **Notes for reviewer:**
-          This is an auto-generated PR which ran `@grafana/create-plugin update`.
-          Please consult the create-plugin [CHANGELOG.md](https://github.com/grafana/plugin-tools/blob/main/packages/create-plugin/CHANGELOG.md) to understand what may have changed.
-          Please review the changes thoroughly before merging.
+    - name: Create or Update PR
+      if: steps.compare-versions.outputs.update_needed == 'true'
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+      run: |
+        PR_NUMBER=$(gh pr list --base main --head update-grafana-create-plugin --json number -q '.[0].number')
+
+        PR_BODY=$(cat <<EOF
+        Bumps [\`@grafana/create-plugin\`](https://github.com/grafana/plugin-tools/tree/main/packages/create-plugin) configuration from ${{ env.CONFIG_VERSION }} to ${{ env.LATEST_VERSION }}.
+
+        **Notes for reviewer:**
+        This is an auto-generated PR which ran \`@grafana/create-plugin update\`.
+        Please consult the create-plugin [CHANGELOG.md](https://github.com/grafana/plugin-tools/blob/main/packages/create-plugin/CHANGELOG.md) to understand what may have changed.
+        Please review the changes thoroughly before merging.
+        EOF
+        )
+
+        if [ -z "$PR_NUMBER" ]; then
+          gh pr create --base main --head update-grafana-create-plugin --title "Chore: Bump @grafana/create-plugin configuration to ${{ env.LATEST_VERSION }}" --body "$PR_BODY"
+        else
+          gh pr edit $PR_NUMBER --title "Chore: Bump @grafana/create-plugin configuration to ${{ env.LATEST_VERSION }}" --body "$PR_BODY"
+        fi
+      shell: bash

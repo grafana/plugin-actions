@@ -23,32 +23,25 @@ on:
   schedule:
     - cron: "0 0 * * 0"
 
+# To use the default github token with the following elevated permissions make sure to check:
+# **Allow GitHub Actions to create and approve pull requests** in https://github.com/USER_NAME/REPO_NAME/settings/actions.
+# Alternatively create a fine-grained personal access token for your repository with `contents: read and write` and `pull requests: read and write` and pass it to the action.
+
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
       - uses: grafana/plugin-actions/create-plugin-update@main
-        with:
-          token: ${{ secrets.GH_PAT_TOKEN }}
 ```
 
 ## Options
 
+The following options can be passed to this action:
+
 - `token`: A github token with write access to pull requests and content (defaults to `github.token`).
 - `base`: The base branch to open the pull request against (defaults to `main`).
 - `node-version`: The version of node to use (defaults to `20`).
-
-## Issues
-
-**Error: GitHub Actions is not permitted to create or approve pull requests.**
-
-If you're seeing this error it means the GH token passes to the action doesn't have the necessary privileges to create the pull request. To resolve this you can either:
-
-- Create a Personal Access Token which has the permission to write to both pull-requests and contents for your repository.
-- Go to https://github.com/USER_NAME/REPO_NAME/settings/actions and check **Allow GitHub Actions to create and approve pull requests** then add the following to your workflow to elevate the token permissions:
-
-  ```yaml
-  permissions:
-    contents: write
-    pull-requests: write
-  ```

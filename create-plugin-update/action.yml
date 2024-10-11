@@ -1,5 +1,5 @@
 name: "Grafana Create Plugin Update"
-description: "Runs create-plugin update within a Grafana plugin"
+description: "Runs create-plugin update within a Grafana plugin and opens a PR with the changes"
 
 inputs:
   token:

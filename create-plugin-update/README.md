@@ -1,6 +1,6 @@
 # Create plugin update action
 
-This GitHub Action automates the process of running `create-plugin update` within your plugins repository.
+This GitHub Action automates the process of running `create-plugin update` within your plugins repository. It checks the current create-plugin version against latest and if there is a newer version available will create a branch, run create-plugin update, update node lock file, and open a PR with the changes.
 
 ## Features
 
@@ -21,7 +21,7 @@ name: Create Plugin Update
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 0 * * 0"
+    - cron: '0 0 1 * *' # run once a month on the 1st day
 
 # To use the default github token with the following elevated permissions make sure to check:
 # **Allow GitHub Actions to create and approve pull requests** in https://github.com/USER_NAME/REPO_NAME/settings/actions.

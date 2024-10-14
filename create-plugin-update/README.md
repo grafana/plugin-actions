@@ -1,6 +1,6 @@
 # Create plugin update action
 
-This GitHub Action automates the process of running `create-plugin update` within your plugins repository. It checks the current create-plugin version against latest and if there is a newer version available will create a branch, run create-plugin update, update node lock file, and open a PR with the changes.
+This GitHub Action automates the process of running `create-plugin update` within your plugins repository. It checks the current create-plugin version against latest and if there is a newer version available it will create a branch, run create-plugin update, update the node lock file, and open a PR with the changes.
 
 ## Features
 

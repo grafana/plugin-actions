@@ -2,7 +2,7 @@
 
 # Check if command argument is provided
 if [ "$1" = "" ]; then
-	echo "Please provide a command to run."
+	echo "Please provide a command to run. Available commands: install, update"
 	exit 1
 fi
 

@@ -53,6 +53,7 @@ runs:
       run: |
         cd ..
         gh auth status
+        gh repo clone grafana/plugin-extension-types
       shell: bash
       env:
         GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}

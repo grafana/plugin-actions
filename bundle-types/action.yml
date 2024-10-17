@@ -32,7 +32,7 @@ runs:
       shell: bash
 
     - name: Bundle types
-      run: npx -y @grafana/plugin-types-bundler@latest --entry-point ${{ inputs.entryPoint }} --tsConfig ${{ inputs.tsConfig }} --outDir ${{ inputs.outDir }}
+      run: npx -y @grafana/plugin-types-bundler@latest --entry-point ${{ inputs.entryPoint }}
       shell: bash
 
     - id: get-secrets

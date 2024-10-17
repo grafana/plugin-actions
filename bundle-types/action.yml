@@ -18,7 +18,7 @@ inputs:
   outDir:
     description: "A directory to output the types file to. Defaults to ./dist."
     required: false
-    default: "./dist"
+    default: ""
 
 runs:
   using: "composite"
@@ -35,8 +35,24 @@ runs:
       run: npx -y @grafana/plugin-types-bundler@latest --entry-point ${{ inputs.entryPoint }} --tsConfig ${{ inputs.tsConfig }} --outDir ${{ inputs.outDir }}
       shell: bash
 
-    - name: Set outputs
-      id: set-outputs
+    - id: get-secrets
+      uses: grafana/shared-workflows/actions/get-vault-secrets@main
+      with:
+        common_secrets: |
+          GITHUB_APP_ID=plugins-platform-bot-app:app-id
+          GITHUB_APP_PRIVATE_KEY=plugins-platform-bot-app:app-private-key
+
+    - name: Generate token
+      id: generate_token
+      uses: tibdex/github-app-token@v2
+      with:
+        app_id: ${{ env.GITHUB_APP_ID }}
+        private_key: ${{ env.GITHUB_APP_PRIVATE_KEY }}
+
+    - name: Clone NPM package types package repo
       run: |
-        echo "typesFilePath=${{ inputs.outDir }}/index.d.ts" >> $GITHUB_OUTPUT
+        cd ..
+        gh auth status
       shell: bash
+      env:
+        GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}

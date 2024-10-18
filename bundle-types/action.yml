@@ -52,9 +52,37 @@ runs:
     - name: Clone NPM package types package repo
       run: |
         cd ..
-        pwd
         gh auth status
         gh repo clone grafana/plugin-extension-types
       shell: bash
       env:
         GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
+
+    - name: Create branch
+      run: |
+        pwd
+      shell: bash
+
+    # - name: Create or Update PR
+    #   if: steps.compare-versions.outputs.update_needed == 'true'
+    #   env:
+    #     GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+    #   run: |
+    #     PR_NUMBER=$(gh pr list --base main --head update-grafana-create-plugin-${{ env.LATEST_VERSION }} --json number -q '.[0].number')
+
+    #     PR_BODY=$(cat <<EOF
+    #     Bumps [\`@grafana/create-plugin\`](https://github.com/grafana/plugin-tools/tree/main/packages/create-plugin) configuration from ${{ env.CONFIG_VERSION }} to ${{ env.LATEST_VERSION }}.
+
+    #     **Notes for reviewer:**
+    #     This is an auto-generated PR which ran \`@grafana/create-plugin update\`.
+    #     Please consult the create-plugin [CHANGELOG.md](https://github.com/grafana/plugin-tools/blob/main/packages/create-plugin/CHANGELOG.md) to understand what may have changed.
+    #     Please review the changes thoroughly before merging.
+    #     EOF
+    #     )
+
+    #     if [ -z "$PR_NUMBER" ]; then
+    #       gh pr create --base main --head update-grafana-create-plugin-${{ env.LATEST_VERSION }} --title "Chore: Bump @grafana/create-plugin configuration to ${{ env.LATEST_VERSION }}" --body "$PR_BODY"
+    #     else
+    #       gh pr edit $PR_NUMBER --title "Chore: Bump @grafana/create-plugin configuration to ${{ env.LATEST_VERSION }}" --body "$PR_BODY"
+    #     fi
+    #   shell: bash

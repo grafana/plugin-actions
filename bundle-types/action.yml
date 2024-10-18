@@ -75,14 +75,14 @@ runs:
       shell: bash
 
     - name: Create branch
-      if: ${{ steps.check-diff.outputs.changes == 'true' }}
+      if: ${{ steps.check-diff.outputs.has-changes == 'true' }}
       run: |
         cd ../plugin-extension-types
         git config --local user.name "github-actions[bot]"
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git checkout -b ${{ steps.metadata.outputs.plugin-id }}-${{ github.sha }}
         git add .
-        git commit -m "wip: testing"
+        git commit -m "types: updating ${{ steps.metadata.outputs.plugin-id }}"
         git push https://x-access-token:${{ steps.generate-token.outputs.token }}@github.com/grafana/plugin-extension-types test-branch
       shell: bash
 

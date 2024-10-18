@@ -20,16 +20,12 @@ NOTE: the package.json version and the git tag must match. You can use `yarn ver
 ## Workflow example
 
 ```yaml
-name: Release
+name: Bundle Types
 
 on:
   push:
-    tags:
-      - "v*" # Run workflow on version tags, e.g. v1.0.0.
-
-# necessary to create releases
-permissions:
-  contents: write
+    branches:
+      - main
 
 jobs:
   release:

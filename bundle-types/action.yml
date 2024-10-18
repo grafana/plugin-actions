@@ -40,7 +40,7 @@ runs:
       with:
         common_secrets: |
           GITHUB_APP_ID=plugins-platform-bot-app:app-id
-          GITHUB_APP_PRIVATE_KEY=plugins-platform-bot-app:app-private-key
+          GITHUB_APP_PRIVATE_KEY=plugins-platform-bot-app:private-key
 
     - name: Generate token
       id: generate_token

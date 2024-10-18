@@ -30,7 +30,7 @@ runs:
     - name: Get plugin id
       id: get-plugin-id
       run: |
-        PLUGIN_ID=$(cat dist/plugin.json | jq -r .id)
+        PLUGIN_ID=$(cat src/plugin.json | jq -r .id)
         echo "plugin-id=${PLUGIN_ID}" >> $GITHUB_OUTPUT
       shell: bash
 

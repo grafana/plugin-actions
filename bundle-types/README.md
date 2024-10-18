@@ -20,19 +20,15 @@ NOTE: the package.json version and the git tag must match. You can use `yarn ver
 ## Workflow example
 
 ```yaml
-name: Release
+name: Bundle Types
 
 on:
   push:
-    tags:
-      - "v*" # Run workflow on version tags, e.g. v1.0.0.
-
-# necessary to create releases
-permissions:
-  contents: write
+    branches:
+      - main
 
 jobs:
-  release:
+  bundle-types:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -42,6 +38,5 @@ jobs:
 
 ## Options
 
-- `entryPoint`: Location of types file to bundle.
+- `entryPoint`: Location of types file to bundle. Defaults to `"./src/types/index.ts"`
 - `tsConfig`: A path to the tsconfig file to use when bundling types.
-- `outDir`: A directory to output the types file to. Defaults to ./dist.

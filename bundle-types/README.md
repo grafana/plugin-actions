@@ -28,7 +28,7 @@ on:
       - main
 
 jobs:
-  release:
+  bundle-types:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

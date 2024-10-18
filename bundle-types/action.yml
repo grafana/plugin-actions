@@ -52,6 +52,7 @@ runs:
     - name: Clone NPM package types package repo
       run: |
         cd ..
+        pwd
         gh auth status
         gh repo clone grafana/plugin-extension-types
       shell: bash

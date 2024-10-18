@@ -15,10 +15,9 @@ inputs:
     description: "A path to the tsconfig file to use when bundling types."
     required: false
     default: ""
-  outDir:
-    description: "A directory to output the types file to. Defaults to ./dist."
-    required: false
-    default: ""
+  pluginId:
+    description: "The plugins Id. Used as the directory to output the types file to."
+    required: true
 
 runs:
   using: "composite"
@@ -29,10 +28,6 @@ runs:
 
     - name: Install dependencies
       run: ${{ github.action_path }}/pm.sh install
-      shell: bash
-
-    - name: Bundle types
-      run: npx -y @grafana/plugin-types-bundler@latest --entry-point ${{ inputs.entryPoint }}
       shell: bash
 
     - id: get-secrets
@@ -49,7 +44,7 @@ runs:
         app_id: ${{ env.GITHUB_APP_ID }}
         private_key: ${{ env.GITHUB_APP_PRIVATE_KEY }}
 
-    - name: Clone NPM package types package repo
+    - name: Clone NPM types package repo
       run: |
         cd ..
         gh auth status
@@ -58,9 +53,19 @@ runs:
       env:
         GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
 
+    - name: Bundle types
+      run: npx -y @grafana/plugin-types-bundler@latest --entry-point ${{ inputs.entryPoint }} --out-dir="../plugin-extension-types/${{ inputs.pluginId }}"
+      shell: bash
+
     - name: Create branch
       run: |
-        pwd
+        cd ../plugin-extension-types
+        git config --local user.name "github-actions[bot]"
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git checkout -b test-branch
+        git add .
+        git commit -m "wip: testing"
+        git push https://x-access-token:${{ steps.generate_token.outputs.token }}@github.com/grafana/plugin-extension-types test-branch
       shell: bash
 
     # - name: Create or Update PR

@@ -80,9 +80,9 @@ runs:
         cd ../plugin-extension-types
         git config --local user.name "github-actions[bot]"
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
-        git checkout -b ${{ steps.metadata.outputs.plugin-id }}-${{ github.sha }}
+        git checkout -b ${{ steps.get-plugin-id.outputs.plugin-id }}-${{ github.sha }}
         git add .
-        git commit -m "types: updating ${{ steps.metadata.outputs.plugin-id }}"
+        git commit -m "types: updating ${{ steps.get-plugin-id.outputs.plugin-id }}"
         git push https://x-access-token:${{ steps.generate-token.outputs.token }}@github.com/grafana/plugin-extension-types test-branch
       shell: bash
 

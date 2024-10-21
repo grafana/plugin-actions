@@ -89,7 +89,7 @@ runs:
       shell: bash
 
     - name: Create or Update PR
-      if: steps.compare-versions.outputs.update_needed == 'true'
+      if: ${{ steps.check-diff.outputs.has-changes == 'true' }}
       env:
         GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
       run: |

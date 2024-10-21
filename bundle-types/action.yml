@@ -65,12 +65,12 @@ runs:
       id: check-diff
       run: |
         cd ../plugin-extension-types
-        if git diff --quiet; then
-          echo "No changes found"
-          echo "has-changes=false" >> $GITHUB_OUTPUT
-        else
+        if [[ -n $(git status --porcelain) ]]; then
           echo "Changes to ${{ inputs.entryPoint }} detected..."
           echo "has-changes=true" >> $GITHUB_OUTPUT
+        else
+          echo "No changes found"
+          echo "has-changes=false" >> $GITHUB_OUTPUT
         fi
       shell: bash
 

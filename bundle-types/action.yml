@@ -83,7 +83,7 @@ runs:
         git checkout -b ${{ steps.get-plugin-id.outputs.plugin-id }}-${{ github.sha }}
         git add .
         git commit -m "types: updating ${{ steps.get-plugin-id.outputs.plugin-id }}"
-        git push https://x-access-token:${{ steps.generate-token.outputs.token }}@github.com/grafana/plugin-extension-types test-branch
+        git push https://x-access-token:${{ steps.generate-token.outputs.token }}@github.com/grafana/plugin-extension-types ${{ steps.get-plugin-id.outputs.plugin-id }}-${{ github.sha }}
       shell: bash
 
     # - name: Create or Update PR

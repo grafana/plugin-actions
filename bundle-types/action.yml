@@ -107,8 +107,6 @@ runs:
         )
 
         if [ -z "$PR_NUMBER" ]; then
-          gh pr create --base main --head update-grafana-create-plugin-${{ env.LATEST_VERSION }} --title "Chore: Bump @grafana/create-plugin configuration to ${{ env.LATEST_VERSION }}" --body "$PR_BODY"
-        else
-          gh pr edit $PR_NUMBER --title "Chore: Bump @grafana/create-plugin configuration to ${{ env.LATEST_VERSION }}" --body "$PR_BODY"
+          gh pr create --base main --head ${{ steps.metadata.outputs.plugin-id }}-${{ steps.metadata.outputs.plugin-version }} --title "Chore: Add ${{ steps.metadata.outputs.plugin-id }}-${{ steps.metadata.outputs.plugin-version }} types" --body "$PR_BODY"
         fi
       shell: bash

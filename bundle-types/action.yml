@@ -93,6 +93,8 @@ runs:
       env:
         GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
       run: |
+        cd ../plugin-extension-types
+
         PR_NUMBER=$(gh pr list --base main --head ${{ steps.metadata.outputs.plugin-id }}-${{ steps.metadata.outputs.plugin-version }} --json number -q '.[0].number')
 
         PR_BODY=$(cat <<EOF

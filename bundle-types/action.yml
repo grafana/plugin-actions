@@ -60,7 +60,7 @@ runs:
         GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
     - name: Bundle types
-      run: npx -y @grafana/plugin-types-bundler@latest --entry-point ${{ inputs.entryPoint }} --out-dir="../plugin-extension-types/${{ steps.metadata.outputs.plugin-id }}"
+      run: npx -y @grafana/plugin-types-bundler@latest --entry-point ${{ inputs.entryPoint }} --out-dir="../plugin-extension-types/types/${{ steps.metadata.outputs.plugin-id }}"
       shell: bash
 
     - name: Check diff for changes

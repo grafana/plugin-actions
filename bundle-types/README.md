@@ -1,31 +1,31 @@
-# Bundle plugin action
+# Bundle plugin types action
 
 This GitHub Action automates the process of bundling Grafana plugins typescript types for sharing with other plugins. It takes the source code of a Grafana plugin and outputs a typescript declaration file.
+
+> [!IMPORTANT]
+> This action is only available to plugins that live within the grafana github organization. Attempting to use this action in a plugin whos source code lives outside the grafana github org will fail.
 
 ## Features
 
 - Builds a Grafana plugin source typescript file into a single typescript declaration file.
 - Supports bundling and treeshaking imported types.
+- On successful build opens a PR in the `@grafana/plugin-types` repo set to auto merge.
 
 ## Usage
 
-- Add this workflow to your Github repository as in the example.
-- Set up the necessary environment variables and secrets, including the Grafana access token policy (if signing is desired).
-- Create a git tag with the same version as the package.json version that you want to build and create a release.
-- Push the git tag to trigger the action.
-- The action will build the plugin, create an archive, and generate a draft release based on the package.json version.
-
-NOTE: the package.json version and the git tag must match. You can use `yarn version` or `npm version` to set the correct version and create the git tag.
+- Add this workflow to your Github repository (see example below).
+- The action will build the plugin types file, clone the `@grafana/plugin-types` repo, create a branch, open a PR in the repo set to auto merge. The branch name and PR will be associated to your plugins id and version at time of checkout.
 
 ## Workflow example
+
+>[!NOTE]
+> The example below uses workflow_dispatch to manually release new types. Consider how releases work within your plugin and set the event accordingly.
 
 ```yaml
 name: Bundle Types
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   bundle-types:
@@ -38,5 +38,6 @@ jobs:
 
 ## Options
 
-- `entryPoint`: Location of types file to bundle. Defaults to `"./src/types/index.ts"`
-- `tsConfig`: A path to the tsconfig file to use when bundling types.
+- `entry-point`: The location of types file to bundle. Defaults to `"./src/types/index.ts"`.
+- `ts-config`: A path to the tsconfig file to use when bundling types. If
+- `node-version`: The version of node to use with the action. Defaults to `20`.

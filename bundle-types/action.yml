@@ -15,6 +15,10 @@ inputs:
     description: "A path to the tsconfig file to use when bundling types."
     required: false
     default: ""
+  node-version:
+    description: "Version of node"
+    required: false
+    default: "20"
 
 runs:
   using: "composite"

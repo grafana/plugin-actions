@@ -7,11 +7,11 @@ outputs:
     value: ${{ steps.set-outputs.outputs.typesFilePath }}
 
 inputs:
-  entryPoint:
+  entry-point:
     description: "Location of types file to bundle."
     required: false
     default: "./src/types/index.ts"
-  tsConfig:
+  ts-config:
     description: "A path to the tsconfig file to use when bundling types."
     required: false
     default: ""
@@ -64,7 +64,7 @@ runs:
         GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
     - name: Bundle types
-      run: npx -y @grafana/plugin-types-bundler@latest --entry-point ${{ inputs.entryPoint }} --ts-config ${{ inputs.tsConfig }} --out-dir="../plugin-extension-types/types/${{ steps.metadata.outputs.plugin-id }}"
+      run: npx -y @grafana/plugin-types-bundler@latest --entry-point ${{ inputs.entry-point }} --ts-config ${{ inputs.ts-config }} --out-dir="../plugin-extension-types/types/${{ steps.metadata.outputs.plugin-id }}"
       shell: bash
 
     - name: Check diff for changes
@@ -72,7 +72,7 @@ runs:
       run: |
         cd ../plugin-extension-types
         if [[ -n $(git status --porcelain) ]]; then
-          echo "Changes to ${{ inputs.entryPoint }} detected..."
+          echo "Changes to ${{ inputs.entry-point }} detected..."
           echo "has-changes=true" >> $GITHUB_OUTPUT
         else
           echo "No changes found"

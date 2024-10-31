@@ -31,6 +31,13 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Check if repository lives within the grafana organization
+      if: ${{ github.repository_owner != 'grafana' }}
+      run: |
+        echo "This workflow can only be run from within the Grafana organization."
+        exit 1
+      shell: bash
+
     - uses: actions/setup-node@v4
       with:
         node-version: "${{ inputs.node-version }}"

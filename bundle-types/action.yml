@@ -19,6 +19,14 @@ inputs:
     description: "Version of node"
     required: false
     default: "20"
+  plugin-json-path:
+    description: "A path to the plugins plugin.json file."
+    required: false
+    default: "src/plugin.json"
+  package-json-path:
+    description: "A path to the plugins package.json file."
+    required: false
+    default: "package.json"
 
 runs:
   using: "composite"
@@ -34,9 +42,9 @@ runs:
     - name: Get plugin id and version
       id: metadata
       run: |
-        PLUGIN_ID=$(cat src/plugin.json | jq -r .id)
+        PLUGIN_ID=$(cat ${{ inputs.plugin-json-path }} | jq -r .id)
         echo "plugin-id=${PLUGIN_ID}" >> $GITHUB_OUTPUT
-        PLUGIN_VERSION=$(cat package.json | jq -r .version)
+        PLUGIN_VERSION=$(cat ${{ inputs.package-json-path }} | jq -r .version)
         echo "plugin-version=${PLUGIN_VERSION}" >> $GITHUB_OUTPUT
       shell: bash
 

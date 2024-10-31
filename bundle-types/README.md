@@ -27,6 +27,11 @@ name: Bundle Types
 on:
   workflow_dispatch:
 
+# These permissions are needed to assume roles from Github's OIDC.
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   bundle-types:
     runs-on: ubuntu-latest
@@ -41,3 +46,5 @@ jobs:
 - `entry-point`: The location of types file to bundle. Defaults to `"./src/types/index.ts"`.
 - `ts-config`: A path to the tsconfig file to use when bundling types. If
 - `node-version`: The version of node to use with the action. Defaults to `20`.
+- `plugin-json-path`: The path to your plugins `plugin.json` file. Used to extract the plugin id. Defaults to `"src/plugin.json"`.
+- `package-json-path`: The path to your plugins `package.json` file. Used to extract the plugin version. Defaults to `"package.json"`.

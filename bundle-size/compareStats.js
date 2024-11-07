@@ -1,23 +1,55 @@
 // @ts-check
 const fs = require("fs");
 
-const prMessageSymbol = `<!-- grafana-plugin-actions-bundle-size-comment -->`;
+/**
+ * @typedef {Object} AssetSize
+ * @property {number} size
+ */
 
-function capitalize(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
+/**
+ * @typedef {Object} Entrypoint
+ * @property {string} name
+ * @property {number} assetsSize
+ */
 
-function formatBytes(bytes) {
-  if (bytes === 0) {
-    return "0 Bytes";
-  }
-  const absBytes = Math.abs(bytes);
-  const k = 1024;
-  const sizes = ["Bytes", "KB", "MB", "GB"];
-  const i = Math.floor(Math.log(absBytes) / Math.log(k));
-  return parseFloat((absBytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
-}
+/**
+ * @typedef {Object} EntryDiffResult
+ * @property {AssetDiff[]} entries
+ * @property {AssetDiff} total
+ */
 
+/**
+ * @typedef {Object} AssetDiff
+ * @property {string} name
+ * @property {AssetSize} new
+ * @property {AssetSize} old
+ * @property {number} diff
+ * @property {number} diffPercentage
+ */
+
+/**
+ * @typedef {Object} AssetStat
+ * @property {string} name
+ * @property {number} size
+ */
+
+/**
+ * @typedef {AssetStat & { modules?: ModuleStat[] }} ModuleStat
+ */
+
+/**
+ * @typedef {Object} DiffResult
+ * @property {AssetDiff[]} added
+ * @property {AssetDiff[]} removed
+ * @property {AssetDiff[]} bigger
+ * @property {AssetDiff[]} smaller
+ * @property {AssetDiff} total
+ */
+
+/**
+ * @param {Array<AssetStat>} statAssets
+ * @returns {Map<string, AssetSize>}
+ */
 function generateAssetSizes(statAssets = []) {
   return new Map(
     statAssets.map((asset) => {
@@ -31,42 +63,132 @@ function generateAssetSizes(statAssets = []) {
   );
 }
 
+/**
+ * @param {Array<{ modules?: ModuleStat[] }>} statChunks
+ * @returns {Map<string, AssetSize>}
+ */
 function generateModuleSizes(statChunks = []) {
-  return new Map(
-    statChunks.flatMap((chunk) => {
-      if (!chunk.modules) {
-        return [];
-      }
-      return chunk.modules.flatMap((module) => {
-        if (module.modules) {
-          return module.modules.map((submodule) => [
-            submodule.name ?? "",
-            {
-              size: submodule.size ?? 0,
-            },
-          ]);
-        } else {
-          if (
-            module.name.startsWith("webpack/") ||
-            module.name.startsWith("external ")
-          ) {
-            return [];
-          }
+  const moduleSizeMap = new Map();
 
-          return [
-            [
-              module.name ?? "",
-              {
-                size: module.size ?? 0,
-              },
-            ],
-          ];
-        }
-      });
+  statChunks.forEach((chunk) => {
+    if (!chunk.modules) {
+      return;
+    }
+
+    chunk.modules.forEach((module) => {
+      if (
+        module.name.startsWith("webpack/") ||
+        module.name.startsWith("external ")
+      ) {
+        return;
+      }
+
+      if (module.modules) {
+        module.modules.forEach((submodule) => {
+          if (
+            submodule.name &&
+            !submodule.name.startsWith("webpack/") &&
+            !submodule.name.startsWith("external ")
+          ) {
+            addModuleSize(
+              moduleSizeMap,
+              getPackageName(submodule.name),
+              submodule.size ?? 0
+            );
+          }
+        });
+      } else {
+        addModuleSize(
+          moduleSizeMap,
+          getPackageName(module.name),
+          module.size ?? 0
+        );
+      }
+    });
+  });
+
+  return moduleSizeMap;
+}
+
+function addModuleSize(moduleSizeMap, packageName, size) {
+  if (moduleSizeMap.has(packageName)) {
+    const currentSize = moduleSizeMap.get(packageName).size;
+    moduleSizeMap.set(packageName, { size: currentSize + size });
+  } else {
+    moduleSizeMap.set(packageName, { size });
+  }
+}
+
+function getPackageName(modulePath) {
+  if (!modulePath.includes("node_modules")) {
+    return modulePath;
+  }
+
+  const pathParts = modulePath.split("node_modules/");
+  const remainingPath = pathParts[1];
+
+  // Extract package name considering scoped packages
+  if (remainingPath.startsWith("@")) {
+    const [scope, packageName] = remainingPath.split("/");
+    return `${scope}/${packageName}`;
+  } else {
+    const [packageName] = remainingPath.split("/");
+    return packageName;
+  }
+}
+
+/**
+ * @param {Record<string, Entrypoint>} statEntryPoints
+ * @returns {Map<string, AssetSize>}
+ */
+function generateEntriesSizes(statEntryPoints = {}) {
+  return new Map(
+    Object.values(statEntryPoints).map((entrypoint) => {
+      return [
+        entrypoint.name,
+        {
+          size: entrypoint.assetsSize,
+        },
+      ];
     })
   );
 }
 
+/**
+ * @param {Map<string, AssetSize>} oldEntries
+ * @param {Map<string, AssetSize>} newEntries
+ * @returns {EntryDiffResult}
+ */
+function entryStatsDiff(oldEntries, newEntries) {
+  const diffResults = [];
+  let oldTotal = 0;
+  let newTotal = 0;
+
+  for (const [entryName, newEntry] of newEntries) {
+    const oldEntry = oldEntries.get(entryName) || { size: 0 };
+    oldTotal += oldEntry.size;
+    newTotal += newEntry.size;
+
+    const diff = getAssetDiff(entryName, oldEntry, newEntry);
+    diffResults.push(diff);
+  }
+
+  return {
+    entries: diffResults,
+    total: getAssetDiff(
+      "Entrypoints Total",
+      { size: oldTotal },
+      { size: newTotal }
+    ),
+  };
+}
+
+/**
+ * @param {string} name
+ * @param {AssetSize} oldSize
+ * @param {AssetSize} newSize
+ * @returns {AssetDiff}
+ */
 function getAssetDiff(name, oldSize, newSize) {
   return {
     name,
@@ -81,12 +203,21 @@ function getAssetDiff(name, oldSize, newSize) {
   };
 }
 
+/**
+ * @param {Array<AssetDiff>} items
+ * @returns {Array<AssetDiff>}
+ */
 function sortDiffDescending(items) {
   return items.sort(
     (diff1, diff2) => Math.abs(diff2.diff) - Math.abs(diff1.diff)
   );
 }
 
+/**
+ * @param {Map<string, AssetSize>} oldAssets
+ * @param {Map<string, AssetSize>} newAssets
+ * @returns {DiffResult}
+ */
 function statsDiff(oldAssets, newAssets) {
   let oldTotal = 0;
   let newTotal = 0;
@@ -94,13 +225,12 @@ function statsDiff(oldAssets, newAssets) {
   const removed = [];
   const bigger = [];
   const smaller = [];
-  const unchanged = [];
 
   for (const [name, oldAssetSizes] of oldAssets) {
     oldTotal += oldAssetSizes.size;
     const newAsset = newAssets.get(name);
     if (!newAsset) {
-      removed.push(getAssetDiff(name, oldAssetSizes, { size: 0, gzipSize: 0 }));
+      removed.push(getAssetDiff(name, oldAssetSizes, { size: 0 }));
     } else {
       const diff = getAssetDiff(name, oldAssetSizes, newAsset);
 
@@ -108,8 +238,6 @@ function statsDiff(oldAssets, newAssets) {
         bigger.push(diff);
       } else if (diff.diffPercentage < 0) {
         smaller.push(diff);
-      } else {
-        unchanged.push(diff);
       }
     }
   }
@@ -118,7 +246,7 @@ function statsDiff(oldAssets, newAssets) {
     newTotal += newAssetSizes.size;
     const oldAsset = oldAssets.get(name);
     if (!oldAsset) {
-      added.push(getAssetDiff(name, { size: 0, gzipSize: 0 }, newAssetSizes));
+      added.push(getAssetDiff(name, { size: 0 }, newAssetSizes));
     }
   }
 
@@ -130,7 +258,6 @@ function statsDiff(oldAssets, newAssets) {
     removed: sortDiffDescending(removed),
     bigger: sortDiffDescending(bigger),
     smaller: sortDiffDescending(smaller),
-    unchanged,
     total: getAssetDiff(
       oldFilesCount === newFilesCount
         ? `${newFilesCount}`
@@ -141,111 +268,11 @@ function statsDiff(oldAssets, newAssets) {
   };
 }
 
-function getPercentageString(number) {
-  if ([Infinity, -Infinity].includes(number)) {
-    return "-";
-  }
-
-  const absValue = Math.abs(number);
-  const value = absValue.toFixed(2);
-  const sign = number < 0 ? "-" : "+";
-
-  return `${number === 0 ? "" : sign}${value}%`;
-}
-
-function createDiffCell(assetDiff) {
-  const formattedNewSize = formatBytes(assetDiff.new.size);
-  const value = assetDiff.diff;
-  if (value === 0) {
-    return formattedNewSize;
-  }
-  const sign = value < 0 ? "-" : "+";
-
-  return `${formattedNewSize} (${value === 0 ? "" : sign}${formatBytes(
-    value
-  )})`;
-}
-
-function printAssetTableRow(assetDiff) {
-  return `| ${assetDiff.name} | ${createDiffCell(
-    assetDiff
-  )} | ${getPercentageString(assetDiff.diffPercentage)} |`;
-}
-
-function printAssetTables(assetsDiff) {
-  const result = ["added", "removed", "bigger", "smaller", "unchanged"]
-    .map((assetDiffField) => {
-      const assets = assetsDiff[assetDiffField];
-      const title = capitalize(assetDiffField);
-      if (assets.length === 0) {
-        return `**${title}**\n\nNo assets were ${assetDiffField}\n`;
-      }
-
-      return `**${title}**\n\n
-| Name | Size | % Diff |
-| --- | --- | --- |
-${assets.map((assetDiff) => printAssetTableRow(assetDiff)).join("\n")}
-`;
-    })
-    .join("\n\n");
-
-  return result;
-}
-
-function printChunkModulesTable(modulesDiff) {
-  const result = ["added", "removed", "bigger", "smaller", "unchanged"];
-  return result
-    .map((moduleDiffField) => {
-      const modules = modulesDiff[moduleDiffField];
-      const title = capitalize(moduleDiffField);
-      if (modules.length === 0) {
-        return `**${title}**\n\nNo modules were ${moduleDiffField}\n`;
-      }
-
-      return `**${title}**\n\n
-| Name | Size | % Diff |
-| --- | --- | --- |
-${modules.map((moduleDiff) => printAssetTableRow(moduleDiff)).join("\n")}
-`;
-    })
-    .join("\n\n");
-}
-
-function getComment(assetsDiff, modulesDiff) {
-  return `${prMessageSymbol}
-### Bundle Size Changes
-
-Hello! 👋 This comment was generated by a Github Action to help you and reviewers understand the impact of your PR on frontend bundle sizes.
-
-Whenever this PR is updated, this comment will update to reflect the latest changes.
-
-| Files | Total bundle size | % diff |
-| --- | --- | --- |
-${printAssetTableRow(assetsDiff.total)}
-<details>
-<summary>View detailed bundle information</summary>
-<div>
-
-${printAssetTables(assetsDiff)}
-
-</div>
-</details>
-
-${
-  modulesDiff
-    ? `<details>
-<summary>View module information</summary>
-<div>
-
-${printChunkModulesTable(modulesDiff)}
-
-</div>
-</details>`
-    : ""
-}
-`;
-}
-
+/**
+ * @param {string} mainStatsFile
+ * @param {string} prStatsFile
+ * @returns {{ assetsDiff: DiffResult, modulesDiff: DiffResult, entriesDiff: EntryDiffResult }}
+ */
 function compareStats(mainStatsFile, prStatsFile) {
   try {
     if (!fs.existsSync(mainStatsFile)) {
@@ -266,84 +293,22 @@ function compareStats(mainStatsFile, prStatsFile) {
     const prAssets = generateAssetSizes(prStats.assets);
     const mainModules = generateModuleSizes(mainStats.chunks);
     const prModules = generateModuleSizes(prStats.chunks);
+    const mainEntries = generateEntriesSizes(mainStats.entrypoints);
+    const prEntries = generateEntriesSizes(prStats.entrypoints);
     const assetsDiff = statsDiff(mainAssets, prAssets);
     const modulesDiff = statsDiff(mainModules, prModules);
+    const entriesDiff = entryStatsDiff(mainEntries, prEntries);
+
     return {
       assetsDiff,
       modulesDiff,
+      entriesDiff,
     };
   } catch (error) {
     throw new Error(`Error comparing stats: ${error.message}`);
   }
 }
 
-module.exports = async (
-  { core, context, github },
-  mainStatsFile,
-  prStatsFile
-) => {
-  try {
-    const {
-      payload: { pull_request },
-      repo,
-    } = context;
-    const prNumber = pull_request.number;
-    const { assetsDiff, modulesDiff } = compareStats(
-      mainStatsFile,
-      prStatsFile
-    );
-
-    const threshold = parseInt(context.payload.inputs.threshold, 10);
-    const commentBody = getComment(assetsDiff, modulesDiff);
-
-    const { data: comments } = await github.rest.issues.listComments({
-      ...repo,
-      issue_number: prNumber,
-    });
-
-    const [previousComment, ...restComments] = comments.filter(
-      (comment) => comment.body && comment.body.includes(prMessageSymbol)
-    );
-
-    if (restComments.length > 1) {
-      for (const comment of restComments) {
-        await github.rest.issues.deleteComment({
-          ...repo,
-          comment_id: comment.id,
-        });
-      }
-    }
-
-    if (assetsDiff.total.diffPercentage < threshold) {
-      core.setoutput(
-        `Bundle size increase of ${assetsDiff.total.diffPercentage}% exceeds the threshold of ${threshold}%`
-      );
-      if (previousComment) {
-        await github.rest.issues.updateComment({
-          ...repo,
-          comment_id: previousComment.id,
-          body: commentBody,
-        });
-      }
-      return;
-    }
-
-    if (previousComment) {
-      await github.rest.issues.updateComment({
-        ...repo,
-        comment_id: previousComment.id,
-        body: commentBody,
-      });
-    } else {
-      await github.rest.issues.createComment({
-        ...repo,
-        issue_number: prNumber,
-        body: commentBody,
-      });
-    }
-
-    core.setOutput("report", commentBody);
-  } catch (error) {
-    core.setFailed(error.message);
-  }
+module.exports = {
+  compareStats,
 };

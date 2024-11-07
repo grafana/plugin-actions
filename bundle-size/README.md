@@ -44,7 +44,7 @@ The following options can be passed to this action:
 
 - `token`: A github token with write access to pull requests and content (defaults to `github.token`).
 - `node-version`: The version of node to use (defaults to `20`).
-- `threshold`: The minimum total percentage difference required to post comments in PRs (defaults to `5`).
+- `threshold`: The minimum entrypoints total percentage difference required to post comments in PRs (defaults to `5`).
 
 ## Troubleshooting
 

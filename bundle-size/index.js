@@ -18,15 +18,23 @@ module.exports = async (
       payload: { pull_request },
       repo,
     } = context;
+
+    if (!pull_request) {
+      core.info(
+        "This action is intended to run only on pull_request events. Exiting... 🚪"
+      );
+      return;
+    }
+
     const prNumber = pull_request.number;
+    const diffThreshold = parseInt(threshold, 10);
     console.log("Comparing stats... 🔍");
     const { assetsDiff, modulesDiff, entriesDiff } = compareStats(
       mainStatsFile,
       prStatsFile
     );
     console.log("Comparing stats done. 👍");
-    const diffThreshold = parseInt(threshold, 10);
-    const commentBody = getComment(assetsDiff, modulesDiff, entriesDiff);
+
     console.log("Checking PR comments... 📝");
     const { data: comments } = await github.rest.issues.listComments({
       ...repo,
@@ -38,7 +46,7 @@ module.exports = async (
     );
 
     if (restComments.length > 1) {
-      console.log("Cleaning up old comments... 🧹");
+      console.log("Cleaning up comments... 🧹");
       for (const comment of restComments) {
         await github.rest.issues.deleteComment({
           ...repo,
@@ -67,6 +75,8 @@ module.exports = async (
       core.setOutput(msg);
       return;
     }
+
+    const commentBody = getComment(assetsDiff, modulesDiff, entriesDiff);
 
     if (previousComment) {
       console.log("Updating PR comment... 🔄");

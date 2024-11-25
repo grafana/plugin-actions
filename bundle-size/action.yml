@@ -29,7 +29,7 @@ runs:
       env:
         GH_TOKEN: ${{ inputs.token }}
       run: |
-        MAIN_STATS_RUN_ID=$(gh api /repos/${{ github.repository }}/actions/artifacts --jq ".artifacts[] | select(.name == \"main-branch-stats\") | .workflow_run.id")
+        MAIN_STATS_RUN_ID=$(gh api /repos/${{ github.repository }}/actions/artifacts --jq ".artifacts | map(select(.name == \"main-branch-stats\")) | sort_by(.created_at) | reverse | .[0].workflow_run.id")
         echo "run-id=${MAIN_STATS_RUN_ID}" >> $GITHUB_OUTPUT
       shell: bash
 

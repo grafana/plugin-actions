@@ -19,6 +19,13 @@ runs:
   using: "composite"
 
   steps:
+    - name: Check if pull request event
+      if: ${{ github.event_name != 'pull_request' }}
+      run: |
+        echo "This action is intended to run only on pull_request events. Exiting."
+        exit 1
+      shell: bash
+
     - name: Set up Node.js
       uses: actions/setup-node@v4
       with:

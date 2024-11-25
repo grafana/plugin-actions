@@ -1,0 +1,64 @@
+name: "Grafana Bundle Size"
+description: "Compares and reports frontend bundle size changes in pull requests"
+
+inputs:
+  token:
+    description: "Github token for the repository."
+    required: false
+    default: "${{ github.token }}"
+  node-version:
+    description: "The version of node to use."
+    required: false
+    default: "20"
+  threshold:
+    description: "Only post reports to PRs if the total entrypoint diff percentage is greater than this number."
+    required: false
+    default: "5"
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Check if pull request event
+      if: ${{ github.event_name != 'pull_request' }}
+      run: |
+        echo "This action is intended to run only on pull_request events. Exiting."
+        exit 1
+      shell: bash
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Get main stats artifact run-id
+      id: "main-stats-info"
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+      run: |
+        MAIN_STATS_RUN_ID=$(gh api /repos/${{ github.repository }}/actions/artifacts --jq ".artifacts | map(select(.name == \"main-branch-stats\")) | sort_by(.created_at) | reverse | .[0].workflow_run.id")
+        echo "run-id=${MAIN_STATS_RUN_ID}" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: Install dependencies
+      run: ${{ github.action_path }}/pm.sh install
+      shell: bash
+
+    - name: Build project to generate PR stats
+      run: ${{ github.action_path }}/pm.sh build
+      shell: bash
+
+    - name: Download main branch stats artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: main-branch-stats
+        path: main-branch-stats
+        github-token: ${{ inputs.token }}
+        run-id: ${{ steps.main-stats-info.outputs.run-id }}
+
+    - name: Generate stats report and comment on PR
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const script = require('${{ github.action_path }}/index.js')
+          await script({github, context, core}, ${{ inputs.threshold }}, "main-branch-stats/stats.json", "pr-stats.json")

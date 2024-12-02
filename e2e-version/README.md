@@ -8,6 +8,10 @@ This Action resolves what Grafana image names and versions to use when E2E testi
 
 By default, this actions resolves an image for the latest build of the main branch in Grafana. If you don't want to include the `grafana-dev` image in your test matrix, you can opt-out on it by setting the `skip-grafana-dev-image` to `true`.
 
+### `limit`
+
+The maximum number of versions to resolve. Default is 6, 0 means no limit.
+
 ### `version-resolver-type`
 
 The action supports two modes.
@@ -166,6 +170,10 @@ jobs:
       ...
 ```
 
+### `grafana-dependency`
+
+When using the `plugin-grafana-dependency` resolver type, you can optionally use the `grafana-dependency` input to pass a semver range of supported Grafana versions to test against. If this input is provided, the [dependencies.grafanaDependency](https://grafana.com/developers/plugin-tools/reference/plugin-json#properties-1) property in plugin.json will be ignored.
+
 ## Development
 
 ```bash
@@ -175,7 +183,3 @@ npm i
 #before pushing to main
 npm run bundle
 ```
-
-### `grafana-dependency`
-
-When using the `plugin-grafana-dependency` resolver type, you can optionally use the `grafana-dependency` input to pass a semver range of supported Grafana versions to test against. If this input is provided, the [dependencies.grafanaDependency](https://grafana.com/developers/plugin-tools/reference/plugin-json#properties-1) property in plugin.json will be ignored.

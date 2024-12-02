@@ -7,8 +7,8 @@ const path = require('path');
 const SkipGrafanaDevImageInput = 'skip-grafana-dev-image';
 const VersionResolverTypeInput = 'version-resolver-type';
 const GrafanaDependencyInput = 'grafana-dependency';
+const LimitInput = 'limit';
 const MatrixOutput = 'matrix';
-const VERSIONS_LIMIT = 5;
 
 const VersionResolverTypes = {
   PluginGrafanaDependency: 'plugin-grafana-dependency',
@@ -20,6 +20,7 @@ async function run() {
     const skipGrafanaDevImage = core.getBooleanInput(SkipGrafanaDevImageInput);
     const grafanaDependency = core.getInput(GrafanaDependencyInput);
     const versionResolverType = core.getInput(VersionResolverTypeInput) || VersionResolverTypes.PluginGrafanaDependency;
+    const limit = parseInt(core.getInput(LimitInput));
     const availableGrafanaVersions = await getGrafanaStableMinorVersions();
     if (availableGrafanaVersions.length === 0) {
       core.setFailed('Could not find any stable Grafana versions');
@@ -45,7 +46,8 @@ async function run() {
         }
         break;
       default:
-        const pluginDependency = grafanaDependency === '' ? (await getPluginGrafanaDependencyFromPluginJson()) : grafanaDependency;
+        const pluginDependency =
+          grafanaDependency === '' ? await getPluginGrafanaDependencyFromPluginJson() : grafanaDependency;
         console.log(`Found version requirement ${pluginDependency}`);
         for (const grafanaVersion of availableGrafanaVersions) {
           if (semver.satisfies(grafanaVersion.version, pluginDependency)) {
@@ -54,9 +56,9 @@ async function run() {
         }
     }
 
-    if (versionResolverType === VersionResolverTypes.PluginGrafanaDependency) {
+    if (limit !== 0 && versionResolverType === VersionResolverTypes.PluginGrafanaDependency && versions.length !== 0) {
       // limit the number of versions to avoid starting too many jobs
-      versions = evenlyPickVersions(versions, VERSIONS_LIMIT);
+      versions = evenlyPickVersions(versions, skipGrafanaDevImage ? limit : limit - 1);
     }
 
     // official grafana-enterprise image
@@ -93,8 +95,8 @@ function evenlyPickVersions(allItems, limit) {
     return allItems;
   }
 
-  const result = [allItems.shift(), allItems.pop()];
-  limit -= 2;
+  const result = limit > 1 ? [allItems.shift(), allItems.pop()] : [allItems.shift()];
+  limit -= result.length;
   const interval = allItems.length / limit;
 
   for (let i = 0; i < limit; i++) {

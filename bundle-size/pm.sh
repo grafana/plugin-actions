@@ -36,7 +36,6 @@ else
   echo "Defaulting to pnpm for build command..."
   install_pnpm_if_not_present
   pmb=("pnpm" "build" "--profile" "--json" "pr-stats.json")
-  exit 1
 fi
 
 # Run the provided command with the detected package manager

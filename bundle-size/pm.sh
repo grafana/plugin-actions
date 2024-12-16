@@ -17,14 +17,12 @@ install_pnpm_if_not_present() {
 # Detect the package manager
 if [ -f yarn.lock ]; then
 	pm="yarn"
-elif [ -f pnpm-lock.yaml ]; then
-	install_pnpm_if_not_present
-	pm="pnpm"
 elif [ -f package-lock.json ]; then
 	pm="npm"
 else
-	echo "No recognized package manager found in this project."
-	exit 1
+	echo "Defaulting to pnpm for install command."
+	install_pnpm_if_not_present
+	pm="pnpm"
 fi
 
 # Detect the command to run build
@@ -33,7 +31,7 @@ if [ -f yarn.lock ]; then
 elif [ -f package-lock.json ]; then
   pmb=("npm" "run" "build" "--" "--profile" "--json" "pr-stats.json")
 else
-  echo "Defaulting to pnpm for build command..."
+  echo "Defaulting to pnpm for build command."
   install_pnpm_if_not_present
   pmb=("pnpm" "build" "--profile" "--json" "pr-stats.json")
 fi

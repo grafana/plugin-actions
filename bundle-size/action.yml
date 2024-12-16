@@ -14,6 +14,10 @@ inputs:
     description: "Only post reports to PRs if the total entrypoint diff percentage is greater than this number."
     required: false
     default: "5"
+  working-directory:
+    description: "The working directory to run the action in."
+    required: false
+    default: "."
 
 runs:
   using: "composite"
@@ -45,6 +49,7 @@ runs:
       shell: bash
 
     - name: Build project to generate PR stats
+      working-directory: ${{ inputs.working-directory }}
       run: ${{ github.action_path }}/pm.sh build
       shell: bash
 

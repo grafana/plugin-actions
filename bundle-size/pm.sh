@@ -30,13 +30,12 @@ fi
 # Detect the command to run build
 if [ -f yarn.lock ]; then
   pmb=("yarn" "build" "--profile" "--json" "pr-stats.json")
-elif [ -f pnpm-lock.yaml ]; then
-  install_pnpm_if_not_present
-  pmb=("pnpm" "build" "--profile" "--json" "pr-stats.json")
 elif [ -f package-lock.json ]; then
   pmb=("npm" "run" "build" "--" "--profile" "--json" "pr-stats.json")
 else
-  echo "No recognized package manager found in this project."
+  echo "Defaulting to pnpm for build command..."
+  install_pnpm_if_not_present
+  pmb=("pnpm" "build" "--profile" "--json" "pr-stats.json")
   exit 1
 fi
 

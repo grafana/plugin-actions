@@ -2,7 +2,7 @@
 
 const {
   getComment,
-  prMessageSymbol,
+  getPrMessageSymbol,
   getBelowThresholdComment,
 } = require("./comment");
 const { compareStats } = require("./compareStats");
@@ -43,7 +43,9 @@ module.exports = async (
     });
 
     const [previousComment, ...restComments] = comments.filter(
-      (comment) => comment.body && comment.body.includes(prMessageSymbol)
+      (comment) =>
+        comment.body &&
+        comment.body.includes(getPrMessageSymbol(workingDirectory))
     );
 
     if (restComments.length > 1) {

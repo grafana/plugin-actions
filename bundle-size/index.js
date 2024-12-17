@@ -11,7 +11,8 @@ module.exports = async (
   { core, context, github },
   threshold,
   mainStatsFile,
-  prStatsFile
+  prStatsFile,
+  workingDirectory
 ) => {
   try {
     const {
@@ -76,7 +77,12 @@ module.exports = async (
       return;
     }
 
-    const commentBody = getComment(assetsDiff, modulesDiff, entriesDiff);
+    const commentBody = getComment(
+      assetsDiff,
+      modulesDiff,
+      entriesDiff,
+      workingDirectory
+    );
 
     if (previousComment) {
       console.log("Updating PR comment... 🔄");

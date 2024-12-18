@@ -14,6 +14,14 @@ inputs:
     description: "Only post reports to PRs if the total entrypoint diff percentage is greater than this number."
     required: false
     default: "5"
+  working-directory:
+    description: "The working directory to run the action in."
+    required: false
+    default: "."
+  main-branch-stats-artifact:
+    description: "The name of the artifact that contains the main branch stats."
+    required: false
+    default: "main-branch-stats"
 
 runs:
   using: "composite"
@@ -36,7 +44,7 @@ runs:
       env:
         GH_TOKEN: ${{ inputs.token }}
       run: |
-        MAIN_STATS_RUN_ID=$(gh api /repos/${{ github.repository }}/actions/artifacts --jq ".artifacts | map(select(.name == \"main-branch-stats\")) | sort_by(.created_at) | reverse | .[0].workflow_run.id")
+        MAIN_STATS_RUN_ID=$(gh api /repos/${{ github.repository }}/actions/artifacts --jq ".artifacts | map(select(.name == \"${{ inputs.main-branch-stats-artifact }}\")) | sort_by(.created_at) | reverse | .[0].workflow_run.id")
         echo "run-id=${MAIN_STATS_RUN_ID}" >> $GITHUB_OUTPUT
       shell: bash
 
@@ -45,14 +53,15 @@ runs:
       shell: bash
 
     - name: Build project to generate PR stats
+      working-directory: ${{ inputs.working-directory }}
       run: ${{ github.action_path }}/pm.sh build
       shell: bash
 
     - name: Download main branch stats artifact
       uses: actions/download-artifact@v4
       with:
-        name: main-branch-stats
-        path: main-branch-stats
+        name: ${{ inputs.main-branch-stats-artifact }}
+        path: ${{ inputs.main-branch-stats-artifact }}
         github-token: ${{ inputs.token }}
         run-id: ${{ steps.main-stats-info.outputs.run-id }}
 
@@ -61,4 +70,4 @@ runs:
       with:
         script: |
           const script = require('${{ github.action_path }}/index.js')
-          await script({github, context, core}, ${{ inputs.threshold }}, "main-branch-stats/stats.json", "pr-stats.json")
+          await script({github, context, core}, ${{ inputs.threshold }}, "${{ inputs.main-branch-stats-artifact }}/stats.json", "${{ inputs.working-directory }}/pr-stats.json", "${{ inputs.working-directory }}")

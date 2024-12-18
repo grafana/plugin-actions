@@ -204,6 +204,8 @@ function getBelowThresholdComment(
   workingDirectory
 ) {
   return `${getPrMessageSymbol(workingDirectory)}
+${getPrMessageTitle(workingDirectory)}
+
 ${prMessageWelcome}
 
 Great job! Bundle size increase of ${diffPercentage}% is now below threshold of ${diffThreshold}%.

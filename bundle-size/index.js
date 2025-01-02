@@ -2,7 +2,7 @@
 
 const {
   getComment,
-  prMessageSymbol,
+  getPrMessageSymbol,
   getBelowThresholdComment,
 } = require("./comment");
 const { compareStats } = require("./compareStats");
@@ -11,7 +11,8 @@ module.exports = async (
   { core, context, github },
   threshold,
   mainStatsFile,
-  prStatsFile
+  prStatsFile,
+  workingDirectory
 ) => {
   try {
     const {
@@ -42,7 +43,9 @@ module.exports = async (
     });
 
     const [previousComment, ...restComments] = comments.filter(
-      (comment) => comment.body && comment.body.includes(prMessageSymbol)
+      (comment) =>
+        comment.body &&
+        comment.body.includes(getPrMessageSymbol(workingDirectory))
     );
 
     if (restComments.length > 1) {
@@ -76,7 +79,12 @@ module.exports = async (
       return;
     }
 
-    const commentBody = getComment(assetsDiff, modulesDiff, entriesDiff);
+    const commentBody = getComment(
+      assetsDiff,
+      modulesDiff,
+      entriesDiff,
+      workingDirectory
+    );
 
     if (previousComment) {
       console.log("Updating PR comment... 🔄");

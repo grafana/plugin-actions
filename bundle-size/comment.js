@@ -28,7 +28,7 @@ function shouldIgnoreWorkingDirectory(workingDirectory) {
 function getPrMessageSymbol(workingDirectory) {
   const workingDirectoryPart = shouldIgnoreWorkingDirectory(workingDirectory)
     ? ""
-    : `-${workingDirectory}`;
+    : `${workingDirectory}`;
   return `<!-- grafana-plugin-actions-bundle-size-comment-${workingDirectoryPart} -->`;
 }
 

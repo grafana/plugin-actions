@@ -30,6 +30,10 @@ inputs:
     description: "Version of node"
     required: false
     default: "20"
+  backend-target:
+    description: "Backend target architecture for the plugin"
+    required: false
+    default: "buildAll"
 
 runs:
   using: "composite"

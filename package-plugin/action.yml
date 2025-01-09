@@ -28,6 +28,10 @@ inputs:
     description: "Version of node"
     required: false
     default: "20"
+  backend-target:
+    description: "Backend target architecture for the plugin"
+    required: false
+    default: "buildAll"
 
 runs:
   using: "composite"
@@ -70,7 +74,7 @@ runs:
       uses: magefile/mage-action@v3
       with:
         version: latest
-        args: buildAll
+        args: "${{ inputs.backend-target }}"
 
     - name: Warn missing Grafana access policy token
       run: |

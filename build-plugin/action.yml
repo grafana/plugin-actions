@@ -45,7 +45,7 @@ runs:
         policy_token: ${{ inputs.policy_token }}
         node-version: "${{ inputs.node-version }}"
         go-version: "${{ inputs.go-version }}"
-        backed-target: "${{ inputs.backend-target }}"
+        backend-target: "${{ inputs.backend-target }}"
 
     - name: Get plugin metadata
       id: metadata

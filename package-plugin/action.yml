@@ -29,7 +29,22 @@ inputs:
     required: false
     default: "20"
   backend-target:
-    description: "Backend target architecture for the plugin"
+    description: |
+      Backend target for the plugin backend build. Supported values:
+        build:backend
+        build:darwin
+        build:darwinARM64
+        build:debug
+        build:debugDarwinAMD64
+        build:debugDarwinARM64
+        build:debugLinuxAMD64
+        build:debugLinuxARM64
+        build:debugWindowsAMD64
+        build:linux
+        build:linuxARM
+        build:linuxARM64
+        build:windows
+        buildAll
     required: false
     default: "buildAll"
 

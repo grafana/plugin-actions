@@ -56,7 +56,7 @@ runs:
   steps:
     - name: Package plugin
       id: "package-plugin"
-      uses: grafana/plugin-actions/package-plugin@add-options-to-select-backend-target-arch
+      uses: grafana/plugin-actions/package-plugin@main
       with:
         policy_token: ${{ inputs.policy_token }}
         node-version: "${{ inputs.node-version }}"

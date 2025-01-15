@@ -30,6 +30,26 @@ inputs:
     description: "Version of node"
     required: false
     default: "20"
+  backend-target:
+    type: choice
+    description: "Backend target for the plugin backend build"
+    options:
+        - build:backend
+        - build:darwin
+        - build:darwinARM64
+        - build:debug
+        - build:debugDarwinAMD64
+        - build:debugDarwinARM64
+        - build:debugLinuxAMD64
+        - build:debugLinuxARM64
+        - build:debugWindowsAMD64
+        - build:linux
+        - build:linuxARM
+        - build:linuxARM64
+        - build:windows
+        - buildAll
+    required: false
+    default: "buildAll"
 
 runs:
   using: "composite"
@@ -41,6 +61,7 @@ runs:
         policy_token: ${{ inputs.policy_token }}
         node-version: "${{ inputs.node-version }}"
         go-version: "${{ inputs.go-version }}"
+        backend-target: "${{ inputs.backend-target }}"
 
     - name: Get plugin metadata
       id: metadata

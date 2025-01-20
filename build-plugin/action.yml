@@ -96,7 +96,7 @@ runs:
       if: ${{ inputs.attestation == 'true' }}
       uses: actions/attest-build-provenance@v1
       with:
-        subject-path: ${{ steps..package-plugin.outputs.archive }}
+        subject-path: ${{ steps.package-plugin.outputs.archive }}
 
     - name: Create Github release
       uses: softprops/action-gh-release@v2

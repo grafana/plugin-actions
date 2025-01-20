@@ -93,3 +93,11 @@ jobs:
 - `policy_token`: Grafana access policy token. https://grafana.com/developers/plugin-tools/publish-a-plugin/sign-a-plugin#generate-an-access-policy-token
 - `grafana_token`: [deprecated] Grafana API Key to sign a plugin. Prefer `policy_token`. See https://grafana.com/developers/plugin-tools/publish-a-plugin/sign-a-plugin
 - attestation: Create a verifiable attestation for the plugin using sigstore. See [attestation of plugin package](#attestation-of-plugin-package)
+
+## Troubleshooting
+
+### Error: Failed to persist attestation: Resource not accessible by integration
+
+You are missing the `attestations: write` permission in your workflow.
+
+See [Add attestation to your existing workflow](#add-attestation-to-your-existing-workflow) for more information.

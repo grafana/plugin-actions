@@ -34,22 +34,26 @@ inputs:
     type: choice
     description: "Backend target for the plugin backend build"
     options:
-        - build:backend
-        - build:darwin
-        - build:darwinARM64
-        - build:debug
-        - build:debugDarwinAMD64
-        - build:debugDarwinARM64
-        - build:debugLinuxAMD64
-        - build:debugLinuxARM64
-        - build:debugWindowsAMD64
-        - build:linux
-        - build:linuxARM
-        - build:linuxARM64
-        - build:windows
-        - buildAll
+      - build:backend
+      - build:darwin
+      - build:darwinARM64
+      - build:debug
+      - build:debugDarwinAMD64
+      - build:debugDarwinARM64
+      - build:debugLinuxAMD64
+      - build:debugLinuxARM64
+      - build:debugWindowsAMD64
+      - build:linux
+      - build:linuxARM
+      - build:linuxARM64
+      - build:windows
+      - buildAll
     required: false
     default: "buildAll"
+  attestation:
+    description: "Create a verifiable attestation for the plugin using Github OIDC. Requires id-token: write and attestations: writes permissions"
+    required: false
+    default: "false"
 
 runs:
   using: "composite"
@@ -87,6 +91,12 @@ runs:
     - name: Check package version
       run: if [ "v${{ steps.package-plugin.outputs.plugin-version }}" != "${{ steps.metadata.outputs.github-tag }}" ]; then printf "\033[0;31mPlugin version doesn't match tag name. The tag should be v${{ steps.package-plugin.outputs.plugin-version }} \033[0m\n"; exit 1; fi
       shell: bash
+
+    - name: Generate artifact attestation
+      if: ${{ inputs.attestation == 'true' }}
+      uses: actions/attest-build-provenance@v1
+      with:
+        subject-path: ${{ steps..package-plugin.outputs.archive }}
 
     - name: Create Github release
       uses: softprops/action-gh-release@v2

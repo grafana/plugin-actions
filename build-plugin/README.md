@@ -58,8 +58,8 @@ This attestation will be used to verify the authenticity of the plugin package b
 
 To add the attestation to your existing workflow, you can use the following steps:
 
-1. Add the `id-token: write` and `attestations: write` permissions to your workflow.
-2. Add the `attestation: true` option to the `build-plugin` action.
+1. Add the `id-token: write` and `attestations: write` permissions to your workflow job.
+1. Add the `attestation: true` option to the `build-plugin` action.
 
 e.g.
 
@@ -101,3 +101,13 @@ jobs:
 You are missing the `attestations: write` permission in your workflow.
 
 See [Add attestation to your existing workflow](#add-attestation-to-your-existing-workflow) for more information.
+
+### Error: Failed to get ID token: Error message: Unable to get ACTIONS_ID_TOKEN_REQUEST_URL env variable
+
+You are missing the `id-token: write` permission in your workflow.
+
+See [Add attestation to your existing workflow](#add-attestation-to-your-existing-workflow) for more information.
+
+### Error: Resource not accessible by integration - https://docs.github.com/rest/releases/releases#create-a-release
+
+You are missing the `contents: write` permission in your workflow.

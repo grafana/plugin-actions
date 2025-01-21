@@ -94,7 +94,7 @@ runs:
       shell: bash
 
     - name: Generate artifact attestation
-      if: ${{ inputs.attestation == 'true' }}
+      if: ${{ inputs.attestation }}
       uses: actions/attest-build-provenance@v1
       with:
         subject-path: ${{ steps.package-plugin.outputs.archive }}

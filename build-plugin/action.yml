@@ -53,7 +53,8 @@ inputs:
   attestation:
     description: "Create a verifiable attestation for the plugin using Github OIDC. Requires id-token: write and attestations: writes permissions"
     required: false
-    default: "false"
+    type: boolean
+    default: false
 
 runs:
   using: "composite"

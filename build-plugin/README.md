@@ -92,7 +92,7 @@ jobs:
 
 - `policy_token`: Grafana access policy token. https://grafana.com/developers/plugin-tools/publish-a-plugin/sign-a-plugin#generate-an-access-policy-token
 - `grafana_token`: [deprecated] Grafana API Key to sign a plugin. Prefer `policy_token`. See https://grafana.com/developers/plugin-tools/publish-a-plugin/sign-a-plugin
-- attestation: Create a verifiable attestation for the plugin using sigstore. See [attestation of plugin package](#attestation-of-plugin-package)
+- attestation: If `true`, create a verifiable attestation for the plugin using sigstore. See [attestation of plugin package](#attestation-of-plugin-package)
 
 ## Troubleshooting
 

@@ -127,4 +127,4 @@ runs:
 
           If the links above are not working, you must first edit this draft release and publish it.
 
-           ${{ inputs.attestation && steps.attestation.outputs.provenance-url && format('This build has been attested. You can view the attestation details [here]({0})', steps.attestation.outputs.attestation-url) }}
+           ${{ inputs.attestation && format('This build has been attested. You can view the attestation details [here]({0})', steps.attestation.outputs.attestation-url) }}

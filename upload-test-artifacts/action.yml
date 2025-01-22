@@ -13,18 +13,18 @@ inputs:
     required: false
     default: ${{ github.token }}
   grafana-image:
-    description: 'Grafana image used in the test. Default is ${{ matrix.GRAFANA_IMAGE.NAME }}'
+    description: 'Grafana image used in the test. Default is `{{ matrix.GRAFANA_IMAGE.NAME }}`.'
     default: ${{ matrix.GRAFANA_IMAGE.NAME }}
     required: false
   grafana-version:
-    description: 'Grafana version used in the test. Default is ${{ matrix.GRAFANA_IMAGE.VERSION }}'
+    description: 'Grafana version used in the test. Default is `{{ matrix.GRAFANA_IMAGE.VERSION }}`.'
     default: ${{ matrix.GRAFANA_IMAGE.VERSION }}
     required: false
   test-outcome:
-    description: 'Outcome of the test step. For example ${{ steps.run-tests.outcome }}'
+    description: 'Outcome of the test step. For example `{{ steps.run-tests.outcome }}`.'
     required: true
   artifact-prefix:
-    description: 'Pattern to prefix the artifact with. Default is "playwright-report-"'
+    description: 'Pattern to prefix the artifact with. Default is "playwright-report-".'
     required: false
     default: 'playwright-report-'
   upload-successful:

@@ -53,7 +53,6 @@ inputs:
   attestation:
     description: "Create a verifiable attestation for the plugin using Github OIDC. Requires id-token: write and attestations: writes permissions"
     required: false
-    type: boolean
     default: false
 
 runs:
@@ -94,7 +93,7 @@ runs:
       shell: bash
 
     - name: Generate artifact attestation
-      if: ${{ inputs.attestation == true }}
+      if: ${{ inputs.attestation == 'true' }}
       id: attestation
       uses: actions/attest-build-provenance@v2
       with:
@@ -127,4 +126,4 @@ runs:
 
           If the links above are not working, you must first edit this draft release and publish it.
 
-           ${{ inputs.attestation && format('This build has been attested. You can view the attestation details [here]({0})', steps.attestation.outputs.attestation-url) }}
+           ${{ inputs.attestation == 'true' && format('This build has been attested. You can view the attestation details [here]({0})', steps.attestation.outputs.attestation-url) }}

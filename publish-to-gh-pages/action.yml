@@ -1,0 +1,142 @@
+name: 'Publish to GH pages'
+description: ''
+author: 'frontend@grafana'
+
+inputs:
+  github-token:
+    description: 'Token for the repository. Can be passed in using `{{ secrets.GITHUB_TOKEN }}`.'
+    required: false
+    default: ${{ github.token }}
+  destination-dir: 
+    description: 'Directory to publish to.'
+    default: ${{ github.event.number }}/
+  retention-days:
+    description: 'Number of days to retain the reports.'
+    required: false
+    default: 30
+  pr-comment-summary:
+    description: 'Whether to comment the PR with the test results.'
+    required: false
+    default: true
+  artifact-pattern:
+    description: 'Pattern to match the artifacts. Default is "playwright-report-*"'
+    required: false
+    default: 'playwright-report-*'
+  multi-sites:
+    description: 'Whether to publish multiple sites.'
+    required: false
+    default: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Download report artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: all-reports
+        pattern: ${{ inputs.artifact-pattern }}
+        merge-multiple: true
+
+    - name: Delete any existing comment
+      uses: thollander/actions-comment-pull-request@v3
+      with:
+        comment-tag: test-results
+        mode: delete
+
+    - name: Set a timestamp
+      shell: bash
+      id: timestampid
+      run: echo "timestamp=$(date --utc +%Y%m%d)" >> "$GITHUB_OUTPUT"
+
+    - name: Push the new files to github pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ inputs.github-token }}
+        publish_dir: all-reports
+        destination_dir: ${{ steps.timestampid.outputs.timestamp }}/${{ inputs.destination-dir }}
+    
+    - name: Build Markdown Table
+      shell: bash
+      run: |
+        cd all-reports || { echo "Failed to enter directory all-reports"; exit 1; }
+
+        # Initialize the table
+        table="### Playwright test results \n| Image Name | Version | Result | Report |\n|:---------- |:------- |:------: |:------: |"
+
+        # Iterate through subdirectories
+        for dir in */; do
+          if [[ -d "$dir" ]]; then
+            dir_name=$(basename "$dir")
+            summary_file="$dir/summary.txt"
+
+            if [[ -f "$summary_file" ]]; then
+              # Read data from summary.txt
+              grafana_image=$(grep 'GRAFANA_IMAGE=' "$summary_file" | cut -d'=' -f2)
+              grafana_version=$(grep 'GRAFANA_VERSION=' "$summary_file" | cut -d'=' -f2)
+              test_output=$(grep 'OUTPUT=' "$summary_file" | cut -d'=' -f2)
+              report_link="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ steps.timestampid.outputs.timestamp }}/${{ github.event.number }}/$grafana_image-v$grafana_version/"
+              
+              # Map result to emoji
+              if [[ "$test_output" == "success" ]]; then
+                result_emoji="✅"
+              else
+                result_emoji="❌"
+              fi
+
+              # Check for index.html
+              if [[ -f "$dir/index.html" ]]; then
+                link_cell="[🔗](${report_link})"
+              else
+                link_cell=""
+              fi
+
+              # Append a row to the table
+              table="${table}
+        | ${grafana_image} | ${grafana_version} | ${result_emoji} | ${link_cell} |"
+            else
+              # Handle missing summary.txt
+              table="${table}
+        | ${dir_name} | UNKNOWN | ❓ | No report available |"
+            fi
+          fi
+        done
+
+        # Debug: Print the final table
+        echo "Generated Markdown Table:"
+        echo -e "$table"
+
+        # Export the table as an environment variable
+        echo "MARKDOWN_TABLE<<EOF" >> "$GITHUB_ENV"
+        echo -e "$table" >> "$GITHUB_ENV"
+        echo "EOF" >> "$GITHUB_ENV"
+
+    - name: Comment PR with Execution Details
+      uses: thollander/actions-comment-pull-request@v3
+      if: ${{ inputs.pr-comment-summary == 'true' }}
+      with:
+        create-if-not-exists: true
+        comment-tag: test-results
+        message: ${{ env.MARKDOWN_TABLE }}
+  
+    - name: Write URL in summary
+      shell: bash
+      if: ${{ inputs.multi-sites == 'true' }}
+      run: echo "$MARKDOWN_TABLE" >> "$GITHUB_STEP_SUMMARY"
+      
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        ref: gh-pages
+
+    - name: Delete old reports
+      shell: bash
+      run: ${{ github.action_path }}/cleanup-folders.sh --retention-days ${{ inputs.retention-days }} --folder-name .
+
+    - name: Commit all changed files back to the repository
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        branch: gh-pages
+        commit_message: Delete folders older than n days
+
+    - name: Checkout code
+      uses: actions/checkout@v4

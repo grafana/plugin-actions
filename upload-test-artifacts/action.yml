@@ -1,0 +1,64 @@
+name: 'Upload test summary to GitHub artifact'
+description: ''
+author: 'frontend@grafana'
+
+outputs:
+  artifact:
+    description: "The path to the uploaded artifact."
+    value: playwright-report-${{ inputs.grafana-image }}-v${{ inputs.grafana-version }}
+
+inputs:
+  github-token:
+    description: 'Token for the repository. Can be passed in using `{{ secrets.GITHUB_TOKEN }}`.'
+    required: false
+    default: ${{ github.token }}
+  grafana-image:
+    description: 'Grafana image used in the test. Default is ${{ matrix.GRAFANA_IMAGE.NAME }}'
+    default: ${{ matrix.GRAFANA_IMAGE.NAME }}
+    required: false
+  grafana-version:
+    description: 'Grafana version used in the test. Default is ${{ matrix.GRAFANA_IMAGE.VERSION }}'
+    default: ${{ matrix.GRAFANA_IMAGE.VERSION }}
+    required: false
+  test-outcome:
+    description: 'Outcome of the test step. For example ${{ steps.run-tests.outcome }}'
+    required: true
+  artifact-prefix:
+    description: 'Pattern to prefix the artifact with. Default is "playwright-report-"'
+    required: false
+    default: 'playwright-report-'
+  upload-successful:
+    description: 'Whether to upload the report if the test was successful.'
+    required: false
+    default: false
+
+runs:
+  using: "composite"
+  steps:
+    - name: Add parent directory
+      shell: bash
+      run: |
+        mv playwright-report ${{ inputs.grafana-image }}-v${{ inputs.grafana-version }}
+        mkdir -p playwright-report
+        mv ${{ inputs.grafana-image }}-v${{ inputs.grafana-version }} playwright-report/
+
+    - name: Remove successful report
+      if: ${{ inputs.upload-successful == 'false' && inputs.test-outcome == 'success' }}
+      shell: bash
+      run: |
+        rm -rf playwright-report/${{ inputs.grafana-image }}-v${{ inputs.grafana-version }}/*
+
+    - name: Write test summary to file
+      shell: bash
+      run: |
+        SUMMARY="GRAFANA_IMAGE=${{ inputs.grafana-image }}
+        GRAFANA_VERSION=${{ inputs.grafana-version }}
+        OUTPUT=${{ inputs.test-outcome }}"
+        echo "${SUMMARY}" > ./playwright-report/${{ inputs.grafana-image }}-v${{ inputs.grafana-version }}/summary.txt
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.artifact-prefix }}${{ inputs.grafana-image }}-v${{ inputs.grafana-version }}
+        path: playwright-report
+        retention-days: 1

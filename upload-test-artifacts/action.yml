@@ -77,9 +77,9 @@ runs:
       id: set-artifact-name
       run: |
         if [[ -n "${{ inputs.plugin-name }}" ]]; then
-          ARTIFACT_NAME="${{ inputs.artifact-prefix }}-${{ inputs.plugin-name }}-${{ inputs.grafana-image }}-${{ inputs.grafana-version }}"
+          ARTIFACT_NAME="${{ inputs.artifact-prefix }}${{ inputs.plugin-name }}-${{ inputs.grafana-image }}-${{ inputs.grafana-version }}"
         else
-          ARTIFACT_NAME="${{ inputs.artifact-prefix }}-${{ inputs.grafana-image }}-${{ inputs.grafana-version }}"
+          ARTIFACT_NAME="${{ inputs.artifact-prefix }}${{ inputs.grafana-image }}-${{ inputs.grafana-version }}"
         fi
 
         echo "::set-output name=artifact::$ARTIFACT_NAME"

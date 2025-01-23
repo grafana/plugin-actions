@@ -34,16 +34,25 @@ inputs:
   report-dir:
     description: 'Directory to publish to.'
     default: playwright-report
+  plugin-name:
+    description: 'Name of the plugin being tested. Useful in mono-repos when multiple plugins are tested.'
+    required: false
 
 runs:
   using: "composite"
   steps:
     - name: Add parent directory
       shell: bash
+      id: add-parent-dir
       run: |
-        mv ${{ inputs.report-dir }} ${{ inputs.grafana-image }}-${{ inputs.grafana-version }}
+        parent_dir=${{ inputs.grafana-image }}-${{ inputs.grafana-version }}
+        if [[ -n "${{ inputs.plugin-name }}" ]]; then
+          parent_dir="${{ inputs.plugin-name }}-${{ inputs.grafana-image }}-${{ inputs.grafana-version }}"
+        fi
+        mv ${{ inputs.report-dir }} $parent_dir
         mkdir -p playwright-report
-        mv ${{ inputs.grafana-image }}-${{ inputs.grafana-version }} playwright-report/
+        mv $parent_dir playwright-report/
+        echo "::set-output name=parent-dir::$parent_dir"
 
     - name: Remove successful report
       if: ${{ inputs.upload-successful == 'false' && inputs.test-outcome == 'success' }}
@@ -56,12 +65,25 @@ runs:
       run: |
         SUMMARY="GRAFANA_IMAGE=${{ inputs.grafana-image }}
         GRAFANA_VERSION=${{ inputs.grafana-version }}
-        OUTPUT=${{ inputs.test-outcome }}"
-        echo "${SUMMARY}" > ./playwright-report/${{ inputs.grafana-image }}-${{ inputs.grafana-version }}/summary.txt
+        OUTPUT=${{ inputs.test-outcome }}
+        PLUGIN_NAME=${{ inputs.plugin-name }}"
+        echo "${SUMMARY}" > ./playwright-report/${{ steps.add-parent-dir.outputs.parent-dir }}/summary.txt
+    
+    - name: Set artifact name
+      shell: bash
+      id: set-artifact-name
+      run: |
+        if [[ -n "${{ inputs.plugin-name }}" ]]; then
+          ARTIFACT_NAME="${{ inputs.artifact-prefix }}-${{ inputs.plugin-name }}-${{ inputs.grafana-image }}-${{ inputs.grafana-version }}"
+        else
+          ARTIFACT_NAME="${{ inputs.artifact-prefix }}-${{ inputs.grafana-image }}-${{ inputs.grafana-version }}"
+        fi
+
+        echo "::set-output name=artifact::$ARTIFACT_NAME"
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ inputs.artifact-prefix }}${{ inputs.grafana-image }}-${{ inputs.grafana-version }}
+        name: ${{ steps.set-artifact-name.outputs.artifact }}
         path: playwright-report
         retention-days: 1

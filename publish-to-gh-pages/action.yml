@@ -60,11 +60,11 @@ runs:
       run: |
         cd all-reports || { echo "Failed to enter directory all-reports"; exit 1; }
 
-        # Initialize the table
+        # Initialize the table variable
         table="### Playwright test results"
 
-        # Check if any summary.txt has PLUGIN_NAME to decide the table structure
-        if grep -q 'PLUGIN_NAME=' */summary.txt 2>/dev/null; then
+        # Check if any summary.txt has a PLUGIN_NAME value
+        if grep -q 'PLUGIN_NAME=.*[^ ]' */summary.txt 2>/dev/null; then
           table="${table}\n| Plugin Name | Image Name | Version | Result | Report |\n|:----------- |:---------- |:------- |:------: |:------: |"
           use_plugin_name=true
         else
@@ -108,15 +108,20 @@ runs:
               # Append a row to the table
               if [[ "$use_plugin_name" == true ]]; then
                 table="${table}
-        | ${plugin_name:-N/A} | ${grafana_image} | ${grafana_version} | ${result_emoji} | ${link_cell} |"
+        | ${plugin_name} | ${grafana_image} | ${grafana_version} | ${result_emoji} | ${link_cell} |"
               else
                 table="${table}
         | ${grafana_image} | ${grafana_version} | ${result_emoji} | ${link_cell} |"
               fi
             else
               # Handle missing summary.txt
-              table="${table}
+              if [[ "$use_plugin_name" == true ]]; then
+                table="${table}
+        | UNKNOWN | ${dir_name} | UNKNOWN | ❓ | No report available |"
+              else
+                table="${table}
         | ${dir_name} | UNKNOWN | ❓ | No report available |"
+              fi
             fi
           fi
         done
@@ -129,6 +134,7 @@ runs:
         echo "MARKDOWN_TABLE<<EOF" >> "$GITHUB_ENV"
         echo -e "$table" >> "$GITHUB_ENV"
         echo "EOF" >> "$GITHUB_ENV"
+
 
     - name: Comment PR with Execution Details
       uses: thollander/actions-comment-pull-request@v3

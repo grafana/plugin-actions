@@ -31,6 +31,9 @@ inputs:
     description: 'Whether to upload the report if the test was successful.'
     required: false
     default: false
+  report-dir:
+    description: 'Directory to publish to.'
+    default: playwright-report
 
 runs:
   using: "composite"
@@ -38,7 +41,7 @@ runs:
     - name: Add parent directory
       shell: bash
       run: |
-        mv playwright-report ${{ inputs.grafana-image }}-v${{ inputs.grafana-version }}
+        mv ${{ inputs.report-dir }} ${{ inputs.grafana-image }}-v${{ inputs.grafana-version }}
         mkdir -p playwright-report
         mv ${{ inputs.grafana-image }}-v${{ inputs.grafana-version }} playwright-report/
 

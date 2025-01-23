@@ -61,7 +61,16 @@ runs:
         cd all-reports || { echo "Failed to enter directory all-reports"; exit 1; }
 
         # Initialize the table
-        table="### Playwright test results \n| Image Name | Version | Result | Report |\n|:---------- |:------- |:------: |:------: |"
+        table="### Playwright test results"
+
+        # Check if any summary.txt has PLUGIN_NAME to decide the table structure
+        if grep -q 'PLUGIN_NAME=' */summary.txt 2>/dev/null; then
+          table="${table}\n| Plugin Name | Image Name | Version | Result | Report |\n|:----------- |:---------- |:------- |:------: |:------: |"
+          use_plugin_name=true
+        else
+          table="${table}\n| Image Name | Version | Result | Report |\n|:---------- |:------- |:------: |:------: |"
+          use_plugin_name=false
+        fi
 
         # Iterate through subdirectories
         for dir in */; do
@@ -97,8 +106,13 @@ runs:
               fi
 
               # Append a row to the table
-              table="${table}
+              if [[ "$use_plugin_name" == true ]]; then
+                table="${table}
+        | ${plugin_name:-N/A} | ${grafana_image} | ${grafana_version} | ${result_emoji} | ${link_cell} |"
+              else
+                table="${table}
         | ${grafana_image} | ${grafana_version} | ${result_emoji} | ${link_cell} |"
+              fi
             else
               # Handle missing summary.txt
               table="${table}

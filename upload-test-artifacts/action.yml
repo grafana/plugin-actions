@@ -49,9 +49,11 @@ runs:
         if [[ -n "${{ inputs.plugin-name }}" ]]; then
           parent_dir="${{ inputs.plugin-name }}-${{ inputs.grafana-image }}-${{ inputs.grafana-version }}"
         fi
+        echo $parent_dir
         mv ${{ inputs.report-dir }} $parent_dir
         mkdir -p playwright-report
         mv $parent_dir playwright-report/
+        ls playwright-report
         echo "::set-output name=parent-dir::$parent_dir"
 
     - name: Remove successful report
@@ -67,6 +69,7 @@ runs:
         GRAFANA_VERSION=${{ inputs.grafana-version }}
         OUTPUT=${{ inputs.test-outcome }}
         PLUGIN_NAME=${{ inputs.plugin-name }}"
+        ls playwright-report
         echo "${SUMMARY}" > ./playwright-report/${{ steps.add-parent-dir.outputs.parent-dir }}/summary.txt
     
     - name: Set artifact name

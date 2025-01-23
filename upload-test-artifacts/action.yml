@@ -5,7 +5,7 @@ author: 'frontend@grafana'
 outputs:
   artifact:
     description: "The path to the uploaded artifact."
-    value: playwright-report-${{ inputs.grafana-image }}-v${{ inputs.grafana-version }}
+    value: playwright-report-${{ inputs.grafana-image }}-${{ inputs.grafana-version }}
 
 inputs:
   github-token:
@@ -41,15 +41,15 @@ runs:
     - name: Add parent directory
       shell: bash
       run: |
-        mv ${{ inputs.report-dir }} ${{ inputs.grafana-image }}-v${{ inputs.grafana-version }}
+        mv ${{ inputs.report-dir }} ${{ inputs.grafana-image }}-${{ inputs.grafana-version }}
         mkdir -p playwright-report
-        mv ${{ inputs.grafana-image }}-v${{ inputs.grafana-version }} playwright-report/
+        mv ${{ inputs.grafana-image }}-${{ inputs.grafana-version }} playwright-report/
 
     - name: Remove successful report
       if: ${{ inputs.upload-successful == 'false' && inputs.test-outcome == 'success' }}
       shell: bash
       run: |
-        rm -rf playwright-report/${{ inputs.grafana-image }}-v${{ inputs.grafana-version }}/*
+        rm -rf playwright-report/${{ inputs.grafana-image }}-${{ inputs.grafana-version }}/*
 
     - name: Write test summary to file
       shell: bash
@@ -57,11 +57,11 @@ runs:
         SUMMARY="GRAFANA_IMAGE=${{ inputs.grafana-image }}
         GRAFANA_VERSION=${{ inputs.grafana-version }}
         OUTPUT=${{ inputs.test-outcome }}"
-        echo "${SUMMARY}" > ./playwright-report/${{ inputs.grafana-image }}-v${{ inputs.grafana-version }}/summary.txt
+        echo "${SUMMARY}" > ./playwright-report/${{ inputs.grafana-image }}-${{ inputs.grafana-version }}/summary.txt
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ inputs.artifact-prefix }}${{ inputs.grafana-image }}-v${{ inputs.grafana-version }}
+        name: ${{ inputs.artifact-prefix }}${{ inputs.grafana-image }}-${{ inputs.grafana-version }}
         path: playwright-report
         retention-days: 1

@@ -9,7 +9,7 @@ cd all-reports || { echo "failed to enter directory all-reports"; exit 1; }
 # initialize the table variable
 table="### Playwright test results"
 
-# check if any summary.txt has a plugin_name value
+# check if any summary.txt has a PLUGIN_NAME value
 if grep -q 'PLUGIN_NAME=.*[^ ]' */summary.txt 2>/dev/null; then
   table="${table}  \n| plugin name | image name | version | result | report |  \n|:----------- |:---------- |:------- |:------: |:------: |"
   use_plugin_name=true
@@ -18,9 +18,10 @@ else
   use_plugin_name=false
 fi
 
-# collect rows in an array for sorting
+# initialize an empty array to store rows
 rows=()
 
+# iterate through subdirectories
 for dir in */; do
   if [[ -d "$dir" ]]; then
     dir_name=$(basename "$dir")
@@ -38,7 +39,7 @@ for dir in */; do
       else
         report_link="https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY_NAME}/${TIMESTAMP}/${GITHUB_EVENT_NUMBER}/$grafana_image-$grafana_version/"
       fi
-
+      
       # map result to emoji
       if [[ "$test_output" == "success" ]]; then
         result_emoji="✅"
@@ -46,7 +47,7 @@ for dir in */; do
         result_emoji="❌"
       fi
 
-      # build row and add it to the array
+      # check for index.html
       if [[ -f "$dir/index.html" ]]; then
         if [[ "$use_plugin_name" == true ]]; then
           rows+=("| $plugin_name | $grafana_image | $grafana_version | $result_emoji | [🔗]($report_link) |")
@@ -54,7 +55,7 @@ for dir in */; do
           rows+=("| $grafana_image | $grafana_version | $result_emoji | [🔗]($report_link) |")
         fi
       else
-        # add row without a report link
+        # Add a row without a report link if index.html is not found
         if [[ "$use_plugin_name" == true ]]; then
           rows+=("| $plugin_name | $grafana_image | $grafana_version | $result_emoji |  |")
         else
@@ -68,15 +69,13 @@ for dir in */; do
   fi
 done
 
-# sort rows by version column in descending order (reverse order)
-sorted_rows=$(printf "%s\n" "${rows[@]}" | sort -t'|' -k3,3 -Vr)
+# sort rows by version (we assume versioning format: <major>.<minor>.<patch>)
+sorted_rows=$(printf "%s\n" "${rows[@]}" | sort -t '|' -k 3 -V)
 
-# add sorted rows to the table
-for row in $sorted_rows; do
-  table="${table}  \n${row}"
-done
+# add the sorted rows to the table
+table="${table}\n$(echo "$sorted_rows" | sed 's/^/ /')"
 
-# export the table
+# export the table as an environment variable
 echo "MARKDOWN_TABLE<<EOF" >> "$GITHUB_ENV"
 echo -e "$table" >> "$GITHUB_ENV"
 echo "EOF" >> "$GITHUB_ENV"

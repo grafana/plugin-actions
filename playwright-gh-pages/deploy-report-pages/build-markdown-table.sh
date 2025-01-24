@@ -70,9 +70,9 @@ done
 sorted_rows=$(printf "%s\n" "${rows[@]}" | sort -t'|' -k3,3 -V)
 
 # add sorted rows to the table
-for row in $sorted_rows; do
+while IFS= read -r row; do
   table="${table}  \n| $row |"
-done
+done <<< "$sorted_rows"
 
 # export the table
 echo "MARKDOWN_TABLE<<EOF" >> "$GITHUB_ENV"

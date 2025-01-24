@@ -54,9 +54,9 @@ for dir in */; do
       else
         # Add a row without a report link if index.html is not found
         if [[ "$use_plugin_name" == true ]]; then
-          table="${table}  \n| $plugin_name | $grafana_image | $grafana_version | $result_emoji | No report available |"
+          table="${table}  \n| $plugin_name | $grafana_image | $grafana_version | $result_emoji |  |"
         else
-          table="${table}  \n| $grafana_image | $grafana_version | $result_emoji | No report available |"
+          table="${table}  \n| $grafana_image | $grafana_version | $result_emoji |  |"
         fi
         echo "warning: index.html not found in $dir"
       fi

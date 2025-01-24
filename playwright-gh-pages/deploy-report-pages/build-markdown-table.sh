@@ -9,14 +9,17 @@ cd all-reports || { echo "failed to enter directory all-reports"; exit 1; }
 # initialize the table variable
 table="### Playwright test results"
 
-# check if any summary.txt has a PLUGIN_NAME value
+# check if any summary.txt has a plugin_name value
 if grep -q 'PLUGIN_NAME=.*[^ ]' */summary.txt 2>/dev/null; then
-  table="${table}  \n| plugin name | image name | version | result | report |  \n|:----------- |:---------- |:------- |:------: |:------: |"
+  table_header="| plugin name | image name | version | result | report |  \n|:----------- |:---------- |:------- |:------: |:------: |"
   use_plugin_name=true
 else
-  table="${table}  \n| image name | version | result | report |  \n|:---------- |:------- |:------: |:------: |"
+  table_header="| image name | version | result | report |  \n|:---------- |:------- |:------: |:------: |"
   use_plugin_name=false
 fi
+
+# array to hold rows
+rows=()
 
 # iterate through subdirectories
 for dir in */; do
@@ -36,7 +39,7 @@ for dir in */; do
       else
         report_link="https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY_NAME}/${TIMESTAMP}/${GITHUB_EVENT_NUMBER}/$grafana_image-$grafana_version/"
       fi
-      
+
       # map result to emoji
       if [[ "$test_output" == "success" ]]; then
         result_emoji="✅"
@@ -44,19 +47,19 @@ for dir in */; do
         result_emoji="❌"
       fi
 
-      # check for index.html
+      # create the row
       if [[ -f "$dir/index.html" ]]; then
         if [[ "$use_plugin_name" == true ]]; then
-          table="${table}  \n| $plugin_name | $grafana_image | $grafana_version | $result_emoji | [report]($report_link) |"
+          rows+=("| $plugin_name | $grafana_image | $grafana_version | $result_emoji | [report]($report_link) |")
         else
-          table="${table}  \n| $grafana_image | $grafana_version | $result_emoji | [report]($report_link) |"
+          rows+=("| $grafana_image | $grafana_version | $result_emoji | [report]($report_link) |")
         fi
       else
-        # Add a row without a report link if index.html is not found
+        # add a row without a report link if index.html is not found
         if [[ "$use_plugin_name" == true ]]; then
-          table="${table}  \n| $plugin_name | $grafana_image | $grafana_version | $result_emoji |  |"
+          rows+=("| $plugin_name | $grafana_image | $grafana_version | $result_emoji |  |")
         else
-          table="${table}  \n| $grafana_image | $grafana_version | $result_emoji |  |"
+          rows+=("| $grafana_image | $grafana_version | $result_emoji |  |")
         fi
         echo "warning: index.html not found in $dir"
       fi
@@ -66,6 +69,13 @@ for dir in */; do
   fi
 done
 
+# sort the rows alphabetically by the version column (3rd column)
+sorted_rows=$(printf "%s\n" "${rows[@]}" | sort -t'|' -k4,4)
+
+# construct the final table
+table="${table}  \n${table_header}  \n${sorted_rows}"
+
+# export the table to the environment variable
 echo "MARKDOWN_TABLE<<EOF" >> "$GITHUB_ENV"
 echo -e "$table" >> "$GITHUB_ENV"
 echo "EOF" >> "$GITHUB_ENV"

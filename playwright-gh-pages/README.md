@@ -24,6 +24,10 @@ The workflow consists of two main actions:
   - Comments on the pull request with the test results and links to the reports.
   - Supports retention of reports for a specified number of days.
 
+## GH Pages Visibility
+
+By default, all GitHub Pages sites are publicly accessible on the Internet. However, GitHub Enterprise customers can restrict access by configuring access control for private and internal repositories. This allows greater flexibility in managing who can view your Pages site. For more details, refer to the official GitHub [documentation](https://docs.github.com/en/enterprise-cloud@latest/pages/getting-started-with-github-pages/changing-the-visibility-of-your-github-pages-site#about-access-control-for-github-pages-sites).
+
 ## Permissions Needed
 
 To use these actions, you need to set up the necessary permissions:

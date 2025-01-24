@@ -60,4 +60,6 @@ for dir in */; do
   fi
 done
 
-echo "::set-output name=MARKDOWN_TABLE::$table"
+echo "MARKDOWN_TABLE<<EOF" >> "$GITHUB_ENV"
+echo -e "$table" >> "$GITHUB_ENV"
+echo "EOF" >> "$GITHUB_ENV"

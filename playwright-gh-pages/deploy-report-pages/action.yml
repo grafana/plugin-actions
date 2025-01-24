@@ -63,11 +63,11 @@ runs:
       with:
         create-if-not-exists: true
         comment-tag: test-results
-        message: ${{ steps.build-markdown-table.outputs.MARKDOWN_TABLE }}
+        message: ${{ env.MARKDOWN_TABLE }}
   
     - name: Write URL in Action summary
       shell: bash
-      run: echo "${{ steps.build-markdown-table.outputs.MARKDOWN_TABLE }}" >> "$GITHUB_STEP_SUMMARY"
+      run: echo "${{ env.MARKDOWN_TABLE }}" >> "$GITHUB_STEP_SUMMARY"
       
     - name: Checkout code
       uses: actions/checkout@v4

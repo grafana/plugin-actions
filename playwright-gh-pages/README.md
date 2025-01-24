@@ -34,7 +34,7 @@ To use these actions, you need to set up the necessary permissions:
 
 ## Workflow Example
 
-This is a simplified workflow example. You may refer to the plugin-e2e [docs](https://grafana.com/developers/plugin-tools/e2e-test-a-plugin/ci) for a full example of how to properly build the plugin.
+This is a simplified workflow example using the [resolve-versions](../e2e-version/README.md) Action which is recommended in the plugin-e2e [docs](https://grafana.com/developers/plugin-tools/e2e-test-a-plugin/ci).
 
 ```yaml
 name: e2e tests
@@ -110,7 +110,7 @@ jobs:
         run: npm run e2e
 
       - name: Upload e2e test summary
-        uses: grafana/plugin-actions/playwright-gh-pages/upload-report-pages@main
+        uses: grafana/plugin-actions/playwright-gh-pages/upload-report-artifacts@main
         if: ${{ always() }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -124,11 +124,78 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Publish report
-        uses: grafana/plugin-actions/playwright-gh-pages/deploy-report-artifacts@main
+        uses: grafana/plugin-actions/playwright-gh-pages/deploy-report-pages@main
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+```
+
+The following simplified example demonstrates how Playwright report publishing can be integrated in a mono repo where the matrix is derived for each plugin in the repo.
+
+```yaml
+name: e2e tests
+
+on:
+  pull_request:
+    branches:
+      - master
+      - main
+
+permissions:
+  contents: write
+  id-token: write
+  pull-requests: write
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        plugin-id: ['grafana-panel-sample1', 'grafana-panel-sample2', 'grafana-panel-sample3']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # necessary steps to install dependencies and build the plugin
+
+      - name: Start Grafana latest
+        run: |
+          docker compose pull
+          DEVELOPMENT=false GRAFANA_VERSION=latest GRAFANA_IMAGE=grafana-enterprise docker compose up -d
+
+      - name: Wait for grafana server
+        uses: grafana/plugin-actions/wait-for-grafana@main
+
+      - name: Install Playwright Browsers
+        run: npm exec playwright install --with-deps
+
+      - name: Run Playwright tests
+        id: run-tests-latest
+        run: npm run e2e
+
+      - name: Upload e2e test summary
+        uses: grafana/plugin-actions/playwright-gh-pages/upload-report-artifacts@main
+        if: ${{ always() }}
+        with:
+          report-dir: playwright-report
+          grafana-version: latest
+          grafana-image: grafana-enterprise
+          plugin-name: ${{ matric.plugin-id }}
+          test-outcome: ${{ steps.run-tests-latest.outcome }}
+      # repeat steps but for another Grafana version if necessary
+
+  deploy-pages:
+    if: ${{ always() }}
+    needs: [playwright-tests]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Publish report
+        uses: grafana/plugin-actions/playwright-gh-pages/deploy-report-pages@main
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ## Inputs
 
-For details on how to
+For details on what the available inputs for the Actions, refer to the [README](./upload-report-artifacts/README.md) of `deploy-report-pages` and the [README](./upload-report-artifacts//README.md) of `upload-report-artifacts`

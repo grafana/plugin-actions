@@ -53,7 +53,7 @@ runs:
       shell: bash
       env:
         GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
-        GITHUB_REPOSITORY: ${{ github.event.repository.name }}
+        GITHUB_REPOSITORY_NAME: ${{ github.event.repository.name }}
         GITHUB_EVENT_NUMBER: ${{ github.event.number }}
         TIMESTAMP: ${{ steps.timestampid.outputs.timestamp }}
 

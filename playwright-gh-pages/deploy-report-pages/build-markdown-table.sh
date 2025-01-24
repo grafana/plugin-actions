@@ -11,10 +11,10 @@ table="### Playwright test results"
 
 # check if any summary.txt has a PLUGIN_NAME value
 if grep -q 'PLUGIN_NAME=.*[^ ]' */summary.txt 2>/dev/null; then
-  table="${table}\n| plugin name | image name | version | result | report |\n|:----------- |:---------- |:------- |:------: |:------: |"
+  table="${table}  \n| plugin name | image name | version | result | report |  \n|:----------- |:---------- |:------- |:------: |:------: |"
   use_plugin_name=true
 else
-  table="${table}\n| image name | version | result | report |\n|:---------- |:------- |:------: |:------: |"
+  table="${table}  \n| image name | version | result | report |  \n|:---------- |:------- |:------: |:------: |"
   use_plugin_name=false
 fi
 
@@ -47,9 +47,9 @@ for dir in */; do
       # check for index.html
       if [[ -f "$dir/index.html" ]]; then
         if [[ "$use_plugin_name" == true ]]; then
-          table="${table}\n| $plugin_name | $grafana_image | $grafana_version | $result_emoji | [report]($report_link) |"
+          table="${table}  \n| $plugin_name | $grafana_image | $grafana_version | $result_emoji | [report]($report_link) |"
         else
-          table="${table}\n| $grafana_image | $grafana_version | $result_emoji | [report]($report_link) |"
+          table="${table}  \n| $grafana_image | $grafana_version | $result_emoji | [report]($report_link) |"
         fi
       else
         echo "warning: index.html not found in $dir"

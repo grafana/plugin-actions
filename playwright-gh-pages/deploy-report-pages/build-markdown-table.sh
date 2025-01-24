@@ -1,5 +1,3 @@
-#!/bin/bash
-
 # exit on any error
 set -e
 
@@ -11,17 +9,16 @@ table="### Playwright test results"
 
 # check if any summary.txt has a plugin_name value
 if grep -q 'PLUGIN_NAME=.*[^ ]' */summary.txt 2>/dev/null; then
-  table_header="| plugin name | image name | version | result | report |  \n|:----------- |:---------- |:------- |:------: |:------: |"
+  table="${table}  \n| plugin name | image name | version | result | report |  \n|:----------- |:---------- |:------- |:------: |:------: |"
   use_plugin_name=true
 else
-  table_header="| image name | version | result | report |  \n|:---------- |:------- |:------: |:------: |"
+  table="${table}  \n| image name | version | result | report |  \n|:---------- |:------- |:------: |:------: |"
   use_plugin_name=false
 fi
 
-# array to hold rows
+# collect rows in an array for sorting
 rows=()
 
-# iterate through subdirectories
 for dir in */; do
   if [[ -d "$dir" ]]; then
     dir_name=$(basename "$dir")
@@ -47,19 +44,19 @@ for dir in */; do
         result_emoji="❌"
       fi
 
-      # create the row
+      # build row and add it to the array
       if [[ -f "$dir/index.html" ]]; then
         if [[ "$use_plugin_name" == true ]]; then
-          rows+=("| $plugin_name | $grafana_image | $grafana_version | $result_emoji | [🔗]($report_link) |")
+          rows+=("$plugin_name | $grafana_image | $grafana_version | $result_emoji | [🔗]($report_link)")
         else
-          rows+=("| $grafana_image | $grafana_version | $result_emoji | [🔗]($report_link) |")
+          rows+=("$grafana_image | $grafana_version | $result_emoji | [🔗]($report_link)")
         fi
       else
-        # add a row without a report link if index.html is not found
+        # add row without a report link
         if [[ "$use_plugin_name" == true ]]; then
-          rows+=("| $plugin_name | $grafana_image | $grafana_version | $result_emoji |  |")
+          rows+=("$plugin_name | $grafana_image | $grafana_version | $result_emoji | ")
         else
-          rows+=("| $grafana_image | $grafana_version | $result_emoji |  |")
+          rows+=("$grafana_image | $grafana_version | $result_emoji | ")
         fi
         echo "warning: index.html not found in $dir"
       fi
@@ -69,13 +66,15 @@ for dir in */; do
   fi
 done
 
-# sort the rows alphabetically by the version column (3rd column)
-sorted_rows=$(printf "%s\n" "${rows[@]}" | sort -t'|' -k4,4)
+# sort rows by version
+sorted_rows=$(printf "%s\n" "${rows[@]}" | sort -t'|' -k3,3 -V)
 
-# construct the final table
-table="${table}  \n${table_header}  \n${sorted_rows}"
+# add sorted rows to the table
+for row in $sorted_rows; do
+  table="${table}  \n| $row |"
+done
 
-# export the table to the environment variable
+# export the table
 echo "MARKDOWN_TABLE<<EOF" >> "$GITHUB_ENV"
 echo -e "$table" >> "$GITHUB_ENV"
 echo "EOF" >> "$GITHUB_ENV"

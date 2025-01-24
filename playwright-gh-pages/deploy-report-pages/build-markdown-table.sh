@@ -50,9 +50,9 @@ for dir in */; do
       # create the row
       if [[ -f "$dir/index.html" ]]; then
         if [[ "$use_plugin_name" == true ]]; then
-          rows+=("| $plugin_name | $grafana_image | $grafana_version | $result_emoji | [report]($report_link) |")
+          rows+=("| $plugin_name | $grafana_image | $grafana_version | $result_emoji | [🔗]($report_link) |")
         else
-          rows+=("| $grafana_image | $grafana_version | $result_emoji | [report]($report_link) |")
+          rows+=("| $grafana_image | $grafana_version | $result_emoji | [🔗]($report_link) |")
         fi
       else
         # add a row without a report link if index.html is not found

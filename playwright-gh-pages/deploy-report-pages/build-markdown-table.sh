@@ -49,16 +49,16 @@ for dir in */; do
       # build row and add it to the array
       if [[ -f "$dir/index.html" ]]; then
         if [[ "$use_plugin_name" == true ]]; then
-          rows+=("$grafana_version | $plugin_name | $grafana_image | $result_emoji | [🔗]($report_link)")
+          rows+=("| $plugin_name | $grafana_image | $grafana_version | $result_emoji | [🔗]($report_link) |")
         else
-          rows+=("$grafana_version | $grafana_image | $result_emoji | [🔗]($report_link)")
+          rows+=("| $grafana_image | $grafana_version | $result_emoji | [🔗]($report_link) |")
         fi
       else
         # add row without a report link
         if [[ "$use_plugin_name" == true ]]; then
-          rows+=("$grafana_version | $plugin_name | $grafana_image | $result_emoji | ")
+          rows+=("| $plugin_name | $grafana_image | $grafana_version | $result_emoji |  |")
         else
-          rows+=("$grafana_version | $grafana_image | $result_emoji | ")
+          rows+=("| $grafana_image | $grafana_version | $result_emoji |  |")
         fi
         echo "warning: index.html not found in $dir"
       fi
@@ -68,12 +68,12 @@ for dir in */; do
   fi
 done
 
-# sort rows by version column in descending order
-sorted_rows=$(printf "%s\n" "${rows[@]}" | sort -t'|' -k1,1 -Vr)
+# sort rows by version column in descending order (reverse order)
+sorted_rows=$(printf "%s\n" "${rows[@]}" | sort -t'|' -k3,3 -Vr)
 
 # add sorted rows to the table
 for row in $sorted_rows; do
-  table="${table}  \n| ${row} |"
+  table="${table}  \n${row}"
 done
 
 # export the table

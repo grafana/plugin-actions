@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # exit on any error
 set -e
 
@@ -66,17 +68,13 @@ for dir in */; do
   fi
 done
 
-# sort rows by version column
-sorted_rows=$(printf "%s\n" "${rows[@]}" | sort -t'|' -k1,1 -V)
+# sort rows by version column in descending order
+sorted_rows=$(printf "%s\n" "${rows[@]}" | sort -t'|' -k1,1 -Vr)
 
 # add sorted rows to the table
-while IFS= read -r row; do
-  if [[ "$use_plugin_name" == true ]]; then
-    table="${table}  \n| ${row} |"
-  else
-    table="${table}  \n| $(echo "$row" | cut -d'|' -f2-) |"
-  fi
-done <<< "$sorted_rows"
+for row in $sorted_rows; do
+  table="${table}  \n| ${row} |"
+done
 
 # export the table
 echo "MARKDOWN_TABLE<<EOF" >> "$GITHUB_ENV"

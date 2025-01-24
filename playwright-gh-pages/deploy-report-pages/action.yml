@@ -10,7 +10,7 @@ inputs:
     description: 'Number of days to retain the reports. Default is 30.'
     required: true
     default: 30
-   pr-comment-summary:
+  pr-comment-summary:
     description: 'Whether to comment the PR with the test results. Default is true.'
     required: true
     default: true

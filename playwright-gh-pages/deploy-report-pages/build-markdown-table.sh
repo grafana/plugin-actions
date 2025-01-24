@@ -60,5 +60,4 @@ for dir in */; do
   fi
 done
 
-# export the table as an environment variable
-export MARKDOWN_TABLE="$table"
+echo "::set-output name=MARKDOWN_TABLE::$table"

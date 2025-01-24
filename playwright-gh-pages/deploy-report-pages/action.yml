@@ -48,7 +48,7 @@ runs:
         destination_dir: ${{ steps.timestampid.outputs.timestamp }}/${{ github.event.number }}
 
     - name: Build Markdown Table
-      run: ${{ github.action_path }}/build_markdown_table.sh
+      run: ${{ github.action_path }}/build-markdown-table.sh
       shell: bash
       env:
         GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}

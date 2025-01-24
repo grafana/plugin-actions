@@ -1,6 +1,6 @@
 # Publishing Playwright reports to Github Pages
 
-When testing a Grafana plugin using the [`@grafana/plugin-e2e`](https://www.npmjs.com/package/@grafana/plugin-e2e?activeTab=readme) package, it is highly recommended to run tests against a matrix of Grafana versions (as demonstrated in this [example](https://grafana.com/developers/plugin-tools/e2e-test-a-plugin/ci) in the documentation). Each test run in this matrix generates an HTML report. By uploading these reports to a static site hosting service, they become immediately accessible for direct browsing, eliminating the need to download and serve them locally. This enhances productivity and fosters collaborative troubleshooting by making the results easily shareable and reviewable. 
+When testing a Grafana plugin using the [`@grafana/plugin-e2e`](https://www.npmjs.com/package/@grafana/plugin-e2e?activeTab=readme) package, it is highly recommended to run tests against a matrix of Grafana versions (as demonstrated in this [example](https://grafana.com/developers/plugin-tools/e2e-test-a-plugin/ci) in the documentation). Each test run in this matrix generates an HTML report. By uploading these reports to a static site hosting service, they become immediately accessible for direct browsing, eliminating the need to download and serve them locally. This enhances productivity and fosters collaborative troubleshooting by making the results easily shareable and reviewable.
 
 This set of GitHub Actions streamlines the process of managing Playwright test reports. It automates uploading reports as artifacts, publishing them to GitHub Pages, and providing links in pull request comments. These actions work seamlessly together, enhancing collaboration, traceability, and test result management.
 
@@ -14,6 +14,7 @@ The workflow consists of two main actions:
 ## Features
 
 - **Upload Report Artifacts Action**:
+
   - Uploads test reports and summaries as GitHub artifacts.
   - Supports conditional uploading based on test outcomes.
   - Structures reports in a well-organized directory format, ensuring uniqueness for each test setup.
@@ -24,17 +25,18 @@ The workflow consists of two main actions:
   - Supports retention of reports for a specified number of days.
 
 ## Permissions Needed
+
 To use these actions, you need to set up the necessary permissions:
 
-* **contents: write**: This permission is needed to push changes to the repository, such as updating the GitHub Pages branch with the latest test reports.
-* **id-token: write**: This permission is required for authentication purposes when interacting with GitHub APIs.
-* **pull-requests: write**: This permission allows the action to create and update pull requests with comments containing the test results and links to the reports.
+- **contents: write**: This permission is needed to push changes to the repository, such as updating the GitHub Pages branch with the latest test reports.
+- **id-token: write**: This permission is required for authentication purposes when interacting with GitHub APIs.
+- **pull-requests: write**: This permission allows the action to create and update pull requests with comments containing the test results and links to the reports.
 
 ## Workflow Example
 
-This is a simplified workflow example. You may refer to the plugin-e2e [docs](https://grafana.com/developers/plugin-tools/e2e-test-a-plugin/ci) for a full example of how to properly build the plugin. 
+This is a simplified workflow example. You may refer to the plugin-e2e [docs](https://grafana.com/developers/plugin-tools/e2e-test-a-plugin/ci) for a full example of how to properly build the plugin.
 
-```yaml 
+```yaml
 name: e2e tests
 
 on:
@@ -108,13 +110,13 @@ jobs:
         run: npm run e2e
 
       - name: Upload e2e test summary
-        uses: grafana/plugin-actions/playwright-gh-pages/publish-report-pages@main
+        uses: grafana/plugin-actions/playwright-gh-pages/upload-report-pages@main
         if: ${{ always() }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           test-outcome: ${{ steps.run-tests.outcome }}
 
-  publish-report:
+  deploy-pages:
     if: ${{ always() }}
     needs: [playwright-tests]
     runs-on: ubuntu-latest
@@ -123,11 +125,10 @@ jobs:
 
       - name: Publish report
         uses: grafana/plugin-actions/playwright-gh-pages/deploy-report-artifacts@main
-        # uses: ./.github/actions/publish-to-gh-pages
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ## Inputs
 
-For details on how to 
+For details on how to

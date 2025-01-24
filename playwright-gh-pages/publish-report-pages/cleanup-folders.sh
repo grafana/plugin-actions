@@ -1,11 +1,9 @@
 #!/bin/bash
 
-# Function to log messages for skipped folders or errors
 log_skipped() {
   echo "SKIPPED --- $1" >&2
 }
 
-# Function to delete a folder
 delete_folder() {
   local folder_path="$1"
   if rm -rf "$folder_path"; then
@@ -15,7 +13,7 @@ delete_folder() {
   fi
 }
 
-# Function to parse and validate a folder name as a date
+# parses and validates a folder name as a date
 parse_folder_date() {
   local folder_name="$1"
   if [[ "$folder_name" =~ ^[0-9]{8}$ ]]; then
@@ -25,7 +23,7 @@ parse_folder_date() {
   fi
 }
 
-# Function to calculate the age of a folder in days
+# calculates the age of a folder in days
 calculate_folder_age() {
   local folder_date="$1"
   local current_date
@@ -39,7 +37,6 @@ calculate_folder_age() {
   fi
 }
 
-# Function to find old folders for deletion
 find_old_folders() {
   local retention_days="$1"
   local directory="$2"
@@ -52,7 +49,7 @@ find_old_folders() {
     if [[ -n "$folder_date" ]]; then
       age_days=$(calculate_folder_age "$folder_date")
       if [[ -n "$age_days" && $age_days -gt $retention_days ]]; then
-        echo "$folder_name"  # Eligible for deletion
+        echo "$folder_name"  # eligible for deletion
       else
         log_skipped "Folder '$folder_name' is not older than $retention_days days. It will not be deleted."
       fi
@@ -62,7 +59,7 @@ find_old_folders() {
   done
 }
 
-# Function to validate and process arguments
+# validates and processes arguments
 parse_arguments() {
   local retention_days=""
   local folder_name=""
@@ -97,12 +94,10 @@ parse_arguments() {
   echo "$retention_days" "$folder_name"
 }
 
-# Main script logic
 main() {
-  # Parse and validate arguments
   read -r retention_days folder_name <<< "$(parse_arguments "$@")"
 
-  # Find old folders and delete them
+  # find old folders and delete them
   old_folders=$(find_old_folders "$retention_days" "$folder_name")
   echo "Old folders found: $old_folders" >&2
   for folder in $old_folders; do
@@ -110,5 +105,5 @@ main() {
   done
 }
 
-# Run the script
+# run the script
 main "$@"

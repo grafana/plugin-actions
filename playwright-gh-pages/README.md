@@ -36,7 +36,9 @@ To use these actions, you need to set up the necessary permissions:
 - **id-token: write**: This permission is required for authentication purposes when interacting with GitHub APIs.
 - **pull-requests: write**: This permission allows the action to create and update pull requests with comments containing the test results and links to the reports.
 
-## Workflow Example
+## Workflow usage
+
+### Example using the [resolve-versions](../e2e-version/README.md) Action
 
 This is a simplified workflow example using the [resolve-versions](../e2e-version/README.md) Action which is recommended in the plugin-e2e [docs](https://grafana.com/developers/plugin-tools/e2e-test-a-plugin/ci).
 
@@ -132,6 +134,8 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
+
+### Example using a per-plugin matrix
 
 The following simplified example demonstrates how Playwright report publishing can be integrated in a mono repo where the matrix is derived for each plugin in the repo.
 

@@ -1,6 +1,6 @@
 # Deploy Report Artifacts Action
 
-This GitHub Action automates the process of uploading test reports and summaries as GitHub artifacts. It is designed to work together with the `publish-report-pages` action to publish the reports to GitHub Pages.
+This GitHub Action automates the process of uploading test reports and summaries as GitHub artifacts. It is designed to work together with the `deploy-report-pages` action to publish the reports to GitHub Pages.
 
 ## Usage
 

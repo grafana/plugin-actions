@@ -9,7 +9,7 @@ This set of GitHub Actions streamlines the process of managing Playwright test r
 The workflow consists of two main actions:
 
 1. **Upload Report Artifacts Action**: This action uploads test reports and summaries as GitHub artifacts. It can be used together with the `deploy-report-pages` action to publish the reports to GitHub Pages.
-2. **Publish to GitHub Pages Action**: This action publishes the test artifacts to GitHub Pages and comments on the pull request with the results and corresponding links. It also cleans up and deletes old reports based on the specified retention policy.
+2. **Deploy to GitHub Pages Action**: This action publishes the test artifacts to GitHub Pages and comments on the pull request with the results and corresponding links. It also cleans up and deletes old reports based on the specified retention policy.
 
 ## Features
 

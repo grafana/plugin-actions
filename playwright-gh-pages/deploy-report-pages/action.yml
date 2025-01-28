@@ -17,7 +17,7 @@ inputs:
   artifact-pattern:
     description: 'Pattern to match the artifacts. Default is "playwright-report-*"'
     required: true
-    default: 'playwright-report-*'
+    default: 'gf-playwright-report-*'
   
 runs:
   using: "composite"

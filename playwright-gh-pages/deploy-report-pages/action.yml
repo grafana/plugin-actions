@@ -32,7 +32,7 @@ runs:
     - name: Delete any existing comment
       uses: thollander/actions-comment-pull-request@v3
       with:
-        comment-tag: test-results
+        comment-tag: gf-playwright-test-results
         mode: delete
 
     - name: Set a timestamp

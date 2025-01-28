@@ -55,7 +55,6 @@ runs:
         mv ${{ inputs.report-dir }} $parent_dir
         mkdir -p playwright-report
         mv $parent_dir playwright-report/
-        ls playwright-report
         echo "::set-output name=parent-dir::$parent_dir"
 
     - name: Remove successful report

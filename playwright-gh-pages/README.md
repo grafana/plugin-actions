@@ -187,7 +187,7 @@ jobs:
           report-dir: playwright-report
           grafana-version: latest
           grafana-image: grafana-enterprise
-          plugin-name: ${{ matric.plugin-id }}
+          plugin-name: ${{ matrix.plugin-id }}
           test-outcome: ${{ steps.run-tests-latest.outcome }}
       # repeat steps but for another Grafana version if necessary
 

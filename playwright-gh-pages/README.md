@@ -32,9 +32,9 @@ By default, all GitHub Pages sites are publicly accessible on the Internet. Howe
 
 To use these actions, you need to set up the necessary permissions:
 
-- **contents: write**: This permission is needed to push changes to the repository, such as updating the GitHub Pages branch with the latest test reports.
-- **id-token: write**: This permission is required for authentication purposes when interacting with GitHub APIs.
-- **pull-requests: write**: This permission allows the action to create and update pull requests with comments containing the test results and links to the reports.
+- `contents: write`: This permission is needed to push changes to the repository, such as updating the GitHub Pages branch with the latest test reports.
+- `id-token: write`: This permission is required for authentication purposes when interacting with GitHub APIs.
+- `pull-requests: write`: This permission allows the action to create and update pull requests with comments containing the test results and links to the reports.
 
 ## Workflow usage
 

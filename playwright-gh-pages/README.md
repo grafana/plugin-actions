@@ -19,7 +19,7 @@ The workflow consists of two main actions:
   - Supports conditional uploading based on test outcomes.
   - Structures reports in a well-organized directory format, ensuring uniqueness for each test setup.
 
-- **Publish to GitHub Pages Action**:
+- **Deploy to GitHub Pages Action**:
   - Downloads test artifacts and publishes them to GitHub Pages.
   - Comments on the pull request with the test results and links to the reports.
   - Supports retention of reports for a specified number of days.

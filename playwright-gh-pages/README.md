@@ -206,4 +206,4 @@ jobs:
 
 ## Inputs
 
-For details on what the available inputs for the Actions, refer to the [README](./upload-report-artifacts/README.md) of `deploy-report-pages` and the [README](./upload-report-artifacts//README.md) of `upload-report-artifacts`
+For details on what the available inputs for the Actions, refer to the [README](./deploy-report-pages/README.md) of `deploy-report-pages` and the [README](./upload-report-artifacts/README.md) of `upload-report-artifacts`

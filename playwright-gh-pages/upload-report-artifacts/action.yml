@@ -1,0 +1,91 @@
+name: 'Upload report and test summary to GitHub artifact'
+description: 'Uploads report and test summary as a GitHub artifact. Can be used together with the deploy-report-pages action to publish the reports to GitHub Pages.'
+author: 'frontend@grafana'
+
+outputs:
+  artifact:
+    description: "The path to the uploaded artifact."    
+    value: ${{ steps.set-artifact-name.outputs.artifact }}
+
+
+inputs:
+  github-token:
+    description: 'Token for the repository. Can be passed in using `{{ secrets.GITHUB_TOKEN }}`.'
+    required: true
+    default: ${{ github.token }}
+  test-outcome:
+    description: 'Outcome of the test step. For example `{{ steps.run-tests.outcome }}`.'
+    required: true
+  grafana-image:
+    description: 'Grafana image used in the test. Default is `{{ matrix.GRAFANA_IMAGE.NAME }}`.'
+    default: ${{ matrix.GRAFANA_IMAGE.NAME }}
+    required: true
+  grafana-version:
+    description: 'Grafana version used in the test. Default is `{{ matrix.GRAFANA_IMAGE.VERSION }}`.'
+    default: ${{ matrix.GRAFANA_IMAGE.VERSION }}
+    required: true
+  artifact-prefix:
+    description: 'Pattern to prefix the artifact with. Default is "playwright-report-".'
+    required: false
+    default: 'playwright-report-'
+  upload-successful-reports:
+    description: 'Whether to upload the report if all tests were successful.'
+    required: false
+    default: false
+  report-dir:
+    description: 'Directory in which the report is stored. Default is "playwright-report".'
+    required: true
+    default: playwright-report
+  plugin-name:
+    description: 'Name of the plugin being tested. Useful in mono-repos when multiple plugins are tested generating multiple reports.'
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - name: Add parent directory with a name unique to the test setup
+      shell: bash
+      id: add-parent-dir
+      run: |
+        parent_dir=${{ inputs.grafana-image }}-${{ inputs.grafana-version }}
+        if [[ -n "${{ inputs.plugin-name }}" ]]; then
+          parent_dir="${{ inputs.plugin-name }}-${{ inputs.grafana-image }}-${{ inputs.grafana-version }}"
+        fi
+        mv ${{ inputs.report-dir }} $parent_dir
+        mkdir -p playwright-report
+        mv $parent_dir playwright-report/
+        echo "::set-output name=parent-dir::$parent_dir"
+
+    - name: Remove successful report
+      if: ${{ inputs.upload-successful-reports == 'false' && inputs.test-outcome == 'success' }}
+      shell: bash
+      run: |
+        rm -rf playwright-report/${{ inputs.grafana-image }}-${{ inputs.grafana-version }}/*
+
+    - name: Write test summary to file
+      shell: bash
+      run: |
+        SUMMARY="GRAFANA_IMAGE=${{ inputs.grafana-image }}
+        GRAFANA_VERSION=${{ inputs.grafana-version }}
+        OUTPUT=${{ inputs.test-outcome }}
+        PLUGIN_NAME=${{ inputs.plugin-name }}"
+        echo "${SUMMARY}" > ./playwright-report/${{ steps.add-parent-dir.outputs.parent-dir }}/summary.txt
+    
+    - name: Set artifact name
+      shell: bash
+      id: set-artifact-name
+      run: |
+        if [[ -n "${{ inputs.plugin-name }}" ]]; then
+          ARTIFACT_NAME="${{ inputs.artifact-prefix }}${{ inputs.plugin-name }}-${{ inputs.grafana-image }}-${{ inputs.grafana-version }}"
+        else
+          ARTIFACT_NAME="${{ inputs.artifact-prefix }}${{ inputs.grafana-image }}-${{ inputs.grafana-version }}"
+        fi
+
+        echo "::set-output name=artifact::$ARTIFACT_NAME"
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.set-artifact-name.outputs.artifact }}
+        path: playwright-report
+        retention-days: 1

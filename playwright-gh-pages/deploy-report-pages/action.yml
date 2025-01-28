@@ -1,0 +1,88 @@
+name: 'Publish to GH pages'
+description: 'Publishes test artifacts to GitHub Pages and comments on the PR with the results and links.'
+author: 'frontend@grafana'
+
+inputs:
+  github-token:
+    description: 'Token for the repository. Can be passed in using `{{ secrets.GITHUB_TOKEN }}`.'
+    required: true
+  retention-days:
+    description: 'Number of days to retain the reports. Default is 30.'
+    required: true
+    default: 30
+  pr-comment-summary:
+    description: 'Whether to comment the PR with the test results. Default is true.'
+    required: true
+    default: true
+  artifact-pattern:
+    description: 'Pattern to match the artifacts. Default is "playwright-report-*"'
+    required: true
+    default: 'gf-playwright-report-*'
+  
+runs:
+  using: "composite"
+  steps:
+    - name: Download report artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: all-reports
+        pattern: ${{ inputs.artifact-pattern }}
+        merge-multiple: true
+
+    - name: Delete any existing comment
+      uses: thollander/actions-comment-pull-request@v3
+      with:
+        comment-tag: gf-playwright-test-results
+        mode: delete
+
+    - name: Set a timestamp
+      shell: bash
+      id: timestampid
+      run: echo "timestamp=$(date --utc +%Y%m%d)" >> "$GITHUB_OUTPUT"
+
+    - name: Push the new files to github pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ inputs.github-token }}
+        publish_dir: all-reports
+        destination_dir: ${{ steps.timestampid.outputs.timestamp }}/${{ github.event.number }}
+
+    - name: Build Markdown Table
+      run: ${{ github.action_path }}/build-markdown-table.sh
+      id: build-markdown-table
+      shell: bash
+      env:
+        GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+        GITHUB_REPOSITORY_NAME: ${{ github.event.repository.name }}
+        GITHUB_EVENT_NUMBER: ${{ github.event.number }}
+        TIMESTAMP: ${{ steps.timestampid.outputs.timestamp }}
+
+    - name: Comment PR with Execution Details
+      uses: thollander/actions-comment-pull-request@v3
+      if: ${{ inputs.pr-comment-summary == 'true' }}
+      with:
+        create-if-not-exists: true
+        comment-tag: test-results
+        message: ${{ env.MARKDOWN_TABLE }}
+  
+    - name: Write URL in Action summary
+      shell: bash
+      run: echo "${{ env.MARKDOWN_TABLE }}" >> "$GITHUB_STEP_SUMMARY"
+      
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        ref: gh-pages
+
+    - name: Delete old reports
+      shell: bash
+      run: ${{ github.action_path }}/cleanup-folders.sh --retention-days ${{ inputs.retention-days }} --folder-name .
+
+    - name: Commit all changed files back to the repository
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        branch: gh-pages
+        commit_message: Delete folders older than n days
+
+    - name: Checkout code
+      uses: actions/checkout@v4

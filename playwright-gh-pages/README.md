@@ -115,6 +115,7 @@ jobs:
         id: run-tests
         run: npm run e2e
 
+      # use upload-report-artifacts Action to upload the report and the test summary to GH Artifacts
       - name: Upload e2e test summary
         uses: grafana/plugin-actions/playwright-gh-pages/upload-report-artifacts@main
         if: ${{ always() }}
@@ -129,6 +130,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # use deploy-report-pages Action to deploy the artifacts to GH Pages
       - name: Publish report
         uses: grafana/plugin-actions/playwright-gh-pages/deploy-report-pages@main
         with:
@@ -180,6 +182,7 @@ jobs:
         id: run-tests-latest
         run: npm run e2e
 
+      # use upload-report-artifacts Action to upload the report and the test summary to GH Artifacts
       - name: Upload e2e test summary
         uses: grafana/plugin-actions/playwright-gh-pages/upload-report-artifacts@main
         if: ${{ always() }}
@@ -198,6 +201,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # use deploy-report-pages Action to deploy the artifacts to GH Pages
       - name: Publish report
         uses: grafana/plugin-actions/playwright-gh-pages/deploy-report-pages@main
         with:

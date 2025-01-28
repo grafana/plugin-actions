@@ -69,7 +69,6 @@ runs:
         GRAFANA_VERSION=${{ inputs.grafana-version }}
         OUTPUT=${{ inputs.test-outcome }}
         PLUGIN_NAME=${{ inputs.plugin-name }}"
-        ls playwright-report
         echo "${SUMMARY}" > ./playwright-report/${{ steps.add-parent-dir.outputs.parent-dir }}/summary.txt
     
     - name: Set artifact name

@@ -56,8 +56,6 @@ runs:
         mkdir -p playwright-report
         mv $parent_dir playwright-report/
 
-        echo "parent-dir=$parent_dir" >> $GITHUB_OUTPUT
-
     - name: Remove successful report
       if: ${{ inputs.upload-successful-reports == 'false' && inputs.test-outcome == 'success' }}
       shell: bash
@@ -77,13 +75,13 @@ runs:
       shell: bash
       id: set-artifact-name
       run: |
-        if [[ -n "${{ inputs.plugin-name }}" ]]; then
-          ARTIFACT_NAME="${{ inputs.artifact-prefix }}${{ inputs.plugin-name }}-${{ inputs.grafana-image }}-${{ inputs.grafana-version }}"
-        else
-          ARTIFACT_NAME="${{ inputs.artifact-prefix }}${{ inputs.grafana-image }}-${{ inputs.grafana-version }}"
-        fi
+      if [[ -n "${{ inputs.plugin-name }}" ]]; then
+        ARTIFACT_NAME="${{ inputs.artifact-prefix }}${{ inputs.plugin-name }}-${{ inputs.grafana-image }}-${{ inputs.grafana-version }}"
+      else
+        ARTIFACT_NAME="${{ inputs.artifact-prefix }}${{ inputs.grafana-image }}-${{ inputs.grafana-version }}"
+      fi
 
-        echo "::set-output name=artifact::$ARTIFACT_NAME"
+      echo "artifact=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4

@@ -44,13 +44,25 @@ runs:
       id: timestampid
       run: echo "timestamp=$(date --utc +%Y%m%d)" >> "$GITHUB_OUTPUT"
 
+    - name: Set initiator variable
+      shell: bash
+      run: |
+        if [[ -n "${{ github.event.number }}" ]]; then
+          echo "JOB_INITIATOR=${{ github.event.number }}" >> "$GITHUB_ENV"
+        elif [[ -n "${{ github.event.workflow_run }}" ]]; then
+          echo "JOB_INITIATOR=${{ github.event.workflow_run }}" >> "$GITHUB_ENV"
+        else
+          echo "JOB_INITIATOR=scheduled" >> "$GITHUB_ENV"
+        fi
+
+
     - name: Push the new files to github pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         publish_branch: ${{ inputs.pages-branch }}
         github_token: ${{ inputs.github-token }}
         publish_dir: all-reports
-        destination_dir: ${{ steps.timestampid.outputs.timestamp }}/${{ github.event.number }}
+        destination_dir: ${{ steps.timestampid.outputs.timestamp }}/${{ env.JOB_INITIATOR }}
 
     - name: Generate Playwright Test Results Table
       id: generate-table
@@ -62,8 +74,8 @@ runs:
       env:
         GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
         GITHUB_REPOSITORY_NAME: ${{ github.event.repository.name }}
-        GITHUB_EVENT_NUMBER: ${{ github.event.number }}
         TIMESTAMP: ${{ steps.timestampid.outputs.timestamp }}
+        JOB_INITIATOR: ${{ env.JOB_INITIATOR }}
 
     - name: Comment PR with Execution Details
       uses: thollander/actions-comment-pull-request@v3

@@ -57,11 +57,11 @@ fs.readdirSync(reportsDir).forEach((dir) => {
   const repoOwner = process.env.GITHUB_REPOSITORY_OWNER;
   const repoName = process.env.GITHUB_REPOSITORY_NAME;
   const timestamp = process.env.TIMESTAMP;
-  const eventNumber = process.env.GITHUB_EVENT_NUMBER;
+  const jobInitiator = process.env.JOB_INITIATOR;
 
   const reportLink = pluginName
-    ? `https://${repoOwner}.github.io/${repoName}/${timestamp}/${eventNumber}/${pluginName}-${grafanaImage}-${grafanaVersion}/`
-    : `https://${repoOwner}.github.io/${repoName}/${timestamp}/${eventNumber}/${grafanaImage}-${grafanaVersion}/`;
+    ? `https://${repoOwner}.github.io/${repoName}/${timestamp}/${jobInitiator}/${pluginName}-${grafanaImage}-${grafanaVersion}/`
+    : `https://${repoOwner}.github.io/${repoName}/${timestamp}/${jobInitiator}/${grafanaImage}-${grafanaVersion}/`;
 
   // Map result to emoji
   const resultEmoji = testOutput === 'success' ? '✅' : '❌';

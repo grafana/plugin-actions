@@ -102,5 +102,5 @@ runs:
         branch: ${{ inputs.pages-branch }}
         commit_message: Delete folders older than n days
 
-    - name: Checkout code
-      uses: actions/checkout@v4
+    # - name: Checkout code
+    #   uses: actions/checkout@v4

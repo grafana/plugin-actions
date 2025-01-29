@@ -118,13 +118,13 @@ jobs:
       # use upload-report-artifacts Action to upload the report and the test summary to GH Artifacts
       - name: Upload e2e test summary
         uses: grafana/plugin-actions/playwright-gh-pages/upload-report-artifacts@main
-        if: ${{ always() }}
+        if: ${{ (always() && !cancelled()) }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           test-outcome: ${{ steps.run-tests.outcome }}
 
   deploy-pages:
-    if: ${{ always() }}
+    if: ${{ (always() && !cancelled()) }}
     needs: [playwright-tests]
     runs-on: ubuntu-latest
     steps:
@@ -185,7 +185,7 @@ jobs:
       # use upload-report-artifacts Action to upload the report and the test summary to GH Artifacts
       - name: Upload e2e test summary
         uses: grafana/plugin-actions/playwright-gh-pages/upload-report-artifacts@main
-        if: ${{ always() }}
+        if: ${{ (always() && !cancelled()) }}
         with:
           report-dir: playwright-report
           grafana-version: latest
@@ -195,7 +195,7 @@ jobs:
       # repeat steps but for another Grafana version if necessary
 
   deploy-pages:
-    if: ${{ always() }}
+    if: ${{ (always() && !cancelled()) }}
     needs: [playwright-tests]
     runs-on: ubuntu-latest
     steps:

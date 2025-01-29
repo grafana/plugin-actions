@@ -47,6 +47,7 @@ runs:
     - name: Push the new files to github pages
       uses: peaceiris/actions-gh-pages@v3
       with:
+        publish_branch: ${{ inputs.pages-branch }}
         github_token: ${{ inputs.github-token }}
         publish_dir: all-reports
         destination_dir: ${{ steps.timestampid.outputs.timestamp }}/${{ github.event.number }}

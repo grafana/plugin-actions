@@ -55,6 +55,7 @@ runs:
         mv ${{ inputs.report-dir }} $parent_dir
         mkdir -p playwright-report
         mv $parent_dir playwright-report/
+        echo "parent-dir=$parent_dir" >> $GITHUB_OUTPUT
 
     - name: Remove successful report
       if: ${{ inputs.upload-successful-reports == 'false' && inputs.test-outcome == 'success' }}

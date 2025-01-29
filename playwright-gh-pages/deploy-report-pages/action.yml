@@ -47,9 +47,12 @@ runs:
         publish_dir: all-reports
         destination_dir: ${{ steps.timestampid.outputs.timestamp }}/${{ github.event.number }}
 
-    - name: Build Markdown Table
-      run: ${{ github.action_path }}/build-markdown-table.sh
-      id: build-markdown-table
+    - name: Generate Playwright Test Results Table
+      id: generate-table
+      run: |
+        echo "table<<EOF" >> "$GITHUB_OUTPUT"
+        node ${{ github.action_path }}/build-pr-comment.js >> "$GITHUB_OUTPUT"
+        echo "EOF" >> "$GITHUB_OUTPUT"
       shell: bash
       env:
         GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
@@ -63,11 +66,11 @@ runs:
       with:
         create-if-not-exists: true
         comment-tag: test-results
-        message: ${{ env.MARKDOWN_TABLE }}
+        message: ${{ steps.generate-table.outputs.table }}
   
-    - name: Write URL in Action summary
+    - name: Write result table in Action summary
       shell: bash
-      run: echo "${{ env.MARKDOWN_TABLE }}" >> "$GITHUB_STEP_SUMMARY"
+      run: echo "${{ steps.generate-table.outputs.table }}" >> "$GITHUB_STEP_SUMMARY"
       
     - name: Checkout code
       uses: actions/checkout@v4

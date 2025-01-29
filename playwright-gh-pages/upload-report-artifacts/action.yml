@@ -47,14 +47,16 @@ runs:
       shell: bash
       id: add-parent-dir
       run: |
-        parent_dir=${{ inputs.grafana-image }}-${{ inputs.grafana-version }}
+        parent_dir="${{ inputs.grafana-image }}-${{ inputs.grafana-version }}"
         if [[ -n "${{ inputs.plugin-name }}" ]]; then
           parent_dir="${{ inputs.plugin-name }}-${{ inputs.grafana-image }}-${{ inputs.grafana-version }}"
         fi
+
         mv ${{ inputs.report-dir }} $parent_dir
         mkdir -p playwright-report
         mv $parent_dir playwright-report/
-        echo "::set-output name=parent-dir::$parent_dir"
+
+        echo "parent-dir=$parent_dir" >> $GITHUB_OUTPUT
 
     - name: Remove successful report
       if: ${{ inputs.upload-successful-reports == 'false' && inputs.test-outcome == 'success' }}

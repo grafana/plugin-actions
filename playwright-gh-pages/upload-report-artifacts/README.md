@@ -18,3 +18,9 @@ See full blown examples [here](../README.txt).
 | `upload-successful-reports` | Whether to upload the report if all tests were successful.                                                                      | No       | `false`                               |
 | `report-dir`                | Directory in which the report is stored. Default is "playwright-report".                                                        | Yes      | `playwright-report`                   |
 | `plugin-name`               | Name of the plugin being tested. Useful in for example mono-repos when multiple plugins are tested generating multiple reports. | No       | N/A                                   |
+
+## Outputs
+
+| Output Name | Description                        |
+| ----------- | ---------------------------------- |
+| `artifact`  | The path to the uploaded artifact. |

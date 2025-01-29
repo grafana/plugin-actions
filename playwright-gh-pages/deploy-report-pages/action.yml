@@ -18,6 +18,10 @@ inputs:
     description: 'Pattern to match the artifacts. Default is "gf-playwright-report-*"'
     required: true
     default: 'gf-playwright-report-*'
+  pages-branch:
+    description: 'Branch to deploy the reports to. Default is "gh-pages".'
+    required: true
+    default: 'gh-pages'
   
 runs:
   using: "composite"
@@ -75,7 +79,7 @@ runs:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
-        ref: gh-pages
+        ref: ${{ inputs.pages-branch }}
 
     - name: Delete old reports
       shell: bash
@@ -84,7 +88,7 @@ runs:
     - name: Commit all changed files back to the repository
       uses: stefanzweifel/git-auto-commit-action@v5
       with:
-        branch: gh-pages
+        branch: ${{ inputs.pages-branch }}
         commit_message: Delete folders older than n days
 
     - name: Checkout code

@@ -14,3 +14,4 @@ See full blown examples [here](../README.txt).
 | `retention-days`     | Number of days to retain the reports.                                          | Yes      | 30                       |
 | `pr-comment-summary` | Whether to comment the PR with the test results.                               | Yes      | true                     |
 | `artifact-pattern`   | Pattern to match the artifacts.                                                | Yes      | `gf-playwright-report-*` |
+| `pages-branch`       | Branch to deploy the reports to.                                               | Yes      | `gh-pages`               |

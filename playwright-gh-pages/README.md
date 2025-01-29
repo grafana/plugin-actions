@@ -24,7 +24,17 @@ The workflow consists of two main actions:
   - Comments on the pull request with the test results and links to the reports.
   - Supports retention of reports for a specified number of days.
 
-## GH Pages Visibility
+## GitHub Pages Branch
+
+By default, the `deploy-report-pages` Action deploys reports to the `gh-pages` branch. However, **you need to take an extra step** to ensure that GitHub Pages can build and serve the site from this branch. To do so:
+
+1. Go to the **Settings** tab of your repository.
+2. In the left-hand sidebar, click on **Pages**.
+3. Under **Source**, select **Deploy from a branch**, then choose the `gh-pages` branch.
+
+This action needs to be completed **manually** in order for your GitHub Pages site to be built and accessible from the `gh-pages` branch. Once configured, GitHub will automatically build and serve the site whenever new reports are deployed.
+
+## GitHub Pages Visibility
 
 By default, all GitHub Pages sites are publicly accessible on the Internet. However, GitHub Enterprise customers can restrict access by configuring access control for private and internal repositories. This allows greater flexibility in managing who can view your Pages site. For more details, refer to the official GitHub [documentation](https://docs.github.com/en/enterprise-cloud@latest/pages/getting-started-with-github-pages/changing-the-visibility-of-your-github-pages-site#about-access-control-for-github-pages-sites).
 
@@ -130,7 +140,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # use deploy-report-pages Action to deploy the artifacts to GH Pages
+      # use deploy-report-pages Action to deploy the artifacts to GitHub Pages
       - name: Publish report
         uses: grafana/plugin-actions/playwright-gh-pages/deploy-report-pages@main
         with:
@@ -201,7 +211,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # use deploy-report-pages Action to deploy the artifacts to GH Pages
+      # use deploy-report-pages Action to deploy the artifacts to GitHub Pages
       - name: Publish report
         uses: grafana/plugin-actions/playwright-gh-pages/deploy-report-pages@main
         with:

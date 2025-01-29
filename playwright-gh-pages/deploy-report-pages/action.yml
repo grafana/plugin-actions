@@ -50,10 +50,8 @@ runs:
       run: |
         if [[ -n "${{ github.event.number }}" ]]; then
           echo "JOB_INITIATOR=${{ github.event.number }}" >> "$GITHUB_ENV"
-        elif [[ -n "${{ github.run_id }}" ]]; then
-          echo "JOB_INITIATOR=${{ github.run_id }}" >> "$GITHUB_ENV"
         else
-          echo "JOB_INITIATOR=latest" >> "$GITHUB_ENV"
+          echo "JOB_INITIATOR=${{ github.run_id }}" >> "$GITHUB_ENV"
         fi
 
     - name: Push the new files to github pages

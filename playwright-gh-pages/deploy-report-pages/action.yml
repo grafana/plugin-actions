@@ -15,7 +15,7 @@ inputs:
     required: true
     default: true
   artifact-pattern:
-    description: 'Pattern to match the artifacts. Default is "playwright-report-*"'
+    description: 'Pattern to match the artifacts. Default is "gf-playwright-report-*"'
     required: true
     default: 'gf-playwright-report-*'
   

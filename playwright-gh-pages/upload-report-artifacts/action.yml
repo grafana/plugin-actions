@@ -25,9 +25,9 @@ inputs:
     default: ${{ matrix.GRAFANA_IMAGE.VERSION }}
     required: true
   artifact-prefix:
-    description: 'Pattern to prefix the artifact with. Default is "playwright-report-".'
+    description: 'Pattern to prefix the artifact with. Default is "gf-playwright-report-".'
     required: false
-    default: 'playwright-report-'
+    default: 'gf-playwright-report-'
   upload-successful-reports:
     description: 'Whether to upload the report if all tests were successful.'
     required: false

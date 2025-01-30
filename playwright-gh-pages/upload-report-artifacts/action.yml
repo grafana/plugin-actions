@@ -7,7 +7,6 @@ outputs:
     description: "The path to the uploaded artifact."    
     value: ${{ steps.set-artifact-name.outputs.artifact }}
 
-
 inputs:
   github-token:
     description: 'Token for the repository. Can be passed in using `{{ secrets.GITHUB_TOKEN }}`.'
@@ -28,6 +27,10 @@ inputs:
     description: 'Pattern to prefix the artifact with. Default is "gf-playwright-report-".'
     required: false
     default: 'gf-playwright-report-'
+  upload-report:
+    description: 'Whether to upload the report as an artifact, no matter the outcome. Default is true.'
+    default: true
+    required: true
   upload-successful-reports:
     description: 'Whether to upload the report if all tests were successful.'
     required: false
@@ -56,9 +59,10 @@ runs:
         mkdir -p playwright-report
         mv $parent_dir playwright-report/
         echo "parent-dir=$parent_dir" >> $GITHUB_OUTPUT
+        
 
-    - name: Remove successful report
-      if: ${{ inputs.upload-successful-reports == 'false' && inputs.test-outcome == 'success' }}
+    - name: Exclude report from artifact 
+      if: ${{ inputs.upload-report == 'false' || (inputs.upload-successful-reports == 'false' && inputs.test-outcome == 'success') }}
       shell: bash
       run: |
         rm -rf playwright-report/${{ inputs.grafana-image }}-${{ inputs.grafana-version }}/*
@@ -69,7 +73,8 @@ runs:
         SUMMARY="GRAFANA_IMAGE=${{ inputs.grafana-image }}
         GRAFANA_VERSION=${{ inputs.grafana-version }}
         OUTPUT=${{ inputs.test-outcome }}
-        PLUGIN_NAME=${{ inputs.plugin-name }}"
+        PLUGIN_NAME=${{ inputs.plugin-name }}
+        UPLOAD_REPORT_ENABLED=${{ inputs.upload-report }}"
         echo "${SUMMARY}" > ./playwright-report/${{ steps.add-parent-dir.outputs.parent-dir }}/summary.txt
     
     - name: Set artifact name

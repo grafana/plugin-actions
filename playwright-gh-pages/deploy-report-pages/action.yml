@@ -113,7 +113,7 @@ runs:
         if git diff --staged --quiet; then
           echo "No changes to commit"
         else
-          git commit -m "Delete folders older than ${{ retention-days }} days"
+          git commit -m "Delete folders older than ${{ inputs.retention-days }} days"
           git push origin ${{ inputs.pages-branch }}
         fi
 

@@ -1,0 +1,118 @@
+name: 'Deploy to GH pages'
+description: 'Deploys test artifacts to GitHub Pages and comments on the PR with the results and links.'
+
+inputs:
+  github-token:
+    description: 'Token for the repository. Can be passed in using `{{ secrets.GITHUB_TOKEN }}`.'
+    required: true
+  retention-days:
+    description: 'Number of days to retain the reports. Default is 30.'
+    required: true
+    default: 30
+  pr-comment-summary:
+    description: 'Whether to comment the PR with the test results. Default is true.'
+    required: true
+    default: true
+  artifact-pattern:
+    description: 'Pattern to match the artifacts. Default is "gf-playwright-report-*"'
+    required: true
+    default: 'gf-playwright-report-*'
+  pages-branch:
+    description: 'Branch to deploy the reports to. Default is "gh-pages".'
+    required: true
+    default: 'gh-pages'
+  
+runs:
+  using: "composite"
+  steps:
+    - name: Download report artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: all-reports
+        pattern: ${{ inputs.artifact-pattern }}
+        merge-multiple: true
+
+    - name: Delete any existing comment
+      uses: thollander/actions-comment-pull-request@v3
+      if: ${{ github.event.number != null }}
+      with:
+        comment-tag: gf-playwright-test-results
+        mode: delete
+
+    - name: Set a timestamp
+      shell: bash
+      id: timestampid
+      run: echo "timestamp=$(date --utc +%Y%m%d)" >> "$GITHUB_OUTPUT"
+
+    - name: Set initiator variable
+      shell: bash
+      run: |
+        if [[ -n "${{ github.event.number }}" ]]; then
+          echo "JOB_INITIATOR=${{ github.event.number }}" >> "$GITHUB_ENV"
+        else
+          echo "JOB_INITIATOR=${{ github.run_id }}" >> "$GITHUB_ENV"
+        fi
+
+    - name: Push the new files to github pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        publish_branch: ${{ inputs.pages-branch }}
+        github_token: ${{ inputs.github-token }}
+        publish_dir: all-reports
+        destination_dir: ${{ steps.timestampid.outputs.timestamp }}/${{ env.JOB_INITIATOR }}
+
+    - name: Generate Playwright Test Results Table
+      id: generate-table
+      run: |
+        table_output=$(node ${{ github.action_path }}/build-pr-comment.js || echo "")
+        if [[ -n "$table_output" ]]; then
+          {
+            echo "table<<EOF"
+            echo "$table_output"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+        fi
+      shell: bash
+      env:
+        GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+        GITHUB_REPOSITORY_NAME: ${{ github.event.repository.name }}
+        TIMESTAMP: ${{ steps.timestampid.outputs.timestamp }}
+        JOB_INITIATOR: ${{ env.JOB_INITIATOR }}
+
+    - name: Comment PR with Execution Details
+      uses: thollander/actions-comment-pull-request@v3
+      if: ${{ inputs.pr-comment-summary == 'true' && github.event.number != null && steps.generate-table.outputs.table != '' }}
+      with:
+        create-if-not-exists: true
+        comment-tag: gf-playwright-test-results
+        message: ${{ steps.generate-table.outputs.table }}
+  
+    - name: Write result table in Action summary
+      shell: bash
+      if: ${{ steps.generate-table.outputs.table != '' }}
+      run: echo "${{ steps.generate-table.outputs.table }}" >> "$GITHUB_STEP_SUMMARY"
+      
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.pages-branch }}
+
+    - name: Delete old reports
+      shell: bash
+      run: ${{ github.action_path }}/cleanup-folders.sh --retention-days ${{ inputs.retention-days }} --folder-name .
+
+
+    - name: Commit and push changed files
+      shell: bash
+      run: |
+        git config --local user.name "github-actions[bot]"
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+
+        git add -A
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "Delete folders older than ${{ inputs.retention-days }} days"
+          git push origin ${{ inputs.pages-branch }}
+        fi
+

@@ -1,6 +1,5 @@
 name: 'Deploy to GH pages'
 description: 'Deploys test artifacts to GitHub Pages and comments on the PR with the results and links.'
-author: 'frontend@grafana'
 
 inputs:
   github-token:

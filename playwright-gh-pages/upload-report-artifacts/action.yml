@@ -1,6 +1,5 @@
 name: 'Upload report and test summary to GitHub artifact'
 description: 'Uploads report and test summary as a GitHub artifact. Can be used together with the deploy-report-pages action to publish the reports to GitHub Pages.'
-author: 'frontend@grafana'
 
 outputs:
   artifact:

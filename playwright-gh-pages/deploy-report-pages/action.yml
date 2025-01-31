@@ -116,5 +116,3 @@ runs:
           git push origin ${{ inputs.pages-branch }}
         fi
 
-    # - name: Checkout code
-    #   uses: actions/checkout@v4

@@ -24,15 +24,17 @@ The workflow consists of two main actions:
   - Comments on the pull request with the test results and links to the reports.
   - Supports retention of reports for a specified number of days.
 
-## GitHub Pages Branch
+## GitHub Pages Branch Configuration
 
-By default, the `deploy-report-pages` Action deploys reports to the `gh-pages` branch. However, **you need to take an extra step** to ensure that GitHub Pages can build and serve the site from this branch. To do so:
+The `deploy-report-pages` Action publishes reports to the `gh-pages` branch by default. However, if GitHub Pages isn't already configured to serve content from this branch, you'll need to take an extra step to ensure your reports are accessible. Follow these steps:
 
-1. Go to the **Settings** tab of your repository.
+1. Navigate to the **Settings** tab of your repository.
 2. In the left-hand sidebar, click on **Pages**.
-3. Under **Source**, select **Deploy from a branch**, then choose the `gh-pages` branch.
+3. Under **Source**, select **Deploy from a branch**, then choose `gh-pages`.
 
-This action needs to be completed **manually** in order for your GitHub Pages site to be built and accessible from the `gh-pages` branch. Once configured, GitHub will automatically build and serve the site whenever new reports are deployed.
+This setup must be completed **manually** before GitHub Pages can build and serve reports from the `gh-pages` branch. Once configured, GitHub will automatically update the site whenever new reports are deployed.
+
+If you’re already using GitHub Pages for other content, ensure that it does not overwrite reports published by the `upload-report-artifacts` Action.
 
 ## GitHub Pages Visibility
 

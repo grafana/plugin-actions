@@ -65,9 +65,14 @@ runs:
     - name: Generate Playwright Test Results Table
       id: generate-table
       run: |
-        echo "table<<EOF" >> "$GITHUB_OUTPUT"
-        node ${{ github.action_path }}/build-pr-comment.js >> "$GITHUB_OUTPUT"
-        echo "EOF" >> "$GITHUB_OUTPUT"
+        table_output=$(node ${{ github.action_path }}/build-pr-comment.js || echo "")
+        if [[ -n "$table_output" ]]; then
+          {
+            echo "table<<EOF"
+            echo "$table_output"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+        fi
       shell: bash
       env:
         GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
@@ -77,7 +82,7 @@ runs:
 
     - name: Comment PR with Execution Details
       uses: thollander/actions-comment-pull-request@v3
-      if: ${{ inputs.pr-comment-summary == 'true' && github.event.number != null }}
+      if: ${{ inputs.pr-comment-summary == 'true' && github.event.number != null && steps.generate-table.outputs.table != '' }}
       with:
         create-if-not-exists: true
         comment-tag: test-results
@@ -85,6 +90,7 @@ runs:
   
     - name: Write result table in Action summary
       shell: bash
+      if: ${{ steps.generate-table.outputs.table != '' }}
       run: echo "${{ steps.generate-table.outputs.table }}" >> "$GITHUB_STEP_SUMMARY"
       
     - name: Checkout code

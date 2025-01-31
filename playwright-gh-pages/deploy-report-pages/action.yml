@@ -108,7 +108,6 @@ runs:
         git config --local user.name "github-actions[bot]"
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
 
-        git checkout ${{ inputs.pages-branch }}
         git add -A
         if git diff --staged --quiet; then
           echo "No changes to commit"

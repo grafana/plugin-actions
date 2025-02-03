@@ -70,6 +70,7 @@ runs:
         GITHUB_REPOSITORY_NAME: ${{ github.event.repository.name }}
         TIMESTAMP: ${{ steps.timestampid.outputs.timestamp }}
         JOB_INITIATOR: ${{ env.JOB_INITIATOR }}
+        DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
   
     - name: Write result table in Action summary
       shell: bash

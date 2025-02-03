@@ -53,14 +53,6 @@ runs:
           echo "JOB_INITIATOR=${{ github.run_id }}" >> "$GITHUB_ENV"
         fi
 
-    - name: Push the new files to github pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        publish_branch: ${{ inputs.pages-branch }}
-        github_token: ${{ inputs.github-token }}
-        publish_dir: all-reports
-        destination_dir: ${{ steps.timestampid.outputs.timestamp }}/${{ env.JOB_INITIATOR }}
-
     - name: Generate Playwright Test Results Table
       id: generate-table
       run: |
@@ -78,6 +70,12 @@ runs:
         GITHUB_REPOSITORY_NAME: ${{ github.event.repository.name }}
         TIMESTAMP: ${{ steps.timestampid.outputs.timestamp }}
         JOB_INITIATOR: ${{ env.JOB_INITIATOR }}
+        DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+  
+    - name: Write result table in Action summary
+      shell: bash
+      if: ${{ steps.generate-table.outputs.table != '' }}
+      run: echo "${{ steps.generate-table.outputs.table }}" >> "$GITHUB_STEP_SUMMARY"
 
     - name: Comment PR with Execution Details
       uses: thollander/actions-comment-pull-request@v3
@@ -86,11 +84,14 @@ runs:
         create-if-not-exists: true
         comment-tag: gf-playwright-test-results
         message: ${{ steps.generate-table.outputs.table }}
-  
-    - name: Write result table in Action summary
-      shell: bash
-      if: ${{ steps.generate-table.outputs.table != '' }}
-      run: echo "${{ steps.generate-table.outputs.table }}" >> "$GITHUB_STEP_SUMMARY"
+
+    - name: Push the new files to github pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        publish_branch: ${{ inputs.pages-branch }}
+        github_token: ${{ inputs.github-token }}
+        publish_dir: all-reports
+        destination_dir: ${{ steps.timestampid.outputs.timestamp }}/${{ env.JOB_INITIATOR }}
       
     - name: Checkout code
       uses: actions/checkout@v4
@@ -100,7 +101,6 @@ runs:
     - name: Delete old reports
       shell: bash
       run: ${{ github.action_path }}/cleanup-folders.sh --retention-days ${{ inputs.retention-days }} --folder-name .
-
 
     - name: Commit and push changed files
       shell: bash

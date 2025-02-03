@@ -49,15 +49,20 @@ runs:
       shell: bash
       id: add-parent-dir
       run: |
+        if [[ ! -d "${{ inputs.report-dir }}" ]]; then
+          echo "::warning::Report directory '${{ inputs.report-dir }}' does not exist. Skipping this step."
+          exit 0  # exit gracefully without failing the workflow
+        fi
+
         parent_dir="${{ inputs.grafana-image }}-${{ inputs.grafana-version }}"
         if [[ -n "${{ inputs.plugin-name }}" ]]; then
           parent_dir="${{ inputs.plugin-name }}-${{ inputs.grafana-image }}-${{ inputs.grafana-version }}"
         fi
 
-        mv ${{ inputs.report-dir }} $parent_dir
+        mv "${{ inputs.report-dir }}" "$parent_dir"
         mkdir -p playwright-report
-        mv $parent_dir playwright-report/
-        echo "parent-dir=$parent_dir" >> $GITHUB_OUTPUT
+        mv "$parent_dir" playwright-report/
+        echo "parent-dir=$parent_dir" >> "$GITHUB_OUTPUT"
         
 
     - name: Exclude report from artifact 

@@ -84,6 +84,7 @@ runs:
     - name: Read changelog
       id: changelog
       run: |
+        echo "CHANGELOG.md"
         awk '/^## / {s++} s == 1 {print}' CHANGELOG.md > release_notes.md
         echo "path=release_notes.md" >> $GITHUB_OUTPUT
       shell: bash

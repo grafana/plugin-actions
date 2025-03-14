@@ -84,8 +84,25 @@ runs:
     - name: Read changelog
       id: changelog
       run: |
-        echo "CHANGELOG.md"
-        awk '/^## / {s++} s == 1 {print}' CHANGELOG.md > release_notes.md
+        if [ -f "CHANGELOG.md" ]; then
+          echo "Changelog found, extracting release notes..."
+          awk '/^## / {s++} s == 1 {print}' CHANGELOG.md > release_notes.md
+          # Check if extraction produced any content
+          if [ -s release_notes.md ]; then
+            echo "Release notes extracted successfully."
+          else
+            echo "Warning: Could not extract release notes from CHANGELOG.md in the expected format."
+            echo "Generating default release notes..."
+            echo "## v${{ steps.package-plugin.outputs.plugin-version }}" > release_notes.md
+            echo "" >> release_notes.md
+            echo "This release includes the latest updates for the plugin." >> release_notes.md
+          fi
+        else
+          echo "No CHANGELOG.md found. Generating default release notes..."
+          echo "## v${{ steps.package-plugin.outputs.plugin-version }}" > release_notes.md
+          echo "" >> release_notes.md
+          echo "This release includes the latest updates for the plugin." >> release_notes.md
+        fi
         echo "path=release_notes.md" >> $GITHUB_OUTPUT
       shell: bash
 

@@ -25,7 +25,7 @@ runs:
 
     - name: Get latest version of create-plugin package
       id: get-latest-version
-      run: echo "LATEST_VERSION=$(npx -y @grafana/create-plugin@latest version)" >> "$GITHUB_ENV"
+      run: echo "LATEST_VERSION=$(npx -y @grafana/create-plugin@latest version | sed 's/.*@//' | sed '/^$/d')" >> "$GITHUB_ENV"
       shell: bash
 
     - name: Checkout Repository

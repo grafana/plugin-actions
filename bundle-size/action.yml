@@ -28,10 +28,10 @@ runs:
 
   steps:
     - name: Check if pull request event
-      if: ${{ github.event_name != 'pull_request' }}
+      if: ${{ github.event_name != 'pull_request' && github.event_name != 'push' }}
       run: |
-        echo "This action is intended to run only on pull_request events. Exiting."
-        exit 1
+        echo "This action is intended to run only on pull_request or push events. Exiting."
+        exit 0
       shell: bash
 
     - name: Set up Node.js
@@ -39,7 +39,33 @@ runs:
       with:
         node-version: ${{ inputs.node-version }}
 
+    - name: Install dependencies
+      run: ${{ github.action_path }}/pm.sh install
+      shell: bash
+
+    - name: Build project to generate stats
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref }}" == "refs/heads/main" ]; then
+          ${{ github.action_path }}/pm.sh buildMain
+        else if [ "${{ github.event_name }}" == "pull_request" ]; then
+          ${{ github.action_path }}/pm.sh buildPR
+        else
+          echo "This action is intended to run only on pull_request or push events. Exiting."
+          exit 0
+        fi
+      shell: bash
+
+    - name: Upload main branch stats.json artifact
+      if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.main-branch-stats-artifact }}
+        path: ${{ inputs.main-branch-stats-artifact }}
+        overwrite: true
+
     - name: Get main stats artifact run-id
+      if: ${{ github.event_name == 'pull_request' }}
       id: "main-stats-info"
       env:
         GH_TOKEN: ${{ inputs.token }}
@@ -48,16 +74,8 @@ runs:
         echo "run-id=${MAIN_STATS_RUN_ID}" >> $GITHUB_OUTPUT
       shell: bash
 
-    - name: Install dependencies
-      run: ${{ github.action_path }}/pm.sh install
-      shell: bash
-
-    - name: Build project to generate PR stats
-      working-directory: ${{ inputs.working-directory }}
-      run: ${{ github.action_path }}/pm.sh build
-      shell: bash
-
     - name: Download main branch stats artifact
+      if: ${{ github.event_name == 'pull_request' }}
       uses: actions/download-artifact@v4
       with:
         name: ${{ inputs.main-branch-stats-artifact }}
@@ -66,6 +84,7 @@ runs:
         run-id: ${{ steps.main-stats-info.outputs.run-id }}
 
     - name: Generate stats report and comment on PR
+      if: ${{ github.event_name == 'pull_request' }}
       uses: actions/github-script@v7
       with:
         script: |

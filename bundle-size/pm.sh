@@ -1,17 +1,33 @@
 #!/bin/bash
 
-# Check if command argument is provided
-if [ "$1" = "" ]; then
-	echo "Please provide a command to run."
+set -euo pipefail
+
+# Supported commands: install, buildPR, buildMain
+
+if [ "$#" -ne 1 ]; then
+	echo "Error: Please provide exactly one command to run."
+	echo "Supported commands: install, buildPR, buildMain"
 	exit 1
 fi
 
+
+case "$1" in
+	"install"|"buildPR"|"buildMain")
+		command="$1"
+		;;
+	*)
+		echo "Error: Unsupported command '$1'"
+		echo "Supported commands: install, buildPR, buildMain"
+		exit 1
+		;;
+esac
+
 install_pnpm_if_not_present() {
-    if ! command -v pnpm &> /dev/null
-    then
-        echo "pnpm could not be found, installing..."
-        npm install -g pnpm
-    fi
+	if ! command -v pnpm &> /dev/null
+	then
+		echo "pnpm could not be found, installing..."
+		npm install -g pnpm
+	fi
 }
 
 # Detect the package manager
@@ -25,21 +41,30 @@ else
 	pm="pnpm"
 fi
 
-# Detect the command to run build
+# Define build commands
 if [ -f yarn.lock ]; then
-  pmb=("yarn" "build" "--profile" "--json" "pr-stats.json")
+	build_pr_cmd=("yarn" "build" "--profile" "--json" "pr-stats.json")
+	build_main_cmd=("yarn" "build" "--profile" "--json" "main-stats.json")
 elif [ -f package-lock.json ]; then
-  pmb=("npm" "run" "build" "--" "--profile" "--json" "pr-stats.json")
+	build_pr_cmd=("npm" "run" "build" "--" "--profile" "--json" "pr-stats.json")
+	build_main_cmd=("npm" "run" "build" "--" "--profile" "--json" "main-stats.json")
 else
-  echo "Defaulting to pnpm for build command."
-  install_pnpm_if_not_present
-  pmb=("pnpm" "build" "--profile" "--json" "pr-stats.json")
+	echo "Defaulting to pnpm for build command."
+	install_pnpm_if_not_present
+	build_pr_cmd=("pnpm" "build" "--profile" "--json" "pr-stats.json")
+	build_main_cmd=("pnpm" "build" "--profile" "--json" "main-stats.json")
 fi
 
 # Run the provided command with the detected package manager
-echo "Running '$1' with $pm..."
-if [ "$1" = "install" ]; then
-	"$pm" install
-elif [ "$1" = "build" ]; then
-	"${pmb[@]}"
-fi
+echo "Running '$command' with $pm..."
+case "$command" in
+	"install")
+		"$pm" install
+		;;
+	"buildPR")
+		"${build_pr_cmd[@]}"
+		;;
+	"buildMain")
+		"${build_main_cmd[@]}"
+		;;
+esac

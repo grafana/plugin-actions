@@ -81,6 +81,12 @@ runs:
         printf "plugin-id=%s\n" "${{ steps.package-plugin.outputs.plugin-id }}"
         printf "plugin-version=%s\n" "${{ steps.package-plugin.outputs.plugin-version }}"
 
+    - name: Check environment variable
+      id: check-env
+      run: |
+        echo "USE_CHANGELOG_GENERATOR=${{ env.USE_CHANGELOG_GENERATOR }}" >> $GITHUB_OUTPUT
+      shell: bash
+
     - name: Generate Changelog using github-changelog-generator
       id: github-changelog-generator
       if: ${{ env.USE_CHANGELOG_GENERATOR }}

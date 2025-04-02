@@ -93,7 +93,12 @@ runs:
       uses: janheinrichmerker/action-github-changelog-generator@v2.3
       with:
         token: ${{ inputs.token }}
-        output: CHANGELOG.md
+    
+    - name: Read generatedchangelog
+      id: read-generated-changelog
+      run: |
+        echo "Generated Changelog: ${{ steps.github-changelog-generator.outputs.changelog }}" >> $GITHUB_OUTPUT
+      shell: bash
 
     - name: Read changelog
       id: changelog

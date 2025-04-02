@@ -83,7 +83,7 @@ runs:
 
     - name: Generate Changelog using github-changelog-generator
       id: github-changelog-generator
-      if: ${{ inputs.use_changelog_generator == 'true' }}
+      if: ${{ inputs.use_changelog_generator }}
       uses: janheinrichmerker/action-github-changelog-generator@v2.3
       with:
         token: ${{ inputs.token }}
@@ -115,19 +115,19 @@ runs:
       shell: bash
 
     - name: Check package version
-  id: version-check
-  shell: bash
-  run: |
-    PLUGIN_VERSION="v${{ steps.package-plugin.outputs.plugin-version }}"
-    TAG_VERSION="${{ steps.metadata.outputs.github-tag }}"
-    
-    if [ "$PLUGIN_VERSION" != "$TAG_VERSION" ]; then
-      echo "::warning::Version mismatch detected: Plugin version ($PLUGIN_VERSION) doesn't match tag name ($TAG_VERSION)"
-      echo "version_mismatch=true" >> $GITHUB_OUTPUT
-    else
-      echo "Versions match: $PLUGIN_VERSION"
-      echo "version_mismatch=false" >> $GITHUB_OUTPUT
-    fi
+      id: version-check
+      shell: bash
+      run: |
+        PLUGIN_VERSION="v${{ steps.package-plugin.outputs.plugin-version }}"
+        TAG_VERSION="${{ steps.metadata.outputs.github-tag }}"
+        
+        if [ "$PLUGIN_VERSION" != "$TAG_VERSION" ]; then
+          echo "::warning::Version mismatch detected: Plugin version ($PLUGIN_VERSION) doesn't match tag name ($TAG_VERSION)"
+          echo "version_mismatch=true" >> $GITHUB_OUTPUT
+        else
+          echo "Versions match: $PLUGIN_VERSION"
+          echo "version_mismatch=false" >> $GITHUB_OUTPUT
+        fi
 
     - name: Generate artifact attestation
       if: ${{ inputs.attestation == 'true' }}

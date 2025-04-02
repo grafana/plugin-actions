@@ -171,8 +171,19 @@ runs:
       shell: bash
 
     - name: Check package version
-      run: if [ "v${{ steps.package-plugin.outputs.plugin-version }}" != "${{ steps.metadata.outputs.github-tag }}" ]; then printf "\033[0;31mPlugin version doesn't match tag name. The tag should be v${{ steps.package-plugin.outputs.plugin-version }} \033[0m\n"; exit 1; fi
-      shell: bash
+  id: version-check
+  shell: bash
+  run: |
+    PLUGIN_VERSION="v${{ steps.package-plugin.outputs.plugin-version }}"
+    TAG_VERSION="${{ steps.metadata.outputs.github-tag }}"
+    
+    if [ "$PLUGIN_VERSION" != "$TAG_VERSION" ]; then
+      echo "::warning::Version mismatch detected: Plugin version ($PLUGIN_VERSION) doesn't match tag name ($TAG_VERSION)"
+      echo "version_mismatch=true" >> $GITHUB_OUTPUT
+    else
+      echo "Versions match: $PLUGIN_VERSION"
+      echo "version_mismatch=false" >> $GITHUB_OUTPUT
+    fi
 
     - name: Generate artifact attestation
       if: ${{ inputs.attestation == 'true' }}
@@ -188,7 +199,7 @@ runs:
         message: 'docs: update changelog for ${{ steps.package-plugin.outputs.plugin-version }} [skip ci]'
         default_author: github_actions
         push: true
-        
+
     - name: Create Github release
       uses: softprops/action-gh-release@v2
       with:

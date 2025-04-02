@@ -48,7 +48,7 @@ runs:
       run: |
         if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref }}" == "refs/heads/main" ]; then
           ${{ github.action_path }}/pm.sh buildMain
-        else if [ "${{ github.event_name }}" == "pull_request" ]; then
+        elif [ "${{ github.event_name }}" == "pull_request" ]; then
           ${{ github.action_path }}/pm.sh buildPR
         else
           echo "This action is intended to run only on pull_request or push events. Exiting."

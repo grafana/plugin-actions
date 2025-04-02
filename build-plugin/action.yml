@@ -81,6 +81,70 @@ runs:
         printf "plugin-id=%s\n" "${{ steps.package-plugin.outputs.plugin-id }}"
         printf "plugin-version=%s\n" "${{ steps.package-plugin.outputs.plugin-version }}"
 
+    - name: Generate Changelog
+      id: generate-changelog
+      shell: bash
+      run: |
+        CURRENT_VERSION="v${{ steps.package-plugin.outputs.plugin-version }}"
+        CURRENT_DATE=$(date +"%Y-%m-%d")
+        
+        # Get commit messages since the last tag
+        if git rev-parse --verify --quiet "$(git describe --abbrev=0 --tags 2>/dev/null)"; then
+          LAST_TAG=$(git describe --abbrev=0 --tags)
+          echo "Getting changes since last tag: $LAST_TAG"
+          COMMITS=$(git log --pretty=format:"- %s" $LAST_TAG..HEAD)
+        else
+          echo "No previous tags found. Including all commits."
+          COMMITS=$(git log --pretty=format:"- %s")
+        fi
+        
+        # Create release notes content
+        echo "## $CURRENT_VERSION ($CURRENT_DATE)" > release_notes.md
+        echo "" >> release_notes.md
+        
+        # Categorize commits (optional: you can enhance this to categorize commits by type)
+        echo "### Changes" >> release_notes.md
+        echo "$COMMITS" >> release_notes.md
+        echo "" >> release_notes.md
+        
+        # Save the output for later use
+        echo "path=release_notes.md" >> $GITHUB_OUTPUT
+        
+        # Update CHANGELOG.md
+        if [ -f "CHANGELOG.md" ]; then
+          echo "Updating existing CHANGELOG.md..."
+          # Create a new changelog with the new entry at the top
+          echo "# Changelog" > temp_changelog.md
+          echo "" >> temp_changelog.md
+          cat release_notes.md >> temp_changelog.md
+          echo "" >> temp_changelog.md
+          # Append existing changelog without the header
+          tail -n +3 CHANGELOG.md >> temp_changelog.md
+          mv temp_changelog.md CHANGELOG.md
+        else
+          echo "Creating new CHANGELOG.md..."
+          echo "# Changelog" > CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          cat release_notes.md >> CHANGELOG.md
+        fi
+        
+        # Add version metadata section if it doesn't exist
+        if ! grep -q "## Version Metadata" CHANGELOG.md; then
+          echo "" >> CHANGELOG.md
+          echo "## Version Metadata" >> CHANGELOG.md
+          echo "This section tracks version availability in the Grafana catalog." >> CHANGELOG.md
+        fi
+        
+        # Add the current version to the metadata section with catalog status
+        if [ "${{ inputs.catalog_release }}" == "true" ]; then
+          sed -i "/## Version Metadata/a\\- $CURRENT_VERSION: Released to catalog on $CURRENT_DATE ✓" CHANGELOG.md
+        else
+          sed -i "/## Version Metadata/a\\- $CURRENT_VERSION: Released on $CURRENT_DATE (not in catalog)" CHANGELOG.md
+        fi
+        
+        # Output the path to the updated changelog
+        echo "changelog_path=CHANGELOG.md" >> $GITHUB_OUTPUT
+
     - name: Read changelog
       id: changelog
       run: |
@@ -117,6 +181,14 @@ runs:
       with:
         subject-path: ${{ steps.package-plugin.outputs.archive }}
 
+    - name: Commit updated changelog
+      uses: EndBug/add-and-commit@v9
+      with:
+        add: 'CHANGELOG.md'
+        message: 'docs: update changelog for ${{ steps.package-plugin.outputs.plugin-version }} [skip ci]'
+        default_author: github_actions
+        push: true
+        
     - name: Create Github release
       uses: softprops/action-gh-release@v2
       with:

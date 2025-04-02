@@ -79,7 +79,7 @@ runs:
       uses: actions/download-artifact@v4
       with:
         name: ${{ inputs.main-branch-stats-artifact }}
-        path: ${{ inputs.working-directory }}/stats.json
+        path: ${{ inputs.working-directory }}
         github-token: ${{ inputs.token }}
         run-id: ${{ steps.main-stats-info.outputs.run-id }}
 

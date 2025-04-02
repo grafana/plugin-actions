@@ -61,7 +61,7 @@ runs:
       uses: actions/upload-artifact@v4
       with:
         name: ${{ inputs.main-branch-stats-artifact }}
-        path: ${{ inputs.main-branch-stats-artifact }}
+        path: ${{ inputs.working-directory }}/stats.json
         overwrite: true
 
     - name: Get main stats artifact run-id
@@ -79,7 +79,7 @@ runs:
       uses: actions/download-artifact@v4
       with:
         name: ${{ inputs.main-branch-stats-artifact }}
-        path: ${{ inputs.main-branch-stats-artifact }}
+        path: ${{ inputs.working-directory }}/stats.json
         github-token: ${{ inputs.token }}
         run-id: ${{ steps.main-stats-info.outputs.run-id }}
 
@@ -89,4 +89,4 @@ runs:
       with:
         script: |
           const script = require('${{ github.action_path }}/index.js')
-          await script({github, context, core}, ${{ inputs.threshold }}, "${{ inputs.main-branch-stats-artifact }}/stats.json", "${{ inputs.working-directory }}/pr-stats.json", "${{ inputs.working-directory }}")
+          await script({github, context, core}, ${{ inputs.threshold }}, "${{ inputs.working-directory }}/stats.json", "${{ inputs.working-directory }}/pr-stats.json", "${{ inputs.working-directory }}")

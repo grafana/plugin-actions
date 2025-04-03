@@ -97,6 +97,13 @@ runs:
         fi
       shell: bash
 
+    - name: Checkout code
+      if: ${{ env.USE_CHANGELOG_GENERATOR }}
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0  # Important for changelog generation to access full history
+        ref: main  # Specify which branch to checkout
+
     - name: Generate Changelog using github-changelog-generator
       id: github-changelog-generator
       if: ${{ env.USE_CHANGELOG_GENERATOR }}
@@ -175,6 +182,7 @@ runs:
         message: 'docs: update changelog for ${{ steps.package-plugin.outputs.plugin-version }} [skip ci]'
         default_author: github_actions
         push: true
+        branch: main
 
     - name: Create Github release
       uses: softprops/action-gh-release@v2

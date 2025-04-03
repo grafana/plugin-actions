@@ -87,18 +87,38 @@ runs:
         echo "USE_CHANGELOG_GENERATOR=${{ env.USE_CHANGELOG_GENERATOR }}" >> $GITHUB_OUTPUT
       shell: bash
 
+    - name: Save original changelog state
+      run: |
+        if [ -f "CHANGELOG.md" ]; then
+          cp CHANGELOG.md CHANGELOG.md.backup
+          echo "ORIGINAL_CHANGELOG_EXISTS=true" >> $GITHUB_ENV
+        else
+          echo "ORIGINAL_CHANGELOG_EXISTS=false" >> $GITHUB_ENV
+        fi
+      shell: bash
+
     - name: Generate Changelog using github-changelog-generator
       id: github-changelog-generator
       if: ${{ env.USE_CHANGELOG_GENERATOR }}
-      uses: janheinrichmerker/action-github-changelog-generator@v2.3
+      uses: janheinrichmerker/action-github-changelog-generator@v2.4
       with:
         token: ${{ inputs.token }}
         output: CHANGELOG.md
-    
-    - name: Read generatedchangelog
-      id: read-generated-changelog
+
+    - name: Check if changelog was updated
       run: |
-        echo "Generated Changelog: ${{ steps.github-changelog-generator.outputs.changelog }}" >> $GITHUB_OUTPUT
+        if [ "$ORIGINAL_CHANGELOG_EXISTS" = "true" ]; then
+          if cmp -s "CHANGELOG.md" "CHANGELOG.md.backup"; then
+            echo "Changelog content was not changed"
+            echo "CHANGELOG_UPDATED=false" >> $GITHUB_ENV
+          else
+            echo "Changelog was updated with new content"
+            echo "CHANGELOG_UPDATED=true" >> $GITHUB_ENV
+          fi
+        else
+          echo "Changelog was newly created"
+          echo "CHANGELOG_UPDATED=true" >> $GITHUB_ENV
+        fi
       shell: bash
 
     - name: Read changelog

@@ -104,19 +104,26 @@ runs:
         fetch-depth: 0  # Important for changelog generation to access full history
         ref: main  # Specify which branch to checkout
 
+    - name: Debug - List recent commits
+      run: |
+        git log --pretty=format:"%h - %s (%cr) <%an>" --date=relative -n 10
+      shell: bash
+
     - name: Generate Changelog using github-changelog-generator
       id: github-changelog-generator
       if: ${{ env.USE_CHANGELOG_GENERATOR }}
       uses: janheinrichmerker/action-github-changelog-generator@v2.4
       with:
         token: ${{ inputs.token }}
-        include-commits: true
-        add-sections: '{"commits":{"prefix":"**Commits:**","labels":["Commits"]}}'
-        unreleased: true
-        unreleased-only: false
-        verbose: true
-        simple-list: true
         output: CHANGELOG.md
+        user: ${{ github.repository_owner }}
+        project: ${{ github.event.repository.name }}
+        unreleased: true
+        issues: true
+        pull-requests: true
+        pulls: true
+        include-labels: "bug,enhancement,feature"
+        simple-list: true
 
     - name: Check if changelog was updated
       run: |

@@ -110,6 +110,8 @@ runs:
       uses: janheinrichmerker/action-github-changelog-generator@v2.4
       with:
         token: ${{ inputs.token }}
+        include-commits: true             # Include all commits
+        add-sections: '{"commits":{"prefix":"**Commits:**","labels":["Commits"]}}'
         output: CHANGELOG.md
 
     - name: Check if changelog was updated

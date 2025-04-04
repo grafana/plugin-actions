@@ -81,12 +81,6 @@ runs:
         printf "plugin-id=%s\n" "${{ steps.package-plugin.outputs.plugin-id }}"
         printf "plugin-version=%s\n" "${{ steps.package-plugin.outputs.plugin-version }}"
 
-    - name: Check environment variable
-      id: check-env
-      run: |
-        echo "USE_CHANGELOG_GENERATOR=${{ env.USE_CHANGELOG_GENERATOR }}" >> $GITHUB_OUTPUT
-      shell: bash
-
     - name: Checkout code
       if: ${{ env.USE_CHANGELOG_GENERATOR }}
       uses: actions/checkout@v3

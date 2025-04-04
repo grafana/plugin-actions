@@ -87,29 +87,14 @@ runs:
         echo "USE_CHANGELOG_GENERATOR=${{ env.USE_CHANGELOG_GENERATOR }}" >> $GITHUB_OUTPUT
       shell: bash
 
-    - name: Save original changelog state
-      run: |
-        if [ -f "CHANGELOG.md" ]; then
-          cp CHANGELOG.md CHANGELOG.md.backup
-          echo "ORIGINAL_CHANGELOG_EXISTS=true" >> $GITHUB_ENV
-        else
-          echo "ORIGINAL_CHANGELOG_EXISTS=false" >> $GITHUB_ENV
-        fi
-      shell: bash
-
     - name: Checkout code
       if: ${{ env.USE_CHANGELOG_GENERATOR }}
       uses: actions/checkout@v3
       with:
-        fetch-depth: 0  # Important for changelog generation to access full history
-        ref: main  # Specify which branch to checkout
+        fetch-depth: 0
+        ref: main
 
-    - name: Debug - List recent commits
-      run: |
-        git log --pretty=format:"%h - %s (%cr) <%an>" --date=relative -n 10
-      shell: bash
-
-    - name: Generate Changelog using github-changelog-generator
+    - name: Generate Changelog
       id: github-changelog-generator
       if: ${{ env.USE_CHANGELOG_GENERATOR }}
       uses: janheinrichmerker/action-github-changelog-generator@v2.4
@@ -124,22 +109,6 @@ runs:
         pulls: true
         include-labels: "bug,enhancement,feature"
         simple-list: true
-
-    - name: Check if changelog was updated
-      run: |
-        if [ "$ORIGINAL_CHANGELOG_EXISTS" = "true" ]; then
-          if cmp -s "CHANGELOG.md" "CHANGELOG.md.backup"; then
-            echo "Changelog content was not changed"
-            echo "CHANGELOG_UPDATED=false" >> $GITHUB_ENV
-          else
-            echo "Changelog was updated with new content"
-            echo "CHANGELOG_UPDATED=true" >> $GITHUB_ENV
-          fi
-        else
-          echo "Changelog was newly created"
-          echo "CHANGELOG_UPDATED=true" >> $GITHUB_ENV
-        fi
-      shell: bash
 
     - name: Read changelog
       id: changelog
@@ -189,6 +158,7 @@ runs:
         subject-path: ${{ steps.package-plugin.outputs.archive }}
 
     - name: Commit updated changelog
+      if: ${{ env.USE_CHANGELOG_GENERATOR }}
       uses: EndBug/add-and-commit@v9
       with:
         add: 'CHANGELOG.md'

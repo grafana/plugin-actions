@@ -131,6 +131,7 @@ runs:
         add: 'CHANGELOG.md'
         message: 'docs: update changelog for ${{ steps.package-plugin.outputs.plugin-version }} [skip ci]'
         default_author: github_actions
+        branch: ${{ github.ref }}
 
     - name: Create Github release
       uses: softprops/action-gh-release@v2

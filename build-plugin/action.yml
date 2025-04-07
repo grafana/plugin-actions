@@ -54,6 +54,10 @@ inputs:
     description: "Create a verifiable attestation for the plugin using Github OIDC. Requires id-token: write and attestations: writes permissions"
     required: false
     default: "false"
+  use_changelog_generator:
+    description: "Whether to generate a changelog for the plugin"
+    required: false
+    default: "false"
 
 runs:
   using: "composite"
@@ -82,15 +86,14 @@ runs:
         printf "plugin-version=%s\n" "${{ steps.package-plugin.outputs.plugin-version }}"
 
     - name: Checkout code
-      if: ${{ env.USE_CHANGELOG_GENERATOR }}
+      if: ${{ inputs.use_changelog_generator == 'true' }}
       uses: actions/checkout@v3
       with:
         fetch-depth: 0
-        ref: main
 
     - name: Generate Changelog
       id: github-changelog-generator
-      if: ${{ env.USE_CHANGELOG_GENERATOR }}
+      if: ${{ inputs.use_changelog_generator == 'true' }}
       uses: janheinrichmerker/action-github-changelog-generator@v2.4
       with:
         token: ${{ inputs.token }}
@@ -99,10 +102,9 @@ runs:
         project: ${{ github.event.repository.name }}
         unreleased: true
         issues: true
-        pull-requests: true
-        pulls: true
-        include-labels: "bug,enhancement,feature"
-        simple-list: true
+        pullRequests: true
+        includeLabels: "bug,enhancement,feature"
+        simpleList: true
 
     - name: Read changelog
       id: changelog
@@ -123,7 +125,7 @@ runs:
         subject-path: ${{ steps.package-plugin.outputs.archive }}
 
     - name: Commit updated changelog
-      if: ${{ env.USE_CHANGELOG_GENERATOR }}
+      if: ${{ inputs.use_changelog_generator == 'true' }}
       uses: EndBug/add-and-commit@v9
       with:
         add: 'CHANGELOG.md'

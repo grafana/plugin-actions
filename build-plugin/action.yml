@@ -85,12 +85,6 @@ runs:
         printf "plugin-id=%s\n" "${{ steps.package-plugin.outputs.plugin-id }}"
         printf "plugin-version=%s\n" "${{ steps.package-plugin.outputs.plugin-version }}"
 
-    - name: Checkout code
-      if: ${{ inputs.use_changelog_generator == 'true' }}
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-
     - name: Generate Changelog
       id: github-changelog-generator
       if: ${{ inputs.use_changelog_generator == 'true' }}
@@ -150,7 +144,6 @@ runs:
         add: 'CHANGELOG.md'
         message: 'docs: update changelog for ${{ steps.package-plugin.outputs.plugin-version }} [skip ci]'
         default_author: github_actions
-        branch: ${{ steps.target-branch.outputs.name }}
         push: origin HEAD:${{ steps.target-branch.outputs.name }}
 
     - name: Create Github release

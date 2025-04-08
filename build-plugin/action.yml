@@ -124,6 +124,25 @@ runs:
       with:
         subject-path: ${{ steps.package-plugin.outputs.archive }}
 
+    - name: Determine target branch for push
+      if: ${{ inputs.use_changelog_generator == 'true' }}
+      id: target-branch
+      shell: bash
+      run: |
+        # Check if we're on a tag reference
+        if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+          # Get the default branch when we're on a tag
+          git remote set-head origin -a
+          DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
+          echo "name=$DEFAULT_BRANCH" >> $GITHUB_OUTPUT
+          echo "Using default branch: $DEFAULT_BRANCH (because we're on a tag)"
+        else
+          # Get current branch name when not on a tag
+          BRANCH=${GITHUB_REF#refs/heads/}
+          echo "name=$BRANCH" >> $GITHUB_OUTPUT
+          echo "Using current branch: $BRANCH"
+        fi
+
     - name: Commit updated changelog
       if: ${{ inputs.use_changelog_generator == 'true' }}
       uses: EndBug/add-and-commit@v9
@@ -131,8 +150,7 @@ runs:
         add: 'CHANGELOG.md'
         message: 'docs: update changelog for ${{ steps.package-plugin.outputs.plugin-version }} [skip ci]'
         default_author: github_actions
-        branch: ${{ github.ref }}
-        push: origin HEAD:${{ github.ref }}
+        branch: ${{ steps.target-branch.outputs.name }}
 
     - name: Create Github release
       uses: softprops/action-gh-release@v2

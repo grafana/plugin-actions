@@ -88,7 +88,7 @@ runs:
     - name: Generate Changelog
       id: github-changelog-generator
       if: ${{ inputs.use_changelog_generator == 'true' }}
-      uses: janheinrichmerker/action-github-changelog-generator@v2.4
+      uses: janheinrichmerker/action-github-changelog-generator@e60b5a2bd9fcd88dadf6345ff8327863fb8b490f # v2.4
       with:
         token: ${{ inputs.token }}
         output: CHANGELOG.md
@@ -107,9 +107,9 @@ runs:
         echo "path=release_notes.md" >> $GITHUB_OUTPUT
       shell: bash
 
-    # - name: Check package version
-    #   run: if [ "v${{ steps.package-plugin.outputs.plugin-version }}" != "${{ steps.metadata.outputs.github-tag }}" ]; then printf "\033[0;31mPlugin version doesn't match tag name. The tag should be v${{ steps.package-plugin.outputs.plugin-version }} \033[0m\n"; exit 1; fi
-    #   shell: bash
+    - name: Check package version
+      run: if [ "v${{ steps.package-plugin.outputs.plugin-version }}" != "${{ steps.metadata.outputs.github-tag }}" ]; then printf "\033[0;31mPlugin version doesn't match tag name. The tag should be v${{ steps.package-plugin.outputs.plugin-version }} \033[0m\n"; exit 1; fi
+      shell: bash
 
     - name: Generate artifact attestation
       if: ${{ inputs.attestation == 'true' }}
@@ -117,17 +117,6 @@ runs:
       uses: actions/attest-build-provenance@v2
       with:
         subject-path: ${{ steps.package-plugin.outputs.archive }}
-
-    # - name: Determine target branch for push
-    #   if: ${{ inputs.use_changelog_generator == 'true' }}
-    #   id: target-branch
-    #   shell: bash
-    #   run: |
-    #     git remote set-head origin -a
-    #     DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
-    #     echo "name=$DEFAULT_BRANCH" >> $GITHUB_OUTPUT
-    #     echo "Using default branch: $DEFAULT_BRANCH"
-        
 
     - name: Commit updated changelog
       if: ${{ inputs.use_changelog_generator == 'true' }}

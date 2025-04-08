@@ -14,6 +14,9 @@ inputs:
     description: "Version of node"
     required: false
     default: "20"
+  pr-prefix:
+    description: "Prefix for pull request title"
+    default: "Chore: "
 
 runs:
   using: "composite"
@@ -76,6 +79,8 @@ runs:
       run: |
         PR_NUMBER=$(gh pr list --base ${{ inputs.base }} --head update-grafana-create-plugin-${{ env.LATEST_VERSION }} --json number -q '.[0].number')
 
+        PR_TITLE="${{ inputs.pr-prefix }}Bump @grafana/create-plugin configuration to ${{ env.LATEST_VERSION }}"
+
         PR_BODY=$(cat <<EOF
         Bumps [\`@grafana/create-plugin\`](https://github.com/grafana/plugin-tools/tree/main/packages/create-plugin) configuration from ${{ env.CONFIG_VERSION }} to ${{ env.LATEST_VERSION }}.
 
@@ -87,8 +92,8 @@ runs:
         )
 
         if [ -z "$PR_NUMBER" ]; then
-          gh pr create --base ${{ inputs.base }} --head update-grafana-create-plugin-${{ env.LATEST_VERSION }} --title "Chore: Bump @grafana/create-plugin configuration to ${{ env.LATEST_VERSION }}" --body "$PR_BODY"
+          gh pr create --base ${{ inputs.base }} --head update-grafana-create-plugin-${{ env.LATEST_VERSION }} --title "$PR_TITLE" --body "$PR_BODY"
         else
-          gh pr edit $PR_NUMBER --title "Chore: Bump @grafana/create-plugin configuration to ${{ env.LATEST_VERSION }}" --body "$PR_BODY"
+          gh pr edit $PR_NUMBER --title "$PR_TITLE" --body "$PR_BODY"
         fi
       shell: bash

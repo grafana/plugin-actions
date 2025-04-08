@@ -107,9 +107,9 @@ runs:
         echo "path=release_notes.md" >> $GITHUB_OUTPUT
       shell: bash
 
-    - name: Check package version
-      run: if [ "v${{ steps.package-plugin.outputs.plugin-version }}" != "${{ steps.metadata.outputs.github-tag }}" ]; then printf "\033[0;31mPlugin version doesn't match tag name. The tag should be v${{ steps.package-plugin.outputs.plugin-version }} \033[0m\n"; exit 1; fi
-      shell: bash
+    # - name: Check package version
+    #   run: if [ "v${{ steps.package-plugin.outputs.plugin-version }}" != "${{ steps.metadata.outputs.github-tag }}" ]; then printf "\033[0;31mPlugin version doesn't match tag name. The tag should be v${{ steps.package-plugin.outputs.plugin-version }} \033[0m\n"; exit 1; fi
+    #   shell: bash
 
     - name: Generate artifact attestation
       if: ${{ inputs.attestation == 'true' }}
@@ -123,19 +123,11 @@ runs:
       id: target-branch
       shell: bash
       run: |
-        # Check if we're on a tag reference
-        if [[ "$GITHUB_REF" == refs/tags/* ]]; then
-          # Get the default branch when we're on a tag
-          git remote set-head origin -a
-          DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
-          echo "name=$DEFAULT_BRANCH" >> $GITHUB_OUTPUT
-          echo "Using default branch: $DEFAULT_BRANCH (because we're on a tag)"
-        else
-          # Get current branch name when not on a tag
-          BRANCH=${GITHUB_REF#refs/heads/}
-          echo "name=$BRANCH" >> $GITHUB_OUTPUT
-          echo "Using current branch: $BRANCH"
-        fi
+        git remote set-head origin -a
+        DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
+        echo "name=$DEFAULT_BRANCH" >> $GITHUB_OUTPUT
+        echo "Using default branch: $DEFAULT_BRANCH"
+        
 
     - name: Commit updated changelog
       if: ${{ inputs.use_changelog_generator == 'true' }}

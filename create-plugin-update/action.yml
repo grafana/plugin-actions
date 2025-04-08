@@ -25,7 +25,8 @@ runs:
 
     - name: Get latest version of create-plugin package
       id: get-latest-version
-      run: echo "LATEST_VERSION=$(npx -y @grafana/create-plugin@latest version | sed 's/.*@//' | sed '/^$/d')" | tee -a "$GITHUB_ENV"
+      run: |
+        echo "LATEST_VERSION=$(npx -y @grafana/create-plugin@latest version | sed 's/.*@//' | sed 's/ *$//' | sed '/^$/d')" | tee -a "$GITHUB_ENV"
       shell: bash
 
     - name: Checkout Repository
@@ -36,7 +37,8 @@ runs:
 
     - name: Get version from .config/.cprc.json
       id: get-config-version
-      run: echo "CONFIG_VERSION=$(jq -r '.version' .config/.cprc.json)" | tee -a "$GITHUB_ENV"
+      run: |
+        echo "CONFIG_VERSION=$(jq -r '.version' .config/.cprc.json)" | tee -a "$GITHUB_ENV"
       shell: bash
 
     - name: Compare versions

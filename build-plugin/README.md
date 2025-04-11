@@ -111,6 +111,22 @@ To enable changelog generation in your workflow:
 
 Note: This will commit changes to your repository's default branch, so your workflow must have the `contents: write` permission.
 
+### For Protected Branches
+
+If your target branch is protected, the default github.token cannot push changes directly, even with write permissions. In this case, you need to:
+
+1. Create a Personal Access Token (PAT) with appropriate permissions
+1. Store it as a repository secret (e.g., CHANGELOG_PAT)
+1. Configure the action to use this token:
+
+```yaml
+- name: Build plugin
+  uses: grafana/plugin-actions/build-plugin@main
+  with:
+    use_changelog_generator: true
+    token: ${{ secrets.CHANGELOG_PAT }}  # Replace default github.token
+```
+
 ## Options
 
 - `policy_token`: Grafana access policy token. https://grafana.com/developers/plugin-tools/publish-a-plugin/sign-a-plugin#generate-an-access-policy-token

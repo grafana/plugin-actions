@@ -8,7 +8,7 @@ This GitHub Action automates the process of building Grafana plugins. It takes t
 - Generates a draft Github release for the plugin.
 - Supports signing the plugin if a Grafana access token policy is provided.
 - Supports creating a [signed build provenance attestation](https://docs.github.com/en/actions/security-for-github-actions/using-artifact-attestations/using-artifact-attestations-to-establish-provenance-for-builds). This guarantees that the plugin was built from the source code provided in the release.
-- Optionally generates a changelog for the plugin using github-changelog-generator
+- Optionally generates a changelog for the plugin using [github-changelog-generator](https://github.com/github-changelog-generator/github-changelog-generator)
 
 ## Usage
 
@@ -93,7 +93,7 @@ jobs:
 
 If you pass `use_changelog_generator: true` to the action, it will:
 
-1. Generate a changelog using the github-changelog-generator tool
+1. Generate a changelog using the [github-changelog-generator](https://github.com/github-changelog-generator/github-changelog-generator) tool
 1. Commit the updated changelog back to your repository's default branch
 
 This feature helps maintain a well-documented history of changes for your plugin. The changelog will include information about merged pull requests, closed issues, and any labeled enhancements or features.
@@ -109,7 +109,7 @@ To enable changelog generation in your workflow:
     use_changelog_generator: true
 ```
 
-Note: This will commit changes to your repository's default branch, so ensure your workflow has the necessary permissions.
+Note: This will commit changes to your repository's default branch, so your workflow must have the `contents: write` permission.
 
 ## Options
 

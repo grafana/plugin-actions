@@ -153,4 +153,4 @@ See [Add attestation to your existing workflow](#add-attestation-to-your-existin
 You are missing the `contents: write` permission in your workflow.
 
 ### Error: Failed to commit changelog: Resource not accessible by integration
-You are using `use_changelog_generator: true` but your workflow doesn't have the required permissions. Make sure you have `contents: write` permission in your workflow.
+You are using `use_changelog_generator: true` but your workflow doesn't have the required permissions. Make sure you have `contents: write` permission in your workflow. Or check if your default branch is protected - in this case please [follow instruction](#for-protected-branches)

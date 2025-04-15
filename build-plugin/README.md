@@ -8,6 +8,7 @@ This GitHub Action automates the process of building Grafana plugins. It takes t
 - Generates a draft Github release for the plugin.
 - Supports signing the plugin if a Grafana access token policy is provided.
 - Supports creating a [signed build provenance attestation](https://docs.github.com/en/actions/security-for-github-actions/using-artifact-attestations/using-artifact-attestations-to-establish-provenance-for-builds). This guarantees that the plugin was built from the source code provided in the release.
+- Optionally generates a changelog for the plugin using [github-changelog-generator](https://github.com/github-changelog-generator/github-changelog-generator)
 
 ## Usage
 
@@ -15,7 +16,7 @@ This GitHub Action automates the process of building Grafana plugins. It takes t
 - Set up the necessary environment variables and secrets, including the Grafana access token policy (if signing is desired).
 - Create a git tag with the same version as the package.json version that you want to build and create a release.
 - Push the git tag to trigger the action.
-- The action will build the plugin, create an archive, and generate a draft release based on the package.json version.
+- The action will build the plugin, create an archive, generate a draft release based on the package.json version and if you prefer, the action will generate and commit an updated changelog to your repository.
 
 NOTE: the package.json version and the git tag must match. You can use `yarn version` or `npm version` to set the correct version and create the git tag.
 
@@ -88,11 +89,50 @@ jobs:
           attestation: true # new line
 ```
 
+## Changelog Generation
+
+If you pass `use_changelog_generator: true` to the action, it will:
+
+1. Generate a changelog using the [github-changelog-generator](https://github.com/github-changelog-generator/github-changelog-generator) tool
+1. Commit the updated changelog back to your repository's default branch
+
+This feature helps maintain a well-documented history of changes for your plugin. The changelog will include information about merged pull requests, closed issues, and any labeled enhancements or features.
+
+### Add changelog generation to your workflow
+
+To enable changelog generation in your workflow:
+
+```yaml
+- uses: grafana/plugin-actions/build-plugin@main
+  with:
+    policy_token: ${{ secrets.GRAFANA_ACCESS_POLICY_TOKEN }}
+    use_changelog_generator: true
+```
+
+Note: This will commit changes to your repository's default branch, so your workflow must have the `contents: write` permission.
+
+### For Protected Branches
+
+If your target branch is protected, the default github.token cannot push changes directly, even with write permissions. In this case, you need to:
+
+1. Create a Personal Access Token (PAT) with appropriate permissions
+1. Store it as a repository secret (e.g., CHANGELOG_PAT)
+1. Configure the action to use this token:
+
+```yaml
+- name: Build plugin
+  uses: grafana/plugin-actions/build-plugin@main
+  with:
+    use_changelog_generator: true
+    token: ${{ secrets.CHANGELOG_PAT }}  # Replace default github.token
+```
+
 ## Options
 
 - `policy_token`: Grafana access policy token. https://grafana.com/developers/plugin-tools/publish-a-plugin/sign-a-plugin#generate-an-access-policy-token
 - `grafana_token`: [deprecated] Grafana API Key to sign a plugin. Prefer `policy_token`. See https://grafana.com/developers/plugin-tools/publish-a-plugin/sign-a-plugin
 - attestation: If `true`, create a verifiable attestation for the plugin using sigstore. See [attestation of plugin package](#attestation-of-plugin-package)
+- use_changelog_generator: If `true`, generate a changelog for the plugin and commit it to the repository. See [changelog generation](#changelog-generation)
 
 ## Troubleshooting
 
@@ -111,3 +151,6 @@ See [Add attestation to your existing workflow](#add-attestation-to-your-existin
 ### Error: Resource not accessible by integration - https://docs.github.com/rest/releases/releases#create-a-release
 
 You are missing the `contents: write` permission in your workflow.
+
+### Error: Failed to commit changelog: Resource not accessible by integration
+You are using `use_changelog_generator: true` but your workflow doesn't have the required permissions. Make sure you have `contents: write` permission in your workflow. Or check if your default branch is protected - in this case please follow the [instructions for protected branches](#for-protected-branches)

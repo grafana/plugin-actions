@@ -93,6 +93,5 @@ runs:
 
     - name: Warn if main stats artifact could not be found
       if: ${{ github.event_name == 'pull_request' && steps.main-stats-info.outputs.run-id == '' }}
-      run: |
-        echo "::warning title=Main stats artifact could not be found::Please run this workflow manually or push a commit to the main branch."
+      run: echo "::warning title=Main stats artifact could not be found::Please run this workflow manually (using workflow_dispatch) or push a commit to the main branch to generate it."
       shell: bash

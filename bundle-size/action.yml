@@ -9,7 +9,7 @@ inputs:
   node-version:
     description: "The version of node to use."
     required: false
-    default: "20"
+    default: "22"
   threshold:
     description: "Only post reports to PRs if the total entrypoint diff percentage is greater than this number."
     required: false

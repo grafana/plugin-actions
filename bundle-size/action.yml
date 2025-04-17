@@ -9,7 +9,7 @@ inputs:
   node-version:
     description: "The version of node to use."
     required: false
-    default: "20"
+    default: "22"
   threshold:
     description: "Only post reports to PRs if the total entrypoint diff percentage is greater than this number."
     required: false
@@ -28,9 +28,9 @@ runs:
 
   steps:
     - name: Check if pull request event
-      if: ${{ github.event_name != 'pull_request' && github.event_name != 'push' }}
+      if: ${{ github.event_name != 'pull_request' && github.event_name != 'push' && github.event_name != 'workflow_dispatch' }}
       run: |
-        echo "This action is intended to run only on pull_request or push events. Exiting."
+        echo "This action is intended to run only on pull_request, push or workflow_dispatch events. Exiting."
         exit 0
       shell: bash
 
@@ -46,7 +46,7 @@ runs:
     - name: Build project to generate stats
       working-directory: ${{ inputs.working-directory }}
       run: |
-        if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref }}" == "refs/heads/main" ]; then
+        if [ "${{ github.event_name }}" == "push" ] || [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ "${{ github.ref }}" == "refs/heads/main" ]; then
           ${{ github.action_path }}/pm.sh buildMain
         elif [ "${{ github.event_name }}" == "pull_request" ]; then
           ${{ github.action_path }}/pm.sh buildPR
@@ -57,7 +57,7 @@ runs:
       shell: bash
 
     - name: Upload main branch stats.json artifact
-      if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+      if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' }}
       uses: actions/upload-artifact@v4
       with:
         name: ${{ inputs.main-branch-stats-artifact }}
@@ -75,7 +75,7 @@ runs:
       shell: bash
 
     - name: Download main branch stats artifact
-      if: ${{ github.event_name == 'pull_request' }}
+      if: ${{ github.event_name == 'pull_request' && steps.main-stats-info.outputs.run-id != '' }}
       uses: actions/download-artifact@v4
       with:
         name: ${{ inputs.main-branch-stats-artifact }}
@@ -84,9 +84,14 @@ runs:
         run-id: ${{ steps.main-stats-info.outputs.run-id }}
 
     - name: Generate stats report and comment on PR
-      if: ${{ github.event_name == 'pull_request' }}
+      if: ${{ github.event_name == 'pull_request' && steps.main-stats-info.outputs.run-id != '' }}
       uses: actions/github-script@v7
       with:
         script: |
           const script = require('${{ github.action_path }}/index.js')
           await script({github, context, core}, ${{ inputs.threshold }}, "${{ inputs.working-directory }}/stats.json", "${{ inputs.working-directory }}/pr-stats.json", "${{ inputs.working-directory }}")
+
+    - name: Warn if main stats artifact could not be found
+      if: ${{ github.event_name == 'pull_request' && steps.main-stats-info.outputs.run-id == '' }}
+      run: echo "::warning title=Main stats artifact could not be found::Please run this workflow manually (using workflow_dispatch) or push a commit to the main branch to generate it."
+      shell: bash

@@ -52,12 +52,12 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: actions/setup-node@v4
+    - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
       with:
         node-version: "${{ inputs.node-version }}"
 
     - name: Setup Go environment
-      uses: actions/setup-go@v5
+      uses: actions/setup-go@0aaccfd150d50ccaeb58ebd88d36e91967a5f35b # v5.4.0
       with:
         go-version: "${{ inputs.go-version }}"
 
@@ -80,14 +80,14 @@ runs:
 
     - name: Test backend
       if: steps.check-for-backend.outputs.has-backend == 'true'
-      uses: magefile/mage-action@v3
+      uses: magefile/mage-action@6f50bbb8ea47d56e62dee92392788acbc8192d0b # v3.1.0
       with:
         version: latest
         args: coverage
 
     - name: Build backend
       if: steps.check-for-backend.outputs.has-backend == 'true'
-      uses: magefile/mage-action@v3
+      uses: magefile/mage-action@6f50bbb8ea47d56e62dee92392788acbc8192d0b # v3.1.0
       with:
         version: latest
         args: "${{ inputs.backend-target }}"
@@ -130,12 +130,18 @@ runs:
     - name: Package plugin
       id: package-plugin
       run: |
-        mv dist ${{ steps.metadata.outputs.plugin-id }}
-        zip ${{ steps.metadata.outputs.archive }} ${{ steps.metadata.outputs.plugin-id }} -r
-        sha1sum ${{ steps.metadata.outputs.archive }} | cut -f1 -d' ' > ${{ steps.metadata.outputs.archive-sha1sum }}
+        mv dist $PLUGIN_ID
+        zip $PLUGIN_ARCHIVE $PLUGIN_ID -r
+        sha1sum $PLUGIN_ARCHIVE | cut -f1 -d' ' > $PLUGIN_ARCHIVE_SHA1SUM
       shell: bash
+      env:
+        PLUGIN_ID: ${{ steps.metadata.outputs.plugin-id }}
+        PLUGIN_ARCHIVE: ${{ steps.metadata.outputs.archive }}
+        PLUGIN_ARCHIVE_SHA1SUM: ${{ steps.metadata.outputs.archive-sha1sum }}
 
     - name: Validate plugin
       run: |
-        npx -y @grafana/plugin-validator@latest -sourceCodeUri file://./ ${{ steps.metadata.outputs.archive }}
+        npx -y @grafana/plugin-validator@latest -sourceCodeUri file://./ $PLUGIN_ARCHIVE
       shell: bash
+      env:
+        PLUGIN_ARCHIVE: ${{ steps.metadata.outputs.archive }}

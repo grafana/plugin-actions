@@ -35,7 +35,7 @@ runs:
       shell: bash
 
     - name: Set up Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
       with:
         node-version: ${{ inputs.node-version }}
 
@@ -61,7 +61,7 @@ runs:
 
     - name: Upload main branch stats.json artifact
       if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' }}
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
       with:
         name: ${{ inputs.main-branch-stats-artifact }}
         path: ${{ inputs.working-directory }}/stats.json
@@ -80,7 +80,7 @@ runs:
 
     - name: Download main branch stats artifact
       if: ${{ github.event_name == 'pull_request' && steps.main-stats-info.outputs.run-id != '' }}
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
       with:
         name: ${{ inputs.main-branch-stats-artifact }}
         path: ${{ inputs.working-directory }}
@@ -89,11 +89,15 @@ runs:
 
     - name: Generate stats report and comment on PR
       if: ${{ github.event_name == 'pull_request' && steps.main-stats-info.outputs.run-id != '' }}
-      uses: actions/github-script@v7
+      uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
       with:
         script: |
           const script = require('${{ github.action_path }}/index.js')
-          await script({github, context, core}, ${THRESHOLD}, "${WORKING_DIRECTORY}/stats.json", "${WORKING_DIRECTORY}/pr-stats.json", "${WORKING_DIRECTORY}")
+          const { THRESHOLD, WORKING_DIRECTORY } = process.env
+          await script({github, context, core}, THRESHOLD, `${WORKING_DIRECTORY}/stats.json`, `${WORKING_DIRECTORY}/pr-stats.json`, `${WORKING_DIRECTORY}`)
+      env:
+        THRESHOLD: ${{ inputs.threshold }}
+        WORKING_DIRECTORY: ${{ inputs.working-directory }}
 
     - name: Warn if main stats artifact could not be found
       if: ${{ github.event_name == 'pull_request' && steps.main-stats-info.outputs.run-id == '' }}

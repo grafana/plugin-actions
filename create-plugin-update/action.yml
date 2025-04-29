@@ -26,7 +26,7 @@ runs:
     - name: Get latest version of create-plugin package
       id: get-latest-version
       run: |
-        echo "LATEST_VERSION=$(npx -y @grafana/create-plugin@latest version | sed 's/.*@//' | sed 's/ *$//' | sed '/^$/d')" >> "$GITHUB_ENV"
+        echo "latest_version=$(npx -y @grafana/create-plugin@latest version | sed 's/.*@//' | sed 's/ *$//' | sed '/^$/d')" >> "$GITHUB_OUTPUT"
       shell: bash
 
     - name: Checkout Repository
@@ -38,7 +38,7 @@ runs:
     - name: Get version from .config/.cprc.json
       id: get-config-version
       run: |
-        echo "CONFIG_VERSION=$(jq -r '.version' .config/.cprc.json)" >> "$GITHUB_ENV"
+        echo "config_version=$(jq -r '.version' .config/.cprc.json)" >> "$GITHUB_OUTPUT"
       shell: bash
 
     - name: Compare versions
@@ -50,6 +50,9 @@ runs:
           echo "update_needed=false" >> "$GITHUB_OUTPUT"
         fi
       shell: bash
+      env:
+        LATEST_VERSION: ${{ steps.get-latest-version.outputs.latest_version }}
+        CONFIG_VERSION: ${{ steps.get-config-version.outputs.config_version }}
 
     - name: Update the configs
       if: steps.compare-versions.outputs.update_needed == 'true'
@@ -63,23 +66,29 @@ runs:
       run: |
         git config --local user.name "github-actions[bot]"
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
-        git checkout -b update-grafana-create-plugin-${{ env.LATEST_VERSION }}
+        git checkout -b update-grafana-create-plugin-${LATEST_VERSION}
         git add .
-        git commit -m "chore: update configuration to create-plugin ${{ env.LATEST_VERSION }}"
-        git push https://x-access-token:${{ inputs.token }}@github.com/${{ github.repository }} update-grafana-create-plugin-${{ env.LATEST_VERSION }}
+        git commit -m "chore: update configuration to create-plugin $LATEST_VERSION"
+        git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} update-grafana-create-plugin-${LATEST_VERSION}
       shell: bash
+      env:
+        LATEST_VERSION: ${{ steps.get-latest-version.outputs.latest_version }}
+        GITHUB_TOKEN: ${{ inputs.token }}
 
     - name: Create or Update PR
       if: steps.compare-versions.outputs.update_needed == 'true'
       env:
         GH_TOKEN: ${{ inputs.token }}
+        LATEST_VERSION: ${{ steps.get-latest-version.outputs.latest_version }}
+        CONFIG_VERSION: ${{ steps.get-config-version.outputs.config_version }}
+        BASE: ${{ inputs.base }}
       run: |
-        PR_NUMBER=$(gh pr list --base ${{ inputs.base }} --head update-grafana-create-plugin-${{ env.LATEST_VERSION }} --json number -q '.[0].number')
+        PR_NUMBER=$(gh pr list --base $BASE --head update-grafana-create-plugin-${LATEST_VERSION} --json number -q '.[0].number')
 
-        PR_TITLE="chore: bump @grafana/create-plugin configuration to ${{ env.LATEST_VERSION }}"
+        PR_TITLE="chore: bump @grafana/create-plugin configuration to $LATEST_VERSION"
 
         PR_BODY=$(cat <<EOF
-        Bumps [\`@grafana/create-plugin\`](https://github.com/grafana/plugin-tools/tree/main/packages/create-plugin) configuration from ${{ env.CONFIG_VERSION }} to ${{ env.LATEST_VERSION }}.
+        Bumps [\`@grafana/create-plugin\`](https://github.com/grafana/plugin-tools/tree/main/packages/create-plugin) configuration from $CONFIG_VERSION to $LATEST_VERSION.
 
         **Notes for reviewer:**
         This is an auto-generated PR which ran \`@grafana/create-plugin update\`.
@@ -89,7 +98,7 @@ runs:
         )
 
         if [ -z "$PR_NUMBER" ]; then
-          gh pr create --base ${{ inputs.base }} --head update-grafana-create-plugin-${{ env.LATEST_VERSION }} --title "$PR_TITLE" --body "$PR_BODY"
+          gh pr create --base $BASE --head update-grafana-create-plugin-${LATEST_VERSION} --title "$PR_TITLE" --body "$PR_BODY"
         else
           gh pr edit $PR_NUMBER --title "$PR_TITLE" --body "$PR_BODY"
         fi

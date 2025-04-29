@@ -94,7 +94,8 @@ runs:
         publish_branch: ${{ inputs.pages-branch }}
         github_token: ${{ inputs.github-token }}
         publish_dir: all-reports
-        destination_dir: ${{ steps.timestampid.outputs.timestamp }}/${{ env.JOB_INITIATOR }}
+        destination_dir: ${{ steps.timestampid.outputs.timestamp }}/${{ steps.set-initiator.outputs.job_initiator }}
+
 
     - name: Checkout code
       uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2

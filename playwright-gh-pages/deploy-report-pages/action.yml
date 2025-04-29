@@ -21,19 +21,19 @@ inputs:
     description: 'Branch to deploy the reports to. Default is "gh-pages".'
     required: true
     default: 'gh-pages'
-  
+
 runs:
   using: "composite"
   steps:
     - name: Download report artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
       with:
         path: all-reports
         pattern: ${{ inputs.artifact-pattern }}
         merge-multiple: true
 
     - name: Delete any existing comment
-      uses: thollander/actions-comment-pull-request@v3
+      uses: thollander/actions-comment-pull-request@65f9e5c9a1f2cd378bd74b2e057c9736982a8e74 # v3
       if: ${{ github.event.number != null }}
       with:
         comment-tag: gf-playwright-test-results
@@ -45,12 +45,13 @@ runs:
       run: echo "timestamp=$(date --utc +%Y%m%d)" >> "$GITHUB_OUTPUT"
 
     - name: Set initiator variable
+      id: set-initiator
       shell: bash
       run: |
         if [[ -n "${{ github.event.number }}" ]]; then
-          echo "JOB_INITIATOR=${{ github.event.number }}" >> "$GITHUB_ENV"
+          echo "job_initiator=${{ github.event.number }}" >> "$GITHUB_OUTPUT"
         else
-          echo "JOB_INITIATOR=${{ github.run_id }}" >> "$GITHUB_ENV"
+          echo "job_initiator=${{ github.run_id }}" >> "$GITHUB_OUTPUT"
         fi
 
     - name: Generate Playwright Test Results Table
@@ -69,16 +70,18 @@ runs:
         GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
         GITHUB_REPOSITORY_NAME: ${{ github.event.repository.name }}
         TIMESTAMP: ${{ steps.timestampid.outputs.timestamp }}
-        JOB_INITIATOR: ${{ env.JOB_INITIATOR }}
+        JOB_INITIATOR: ${{ steps.set-initiator.outputs.job_initiator }}
         DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
-  
+
     - name: Write result table in Action summary
       shell: bash
       if: ${{ steps.generate-table.outputs.table != '' }}
-      run: echo "${{ steps.generate-table.outputs.table }}" >> "$GITHUB_STEP_SUMMARY"
+      run: echo "$TABLE_OUTPUT" >> "$GITHUB_STEP_SUMMARY"
+      env:
+        TABLE_OUTPUT: ${{ steps.generate-table.outputs.table }}
 
     - name: Comment PR with Execution Details
-      uses: thollander/actions-comment-pull-request@v3
+      uses: thollander/actions-comment-pull-request@65f9e5c9a1f2cd378bd74b2e057c9736982a8e74 # v3
       if: ${{ inputs.pr-comment-summary == 'true' && github.event.number != null && steps.generate-table.outputs.table != '' }}
       with:
         create-if-not-exists: true
@@ -86,21 +89,23 @@ runs:
         message: ${{ steps.generate-table.outputs.table }}
 
     - name: Push the new files to github pages
-      uses: peaceiris/actions-gh-pages@v3
+      uses: peaceiris/actions-gh-pages@373f7f263a76c20808c831209c920827a82a2847 # v3.9.3
       with:
         publish_branch: ${{ inputs.pages-branch }}
         github_token: ${{ inputs.github-token }}
         publish_dir: all-reports
         destination_dir: ${{ steps.timestampid.outputs.timestamp }}/${{ env.JOB_INITIATOR }}
-      
+
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       with:
         ref: ${{ inputs.pages-branch }}
 
     - name: Delete old reports
       shell: bash
-      run: ${{ github.action_path }}/cleanup-folders.sh --retention-days ${{ inputs.retention-days }} --folder-name .
+      run: ${{ github.action_path }}/cleanup-folders.sh --retention-days $RETENTION_DAYS --folder-name .
+      env:
+        RETENTION_DAYS: ${{ inputs.retention-days }}
 
     - name: Commit and push changed files
       shell: bash
@@ -112,7 +117,10 @@ runs:
         if git diff --staged --quiet; then
           echo "No changes to commit"
         else
-          git commit -m "Delete folders older than ${{ inputs.retention-days }} days"
-          git push origin ${{ inputs.pages-branch }}
+          git commit -m "Delete folders older than $RETENTION_DAYS days"
+          git push origin $PAGES_BRANCH
         fi
+      env:
+        RETENTION_DAYS: ${{ inputs.retention-days }}
+        PAGES_BRANCH: ${{ inputs.pages-branch }}
 

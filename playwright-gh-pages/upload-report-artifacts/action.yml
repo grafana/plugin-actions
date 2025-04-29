@@ -83,7 +83,7 @@ runs:
       run: |
         SUMMARY="GRAFANA_IMAGE=${GRAFANA_IMAGE}
         GRAFANA_VERSION=${GRAFANA_VERSION}
-        OUTPUT=${TEST_OUTCOME}
+        OUTPUT=${OUTPUT}
         PLUGIN_NAME=${PLUGIN_NAME}
         UPLOAD_REPORT_ENABLED=${UPLOAD_REPORT_ENABLED}"
         echo "${SUMMARY}" > ./playwright-report/${PARENT_DIR}/summary.txt

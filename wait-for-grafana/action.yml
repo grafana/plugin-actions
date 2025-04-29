@@ -20,5 +20,10 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: ${{ github.action_path }}/wait-for-grafana.sh "${{ inputs.url }}" "${{ inputs.responseCode }}" "${{ inputs.timeout }}" "${{ inputs.interval }}"
+    - run: ${{ github.action_path }}/wait-for-grafana.sh "${GRAFANA_URL}" "${GRAFANA_RESPONSE_CODE}" "${GRAFANA_TIMEOUT}" "${GRAFANA_INTERVAL}"
       shell: bash
+      env:
+        GRAFANA_URL: ${{ inputs.url }}
+        GRAFANA_RESPONSE_CODE: ${{ inputs.responseCode }}
+        GRAFANA_TIMEOUT: ${{ inputs.timeout }}
+        GRAFANA_INTERVAL: ${{ inputs.interval }}

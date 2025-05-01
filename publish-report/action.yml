@@ -10,33 +10,41 @@ inputs:
     required: false
     description: "Path to the folder to publish. Defaults to 'playwright-report/'"
 
-
 runs:
   using: "composite"
   steps:
     - id: get-secrets
-      uses: grafana/shared-workflows/actions/get-vault-secrets@main
+      uses: grafana/shared-workflows/actions/get-vault-secrets@5d7e361bc7e0a183cde8afe9899fb7b596d2659b # get-vault-secrets-v1.2.0
       with:
         common_secrets: |
           GCP_UPLOAD_ARTIFACTS_KEY=grafana/artifacts-uploader-service-account:'credentials.json'
 
-    - name: 'Authenticate to Google Cloud'
-      uses: 'google-github-actions/auth@v2'
+    - name: "Authenticate to Google Cloud"
+      uses: "google-github-actions/auth@6fc4af4b145ae7821d527454aa9bd537d1f2dc5f" # v2.1.7
       with:
-        credentials_json: '${{ env.GCP_UPLOAD_ARTIFACTS_KEY }}'
+        credentials_json: "${{ env.GCP_UPLOAD_ARTIFACTS_KEY }}"
 
-    - name: 'Set up Cloud SDK'
-      uses: 'google-github-actions/setup-gcloud@v2'
+    - name: "Set up Cloud SDK"
+      uses: "google-github-actions/setup-gcloud@6189d56e4096ee891640bb02ac264be376592d6a" # v2.1.2
 
     - name: Publish report to Cloud Storage
       shell: bash
       run: |
         echo "Publish release to Google Cloud Storage:"
-        path=${{inputs.path}}
+        path=${PUBLISH_REPORT_PATH}
         last_char=${path: -1}
         [[ $last_char != "/" ]] && path="$path/";
-        gsutil cp -r "$path". gs://releng-pipeline-artifacts-dev/${{ github.event.repository.name }}/${{ github.event.number }}/Grafana-v${{ inputs.grafana-version }}
+        gsutil cp -r "$path". gs://releng-pipeline-artifacts-dev/${EVENT_REPOSITORY_NAME}/${EVENT_NUMBER}/Grafana-v${GRAFANA_VERSION}
+      env:
+        EVENT_REPOSITORY_NAME: ${{ github.event.repository.name }}
+        EVENT_NUMBER: ${{ github.event.number }}
+        GRAFANA_VERSION: ${{ inputs.grafana-version }}
+        PUBLISH_REPORT_PATH: ${{ inputs.path }}
 
     - name: Write report link to summary
       shell: bash
-      run: echo '<a href="https://storage.googleapis.com/releng-pipeline-artifacts-dev/${{ github.event.repository.name }}/${{ github.event.number }}/Grafana-v${{ inputs.grafana-version }}/index.html">Browse the Playwright report for Grafana-v${{ inputs.grafana-version }}</a>' >> $GITHUB_STEP_SUMMARY
+      run: echo "<a href=\"https://storage.googleapis.com/releng-pipeline-artifacts-dev/$EVENT_REPOSITORY_NAME/$EVENT_NUMBER/Grafana-v$GRAFANA_VERSION/index.html\">Browse the Playwright report for Grafana-v$GRAFANA_VERSION</a>" >> $GITHUB_STEP_SUMMARY
+      env:
+        EVENT_REPOSITORY_NAME: ${{ github.event.repository.name }}
+        EVENT_NUMBER: ${{ github.event.number }}
+        GRAFANA_VERSION: ${{ inputs.grafana-version }}

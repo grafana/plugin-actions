@@ -25,13 +25,13 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: actions/setup-node@v4
+    - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
       with:
         node-version: 20
     - id: run-levitate
       run: |
         # RUN levitate is-compatible. Save the output to .levitate_output
-        npx --yes @grafana/levitate@latest is-compatible --path ${{ inputs.module }} --target ${{ inputs.targets }} --markdown | tee .levitate_output || true
+        npx --yes @grafana/levitate@latest is-compatible --path $LEVITATE_PATH --target $LEVITATE_TARGETS --markdown | tee .levitate_output || true
         # Detect the exit code based on the levitate output
         CODE=$(if [[ -n $(cat .levitate_output | grep "not fully compatible") ]]; then echo 1; else echo 0; fi)
         # Capture levitate output in an ENV variable
@@ -43,12 +43,17 @@ runs:
 
         echo "is-compatible-exit-code=$CODE" >> $GITHUB_OUTPUT
       shell: "bash"
+      env:
+        LEVITATE_PATH: ${{ inputs.module }}
+        LEVITATE_TARGETS: ${{ inputs.targets }}
+
     # find the current PR (if running in one)
-    - uses: jwalton/gh-find-current-pr@v1
+    - uses: jwalton/gh-find-current-pr@89ee5799558265a1e0e31fab792ebb4ee91c016b # v1.3.3
       id: finder
       if: (inputs.comment-pr == 'yes' && steps.run-levitate.outputs.code == 1) || (inputs.comment-pr == 'yes' && inputs.skip-comment-if-compatible == 'no')
+
     # write a comment with levitate output
-    - uses: marocchino/sticky-pull-request-comment@v2
+    - uses: marocchino/sticky-pull-request-comment@52423e01640425a022ef5fd42c6fb5f633a02728 # v2.9.1
       if: (inputs.comment-pr == 'yes' && steps.run-levitate.outputs.code == 1) || (inputs.comment-pr == 'yes' && inputs.skip-comment-if-compatible == 'no')
       with:
         number: ${{ steps.finder.outputs.pr }}

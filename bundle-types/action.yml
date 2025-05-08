@@ -71,12 +71,14 @@ runs:
       with:
         app-id: ${{ env.GITHUB_APP_ID }}
         private-key: ${{ env.GITHUB_APP_PRIVATE_KEY }}
+        owner: grafana
+        repository: plugin-extension-types
 
     - name: Clone NPM types package repo
       run: |
         cd ..
         gh auth status
-        gh repo clone git@github.com:grafana/plugin-extension-types.git
+        gh repo clone grafana/plugin-extension-types
       shell: bash
       env:
         GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}

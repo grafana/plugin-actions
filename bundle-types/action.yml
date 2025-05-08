@@ -71,7 +71,11 @@ runs:
       with:
         app-id: ${{ env.GITHUB_APP_ID }}
         private-key: ${{ env.GITHUB_APP_PRIVATE_KEY }}
-        owner: grafana        
+        owner: grafana
+        repositories: |
+            plugin-extension-types
+
+
 
     - name: Clone NPM types package repo
       run: |

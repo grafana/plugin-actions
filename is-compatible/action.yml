@@ -61,7 +61,7 @@ runs:
           Levitate is-compatible report:
 
           ${{ steps.run-levitate.outputs.is-compatible-stdout }}
-    - if: inputs.fail-if-incompatible == 'yes' && steps.run-levitate.outputs.code == 1
+    - if: inputs.fail-if-incompatible == 'yes' && steps.run-levitate.outputs.is-compatible-exit-code == 1
       run: |
         echo "Possible incompatibilities found. Check Levitate output for further information"
         exit 1

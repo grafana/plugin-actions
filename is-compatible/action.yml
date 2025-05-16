@@ -10,7 +10,7 @@ inputs:
     default: "yes"
     required: false
   skip-comment-if-compatible:
-    description: "If comment-pr is enabled, skip the message if the result is favorable. yes or no"
+    description: "If comment-pr is enabled, skip the message if the result is favorable. yes or no. Requires \"pull-requests: write permissions\""
     default: "no"
     required: false
   fail-if-incompatible:
@@ -27,7 +27,7 @@ runs:
   steps:
     - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
       with:
-        node-version: 20
+        node-version: 22
     - id: run-levitate
       run: |
         # RUN levitate is-compatible. Save the output to .levitate_output
@@ -61,7 +61,7 @@ runs:
           Levitate is-compatible report:
 
           ${{ steps.run-levitate.outputs.is-compatible-stdout }}
-    - if: inputs.fail-if-incompatible == 'yes' && steps.run-levitate.outputs.code == 1
+    - if: inputs.fail-if-incompatible == 'yes' && steps.run-levitate.outputs.is-compatible-exit-code == 1
       run: |
         echo "Possible incompatibilities found. Check Levitate output for further information"
         exit 1

@@ -10,7 +10,7 @@ inputs:
     default: "yes"
     required: false
   skip-comment-if-compatible:
-    description: "If comment-pr is enabled, skip the message if the result is favorable. yes or no"
+    description: "If comment-pr is enabled, skip the message if the result is favorable. yes or no. Requires \"pull-requests: write permissions\""
     default: "no"
     required: false
   fail-if-incompatible:

@@ -131,8 +131,8 @@ runs:
       run: |
         git add CHANGELOG.md
 
-        git config --local user.name "github-actions[bot]"
-        git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --local user.name grafana-plugins-platform-bot[bot]
+        git config --local user.email 144369747+grafana-plugins-platform-bot[bot]@users.noreply.github.com
 
         git commit -m "docs: update changelog for ${PLUGIN_VERSION} [skip ci]"
 

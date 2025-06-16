@@ -113,8 +113,9 @@ runs:
       if: ${{ steps.check-diff.outputs.has-changes == 'true' }}
       run: |
         cd ../plugin-extension-types
-        git config --local user.name "github-actions[bot]"
-        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name grafana-plugins-platform-bot[bot]
+        git config --local user.email 144369747+grafana-plugins-platform-bot[bot]@users.noreply.github.com
+
         git checkout -b $PLUGIN_ID-$PLUGIN_VERSION
         git add .
         git commit -m "types: updating $PLUGIN_ID"

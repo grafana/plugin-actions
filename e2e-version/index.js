@@ -8,6 +8,7 @@ const SkipGrafanaDevImageInput = 'skip-grafana-dev-image';
 const VersionResolverTypeInput = 'version-resolver-type';
 const GrafanaDependencyInput = 'grafana-dependency';
 const LimitInput = 'limit';
+const PluginDirectoryInput = 'plugin-directory';
 const MatrixOutput = 'matrix';
 
 const VersionResolverTypes = {
@@ -137,7 +138,7 @@ async function getGrafanaStableMinorVersions() {
 }
 
 async function getPluginGrafanaDependencyFromPluginJson() {
-  const file = await fs.readFile(path.resolve(path.join(process.cwd(), 'src'), 'plugin.json'), 'utf8');
+  const file = await fs.readFile(path.resolve(path.join(core.getInput(PluginDirectoryInput)), 'plugin.json'), 'utf8');
   const json = JSON.parse(file);
   if (!json.dependencies.grafanaDependency) {
     throw new Error('Could not find plugin grafanaDependency');

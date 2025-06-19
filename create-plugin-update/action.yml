@@ -64,8 +64,9 @@ runs:
     - name: Create branch
       if: steps.compare-versions.outputs.update_needed == 'true'
       run: |
-        git config --local user.name "github-actions[bot]"
-        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name grafana-plugins-platform-bot[bot]
+        git config --local user.email 144369747+grafana-plugins-platform-bot[bot]@users.noreply.github.com
+
         git checkout -b update-grafana-create-plugin-${LATEST_VERSION}
         git add .
         git commit -m "chore: update configuration to create-plugin $LATEST_VERSION"

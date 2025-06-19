@@ -14,15 +14,16 @@ runs:
   using: "composite"
   steps:
     - id: get-secrets
-      uses: grafana/shared-workflows/actions/get-vault-secrets@5d7e361bc7e0a183cde8afe9899fb7b596d2659b # get-vault-secrets-v1.2.0
+      uses: grafana/shared-workflows/actions/get-vault-secrets@9f37f656e063f0ad0b0bfc38d49894b57d363936 # v1.2.1
       with:
         common_secrets: |
           GCP_UPLOAD_ARTIFACTS_KEY=grafana/artifacts-uploader-service-account:'credentials.json'
+        export_env: false
 
     - name: "Authenticate to Google Cloud"
       uses: "google-github-actions/auth@ba79af03959ebeac9769e648f473a284504d9193" # v2.1.10
       with:
-        credentials_json: "${{ env.GCP_UPLOAD_ARTIFACTS_KEY }}"
+        credentials_json: "${{ fromJSON(steps.get-secrets.outputs.secrets).GCP_UPLOAD_ARTIFACTS_KEY }}"
 
     - name: "Set up Cloud SDK"
       uses: "google-github-actions/setup-gcloud@77e7a554d41e2ee56fc945c52dfd3f33d12def9a" # v2.1.4

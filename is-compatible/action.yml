@@ -53,7 +53,7 @@ runs:
       if: (inputs.comment-pr == 'yes' && steps.run-levitate.outputs.code == 1) || (inputs.comment-pr == 'yes' && inputs.skip-comment-if-compatible == 'no')
 
     # write a comment with levitate output
-    - uses: marocchino/sticky-pull-request-comment@67d0dec7b07ed060a405f9b2a64b8ab319fdd7db # v2.9.2
+    - uses: marocchino/sticky-pull-request-comment@d2ad0de260ae8b0235ce059e63f2949ba9e05943 # v2.9.3
       if: (inputs.comment-pr == 'yes' && steps.run-levitate.outputs.code == 1) || (inputs.comment-pr == 'yes' && inputs.skip-comment-if-compatible == 'no')
       with:
         number: ${{ steps.finder.outputs.pr }}

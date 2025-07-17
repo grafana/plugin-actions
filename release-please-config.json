@@ -1,0 +1,100 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "changelog-sections": [
+    {
+      "section": "🎉 Features",
+      "type": "feat"
+    },
+    {
+      "section": "🐛 Bug Fixes",
+      "type": "fix"
+    },
+    {
+      "section": "📝 Documentation",
+      "type": "docs"
+    },
+    {
+      "section": "💄 Styles",
+      "type": "style"
+    },
+    {
+      "section": "♻️ Code Refactoring",
+      "type": "refactor"
+    },
+    {
+      "section": "⚡ Performance Improvements",
+      "type": "perf"
+    },
+    {
+      "section": "✅ Tests",
+      "type": "test"
+    },
+    {
+      "section": "🏗️ Builds",
+      "type": "build"
+    },
+    {
+      "section": "🤖 Continuous Integrations",
+      "type": "ci"
+    },
+    {
+      "section": "🔧 Chores",
+      "type": "chore"
+    },
+    {
+      "section": "⏪ Reverts",
+      "type": "revert"
+    }
+  ],
+  "draft-pull-request": true,
+  "include-v-in-tag": true,
+  "packages": {
+    "build-plugin": {
+      "package-name": "build-plugin",
+      "extra-files": ["README.md"]
+    },
+    "bundle-size": {
+      "package-name": "bundle-size",
+      "extra-files": ["README.md"]
+    },
+    "bundle-types": {
+      "package-name": "bundle-types",
+      "extra-files": ["README.md"]
+    },
+    "create-plugin-update": {
+      "package-name": "create-plugin-update",
+      "extra-files": ["README.md"]
+    },
+    "e2e-version": {
+      "package-name": "e2e-version",
+      "extra-files": ["README.md"]
+    },
+    "is-compatible": {
+      "package-name": "is-compatible",
+      "extra-files": ["README.md"]
+    },
+    "package-plugin": {
+      "package-name": "package-plugin",
+      "extra-files": ["README.md"]
+    },
+    "playwright-gh-pages/deploy-report-pages": {
+      "package-name": "deploy-report-pages",
+      "extra-files": ["README.md"]
+    },
+    "playwright-gh-pages/upload-report-artifacts": {
+      "package-name": "upload-report-artifacts",
+      "extra-files": ["README.md"]
+    },
+    "publish-report": {
+      "package-name": "publish-report",
+      "extra-files": ["README.md"]
+    },
+    "wait-for-grafana": {
+      "package-name": "wait-for-grafana",
+      "extra-files": ["README.md"]
+    }
+  },
+  "release-type": "simple",
+  "tag-separator": "/",
+  "separate-pull-requests": true
+}

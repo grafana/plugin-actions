@@ -30,7 +30,7 @@ If you're happy with the default values, you can use the action without specifyi
 
 ```yml
 - name: Wait for Grafana server
-  uses: grafana/plugin-actions/wait-for-grafana@main
+  uses: grafana/plugin-actions/wait-for-grafana@wait-for-grafana/v1.0.1
 ```
 
 ### Using custom values

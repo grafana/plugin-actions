@@ -117,7 +117,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Resolve Grafana E2E versions
         id: resolve-versions
-        uses: grafana/plugin-actions/e2e-version
+        uses: grafana/plugin-actions/e2e-version@e2e-version/v1.0.1
         with:
           # target all minor versions of Grafana that have been released since the version that was specified as grafanaDependency in the plugin
           version-resolver-type: plugin-grafana-dependency
@@ -153,7 +153,7 @@ jobs:
     steps:
       - name: Resolve Grafana E2E versions
         id: resolve-versions
-        uses: grafana/plugin-actions/e2e-version
+        uses: grafana/plugin-actions/e2e-version@e2e-version/v1.0.1
         with:
           #target all minors for the current major version of Grafana and the last minor of the previous major version of Grafana
           version-resolver-type: version-support-policy

@@ -46,7 +46,7 @@
       "type": "revert"
     }
   ],
-  "draft-pull-request": true,
+  "draft-pull-request": false,
   "include-v-in-tag": true,
   "packages": {
     "build-plugin": {

@@ -9,5 +9,5 @@
   "playwright-gh-pages/deploy-report-pages": "1.0.1",
   "playwright-gh-pages/upload-report-artifacts": "1.0.1",
   "publish-report": "1.0.0",
-  "wait-for-grafana": "1.0.0"
+  "wait-for-grafana": "1.0.1"
 }

@@ -36,7 +36,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: grafana/plugin-actions/package-plugin@main
+      - uses: grafana/plugin-actions/package-plugin@package-plugin/v1.0.1
         id: 'package-plugin'
         with:
           # see https://grafana.com/developers/plugin-tools/publish-a-plugin/sign-a-plugin#generate-an-access-policy-token to generate it

@@ -21,7 +21,7 @@ The path to the folder that contains the files that you would like to upload. If
 A Playwright report is only generated in case Playwright tests were executed, so you may want to add a condition to the `publish-report` step that ensures the workflow wasn't cancelled before the execution of the tests took place. Since this Action only works for repositories in the Grafana organization, you can include a check for that in the step condition too.
 
 ### Using the default report path.
-
+<!-- x-release-please-start-version -->
 ```yml
 - name: Publish report to GCS
 if: ${{ (always() && steps.run-tests.outcome == 'success') || (failure() && steps.run-tests.outcome == 'failure') && github.event.organization.login == 'grafana' }}
@@ -29,9 +29,9 @@ uses: grafana/plugin-actions/publish-report@publish-report/v1.0.1
 with:
     grafana-version: ${{ matrix.GRAFANA_IMAGE.VERSION }}
 ```
-
+<!-- x-release-please-end-version -->
 ### Using a custom report path.
-
+<!-- x-release-please-start-version -->
 ```yml
 - name: Publish report to GCS
 if: ${{ (always() && steps.run-tests.outcome == 'success') || (failure() && steps.run-tests.outcome == 'failure') && github.event.organization.login == 'grafana' }}
@@ -40,3 +40,4 @@ with:
     grafana-version: ${{ matrix.GRAFANA_IMAGE.VERSION }}
     directory: packages/grafana-datasource/playwright-report/
 ```
+<!-- x-release-please-end-version -->

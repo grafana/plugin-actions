@@ -27,12 +27,12 @@ You can use this action in your workflow to wait for a Grafana server to become 
 ### Using default values
 
 If you're happy with the default values, you can use the action without specifying any inputs:
-
+<!-- x-release-please-start-version -->
 ```yml
 - name: Wait for Grafana server
   uses: grafana/plugin-actions/wait-for-grafana@wait-for-grafana/v1.0.1
 ```
-
+<!-- x-release-please-end-version -->
 ### Using custom values
 
 You can customize any or all of the inputs:

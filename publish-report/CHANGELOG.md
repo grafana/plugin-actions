@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.2](https://github.com/grafana/plugin-actions/compare/publish-report/v1.0.1...publish-report/v1.0.2) (2025-08-01)
+
+
+### 🔧 Chores
+
+* **deps:** Bump google-github-actions/auth from 2.1.10 to 2.1.11 in /publish-report ([#100](https://github.com/grafana/plugin-actions/issues/100)) ([5f29a57](https://github.com/grafana/plugin-actions/commit/5f29a574d6a8d86f4dc053a0f037660ad4ac00dc))
+* **deps:** Bump google-github-actions/setup-gcloud from 2.1.4 to 2.1.5 in /publish-report ([#101](https://github.com/grafana/plugin-actions/issues/101)) ([da6ca9e](https://github.com/grafana/plugin-actions/commit/da6ca9e75ce0d86f5e644fe98fc316f6bb2d282e))
+
 ## [1.0.1](https://github.com/grafana/plugin-actions/compare/publish-report/v1.0.0...publish-report/v1.0.1) (2025-07-21)
 
 

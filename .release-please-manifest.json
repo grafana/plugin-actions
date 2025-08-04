@@ -1,13 +1,13 @@
 {
-  "build-plugin": "1.0.1",
-  "bundle-size": "1.0.1",
+  "build-plugin": "1.0.2",
+  "bundle-size": "1.0.2",
   "bundle-types": "1.0.2",
-  "create-plugin-update": "1.0.1",
+  "create-plugin-update": "1.0.2",
   "e2e-version": "1.0.1",
   "is-compatible": "1.0.1",
-  "package-plugin": "1.0.1",
+  "package-plugin": "1.0.2",
   "playwright-gh-pages/deploy-report-pages": "1.0.1",
   "playwright-gh-pages/upload-report-artifacts": "1.0.1",
-  "publish-report": "1.0.1",
-  "wait-for-grafana": "1.0.1"
+  "publish-report": "1.0.2",
+  "wait-for-grafana": "1.0.2"
 }

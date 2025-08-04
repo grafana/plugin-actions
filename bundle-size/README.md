@@ -39,7 +39,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - uses: grafana/plugin-actions/bundle-size@bundle-size/v1.0.1
+      - uses: grafana/plugin-actions/bundle-size@bundle-size/v1.0.2
 ```
 <!-- x-release-please-end-version -->
 

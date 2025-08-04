@@ -1,0 +1,54 @@
+name: "Package Manager Detect"
+description: "Detects the Node.js package manager used in a project"
+inputs:
+  workingDirectory:
+    description: "The working directory to check"
+    required: false
+    default: "."
+outputs:
+  name:
+    description: "The name of the package manager"
+    value: ${{ steps.detect-package-manager.outputs.name }}
+  install:
+    description: "The install command"
+    value: ${{ steps.detect-package-manager.outputs.install }}
+  frozenInstall:
+    description: "The frozen install command"
+    value: ${{ steps.detect-package-manager.outputs.frozen-install }}
+  globalInstall:
+    description: "The global install command"
+    value: ${{ steps.detect-package-manager.outputs.global-install }}
+  run:
+    description: "The run command"
+    value: ${{ steps.detect-package-manager.outputs.run }}
+  exec:
+    description: "The exec command"
+    value: ${{ steps.detect-package-manager.outputs.exec }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Detect package manager
+      id: detect-package-manager
+      run: |
+        # Run pm-detect and capture the JSON output
+        PM_OUTPUT=$(npx -y pm-detect --working-directory "$WORKING_DIRECTORY")
+
+        # Parse the JSON and extract individual values
+        NAME=$(echo "$PM_OUTPUT" | jq -r '.name')
+        INSTALL=$(echo "$PM_OUTPUT" | jq -r '.install')
+        FROZEN_INSTALL=$(echo "$PM_OUTPUT" | jq -r '.frozen-install')
+        GLOBAL_INSTALL=$(echo "$PM_OUTPUT" | jq -r '.global-install')
+        RUN_CMD=$(echo "$PM_OUTPUT" | jq -r '.run')
+        EXEC_CMD=$(echo "$PM_OUTPUT" | jq -r '.exec')
+
+        # Set outputs
+        echo "name=$NAME" >> $GITHUB_OUTPUT
+        echo "install=$INSTALL" >> $GITHUB_OUTPUT
+        echo "frozen-install=$FROZEN_INSTALL" >> $GITHUB_OUTPUT
+        echo "global-install=$GLOBAL_INSTALL" >> $GITHUB_OUTPUT
+        echo "run=$RUN_CMD" >> $GITHUB_OUTPUT
+        echo "exec=$EXEC_CMD" >> $GITHUB_OUTPUT
+      shell: bash
+      env:
+        WORKING_DIRECTORY: ${{ inputs.workingDirectory }}

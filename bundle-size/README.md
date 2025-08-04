@@ -13,7 +13,7 @@ This GitHub Action compares two webpack compilation stats files and comments on 
 - Add a workflow to your Github repository as in the example below.
 
 ## Workflow example
-
+<!-- x-release-please-start-version -->
 ```yaml
 name: Bundle Stats
 
@@ -41,6 +41,7 @@ jobs:
 
       - uses: grafana/plugin-actions/bundle-size@bundle-size/v1.0.1
 ```
+<!-- x-release-please-end-version -->
 
 ## Options
 

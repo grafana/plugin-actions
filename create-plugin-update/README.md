@@ -14,6 +14,7 @@ This GitHub Action automates the process of running `create-plugin update` withi
 - Set up the necessary secrets. As this action will push to and open a PR in the plugins repository make sure the token you supply has the correct privileges.
 
 ## Workflow example
+<!-- x-release-please-start-version -->
 
 ```yaml
 name: Create Plugin Update
@@ -35,8 +36,9 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: grafana/plugin-actions/create-plugin-update@create-plugin-update/v1.0.1
+      - uses: grafana/plugin-actions/create-plugin-update@create-plugin-update/v1.0.2
 ```
+<!-- x-release-please-end-version -->
 
 ## Options
 

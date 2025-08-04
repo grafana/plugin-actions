@@ -20,6 +20,7 @@ This GitHub Action automates the process of bundling Grafana plugins typescript 
 
 >[!NOTE]
 > The example below uses workflow_dispatch to manually release new types. Consider how releases work within your plugin and set the event accordingly.
+<!-- x-release-please-start-version -->
 
 ```yaml
 name: Bundle Types
@@ -38,8 +39,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: grafana/plugin-actions/bundle-types@bundle-types/v1.0.1
+      - uses: grafana/plugin-actions/bundle-types@bundle-types/v1.0.2
 ```
+<!-- x-release-please-end-version -->
 
 ## Options
 

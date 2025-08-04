@@ -20,7 +20,7 @@ This GitHub Action automates the process of packaging Grafana plugins. It takes 
 This workflow will trigger on pushes to the `main` branch. Use this workflow if you want to build plugins from your `main` branch as artifacts without creating a release.
 
 To build, package and release in a single action use [build-plugin](https://github.com/grafana/plugin-actions/tree/main/build-plugin)
-
+<!-- x-release-please-start-version -->
 ```yaml
 name: Package plugin and upload artifact
 
@@ -36,7 +36,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: grafana/plugin-actions/package-plugin@package-plugin/v1.0.1
+      - uses: grafana/plugin-actions/package-plugin@package-plugin/v1.0.2
         id: 'package-plugin'
         with:
           # see https://grafana.com/developers/plugin-tools/publish-a-plugin/sign-a-plugin#generate-an-access-policy-token to generate it
@@ -60,7 +60,7 @@ jobs:
           glob: '*.zip'
           parent: false
 ```
-
+<!-- x-release-please-end-version -->
 ## Options
 
 - `policy_token`: Grafana access policy token. https://grafana.com/developers/plugin-tools/publish-a-plugin/sign-a-plugin#generate-an-access-policy-token

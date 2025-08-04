@@ -21,6 +21,7 @@ This GitHub Action automates the process of building Grafana plugins. It takes t
 NOTE: the package.json version and the git tag must match. You can use `yarn version` or `npm version` to set the correct version and create the git tag.
 
 ## Workflow example
+<!-- x-release-please-start-version -->
 
 ```yaml
 name: Release
@@ -28,7 +29,7 @@ name: Release
 on:
   push:
     tags:
-      - "v*" # Run workflow on version tags, e.g. v1.0.0.
+      - "v*" # Run workflow on version tags, e.g. v1.0.2.
 
 jobs:
   release:
@@ -40,7 +41,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: grafana/plugin-actions/build-plugin@build-plugin/v1.0.1
+      - uses: grafana/plugin-actions/build-plugin@build-plugin/v1.0.2
         with:
           # see https://grafana.com/developers/plugin-tools/publish-a-plugin/sign-a-plugin#generate-an-access-policy-token to generate it
           # save the value in your repository secrets
@@ -48,6 +49,7 @@ jobs:
           # creates a signed build provenance attestation to verify the authenticity of the plugin build
           attestation: true
 ```
+<!-- x-release-please-end-version -->
 
 ## Attestation of plugin package
 
@@ -63,6 +65,7 @@ To add the attestation to your existing workflow, you can use the following step
 1. Add the `attestation: true` option to the `build-plugin` action.
 
 e.g.
+<!-- x-release-please-start-version -->
 
 ```yaml
 name: Release
@@ -70,7 +73,7 @@ name: Release
 on:
   push:
     tags:
-      - "v*" # Run workflow on version tags, e.g. v1.0.0.
+      - "v*" # Run workflow on version tags, e.g. v1.0.2.
 
 jobs:
   release:
@@ -83,11 +86,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: grafana/plugin-actions/build-plugin@main
+      - uses: grafana/plugin-actions/build-plugin@build-plugin/v1.0.2
         with:
           policy_token: ${{ secrets.GRAFANA_ACCESS_POLICY_TOKEN }}
           attestation: true # new line
 ```
+<!-- x-release-please-end-version -->
 
 ## Changelog Generation
 
@@ -101,13 +105,15 @@ This feature helps maintain a well-documented history of changes for your plugin
 ### Add changelog generation to your workflow
 
 To enable changelog generation in your workflow:
+<!-- x-release-please-start-version -->
 
 ```yaml
-- uses: grafana/plugin-actions/build-plugin@main
+- uses: grafana/plugin-actions/build-plugin@build-plugin/v1.0.2
   with:
     policy_token: ${{ secrets.GRAFANA_ACCESS_POLICY_TOKEN }}
     use_changelog_generator: true
 ```
+<!-- x-release-please-end-version -->
 
 Note: This will commit changes to your repository's default branch, so your workflow must have the `contents: write` permission.
 
@@ -118,14 +124,16 @@ If your target branch is protected, the default github.token cannot push changes
 1. Create a Personal Access Token (PAT) with appropriate permissions
 1. Store it as a repository secret (e.g., CHANGELOG_PAT)
 1. Configure the action to use this token:
+<!-- x-release-please-start-version -->
 
 ```yaml
 - name: Build plugin
-  uses: grafana/plugin-actions/build-plugin@main
+  uses: grafana/plugin-actions/build-plugin@build-plugin/v1.0.2
   with:
     use_changelog_generator: true
     token: ${{ secrets.CHANGELOG_PAT }}  # Replace default github.token
 ```
+<!-- x-release-please-end-version -->
 
 ## Options
 

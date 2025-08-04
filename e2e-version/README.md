@@ -101,6 +101,7 @@ The result of this action is a JSON array that lists the latest patch version fo
 ## Workflow example
 
 ### plugin-grafana-dependency
+<!-- x-release-please-start-version -->
 
 ```yaml
 name: E2E tests - Playwright
@@ -117,7 +118,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Resolve Grafana E2E versions
         id: resolve-versions
-        uses: grafana/plugin-actions/e2e-version@e2e-version/v1.0.1
+        uses: grafana/plugin-actions/e2e-version@e2e-version/v1.0.2
         with:
           # target all minor versions of Grafana that have been released since the version that was specified as grafanaDependency in the plugin
           version-resolver-type: plugin-grafana-dependency
@@ -137,9 +138,10 @@ jobs:
           GRAFANA_VERSION=${{ matrix.GRAFANA_IMAGE.VERSION }} GRAFANA_IMAGE=${{ matrix.GRAFANA_IMAGE.NAME }} docker-compose up -d
       ...
 ```
+<!-- x-release-please-end-version -->
 
 ### version-support-policy
-
+<!-- x-release-please-start-version -->
 ```yaml
 name: E2E tests - Playwright
 on:
@@ -153,7 +155,7 @@ jobs:
     steps:
       - name: Resolve Grafana E2E versions
         id: resolve-versions
-        uses: grafana/plugin-actions/e2e-version@e2e-version/v1.0.1
+        uses: grafana/plugin-actions/e2e-version@e2e-version/v1.0.2
         with:
           #target all minors for the current major version of Grafana and the last minor of the previous major version of Grafana
           version-resolver-type: version-support-policy
@@ -173,7 +175,7 @@ jobs:
           GRAFANA_VERSION=${{ matrix.GRAFANA_IMAGE.VERSION }} GRAFANA_IMAGE=${{ matrix.GRAFANA_IMAGE.NAME }} docker-compose up -d
       ...
 ```
-
+<!-- x-release-please-end-version -->
 ### `grafana-dependency`
 
 When using the `plugin-grafana-dependency` resolver type, you can optionally use the `grafana-dependency` input to pass a semver range of supported Grafana versions to test against. If this input is provided, the [dependencies.grafanaDependency](https://grafana.com/developers/plugin-tools/reference/plugin-json#properties-1) property in plugin.json will be ignored.

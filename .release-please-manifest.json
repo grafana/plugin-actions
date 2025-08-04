@@ -1,7 +1,7 @@
 {
   "build-plugin": "1.0.1",
   "bundle-size": "1.0.1",
-  "bundle-types": "1.0.1",
+  "bundle-types": "1.0.2",
   "create-plugin-update": "1.0.1",
   "e2e-version": "1.0.1",
   "is-compatible": "1.0.1",

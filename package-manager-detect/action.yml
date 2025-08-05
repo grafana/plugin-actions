@@ -37,8 +37,8 @@ runs:
         # Parse the JSON and extract individual values
         NAME=$(echo "$PM_OUTPUT" | jq -r '.name')
         INSTALL=$(echo "$PM_OUTPUT" | jq -r '.install')
-        FROZEN_INSTALL=$(echo "$PM_OUTPUT" | jq -r '.frozen-install')
-        GLOBAL_INSTALL=$(echo "$PM_OUTPUT" | jq -r '.global-install')
+        FROZEN_INSTALL=$(echo "$PM_OUTPUT" | jq -r '.["frozen-install"]')
+        GLOBAL_INSTALL=$(echo "$PM_OUTPUT" | jq -r '.["global-install"]')
         RUN_CMD=$(echo "$PM_OUTPUT" | jq -r '.run')
         EXEC_CMD=$(echo "$PM_OUTPUT" | jq -r '.exec')
 

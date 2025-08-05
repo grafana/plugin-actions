@@ -1,7 +1,7 @@
 name: "Package Manager Detect"
 description: "Detects the Node.js package manager used in a project"
 inputs:
-  workingDirectory:
+  working-directory:
     description: "The working directory to check"
     required: false
     default: "."
@@ -51,4 +51,4 @@ runs:
         echo "exec=$EXEC_CMD" >> $GITHUB_OUTPUT
       shell: bash
       env:
-        WORKING_DIRECTORY: ${{ inputs.workingDirectory }}
+        WORKING_DIRECTORY: ${{ inputs.working-directory }}

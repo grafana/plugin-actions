@@ -32,7 +32,7 @@ runs:
       id: detect-package-manager
       run: |
         # Run pm-detect and capture the JSON output
-        PM_OUTPUT=$(npx -y pm-detect --working-directory "$WORKING_DIRECTORY")
+        PM_OUTPUT=$(npx -y pm-detect --working-dir "$WORKING_DIRECTORY")
 
         # Parse the JSON and extract individual values
         NAME=$(echo "$PM_OUTPUT" | jq -r '.name')

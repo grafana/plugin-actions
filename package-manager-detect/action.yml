@@ -42,7 +42,7 @@ runs:
         FROZEN_INSTALL=$(echo "$PM_OUTPUT" | jq -r '.["frozen-install"]')
         GLOBAL_INSTALL=$(echo "$PM_OUTPUT" | jq -r '.["global-install"]')
         UNINSTALL=$(echo "$PM_OUTPUT" | jq -r '.uninstall')
-        GLOBAL_UNINSTALL=$(echo "$PM_OUTPUT" | jq -r '.global-uninstall')
+        GLOBAL_UNINSTALL=$(echo "$PM_OUTPUT" | jq -r '.["global-uninstall"]')
         UPDATE=$(echo "$PM_OUTPUT" | jq -r '.update')
         RUN_CMD=$(echo "$PM_OUTPUT" | jq -r '.run')
         EXEC_CMD=$(echo "$PM_OUTPUT" | jq -r '.exec')

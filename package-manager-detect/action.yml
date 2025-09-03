@@ -9,6 +9,12 @@ outputs:
   name:
     description: "The name of the package manager"
     value: ${{ steps.detect-package-manager.outputs.name }}
+  lockFilePath:
+    description: "The path to the lock file"
+    value: ${{ steps.detect-package-manager.outputs.lock-file-path }}
+  agent:
+    description: "The agent used to install dependencies"
+    value: ${{ steps.detect-package-manager.outputs.agent }}
   install:
     description: "The install command"
     value: ${{ steps.detect-package-manager.outputs.install }}
@@ -18,12 +24,24 @@ outputs:
   globalInstall:
     description: "The global install command"
     value: ${{ steps.detect-package-manager.outputs.global-install }}
+  uninstall:
+    description: "The uninstall command"
+    value: ${{ steps.detect-package-manager.outputs.uninstall }}
+  globalUninstall:
+    description: "The global uninstall command"
+    value: ${{ steps.detect-package-manager.outputs.global-uninstall }}
+  update:
+    description: "The update command"
+    value: ${{ steps.detect-package-manager.outputs.update }}
   run:
     description: "The run command"
     value: ${{ steps.detect-package-manager.outputs.run }}
   exec:
     description: "The exec command"
     value: ${{ steps.detect-package-manager.outputs.exec }}
+  execLocal:
+    description: "The exec local command"
+    value: ${{ steps.detect-package-manager.outputs.exec-local }}
 
 runs:
   using: "composite"

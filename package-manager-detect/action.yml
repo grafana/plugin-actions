@@ -7,41 +7,41 @@ inputs:
     default: "."
 outputs:
   name:
-    description: "The name of the package manager"
+    description: "The name of the package manager (e.g. npm, pnpm, yarn)"
     value: ${{ steps.detect-package-manager.outputs.name }}
   lockFilePath:
-    description: "The path to the lock file"
+    description: "The path to the lock file (e.g. package-lock.json, pnpm-lock.yaml, yarn.lock)"
     value: ${{ steps.detect-package-manager.outputs.lock-file-path }}
   agent:
-    description: "The agent used to install dependencies"
+    description: "The agent used to install dependencies (e.g. npm, pnpm, yarn, yarnBerry)"
     value: ${{ steps.detect-package-manager.outputs.agent }}
-  install:
-    description: "The install command"
-    value: ${{ steps.detect-package-manager.outputs.install }}
-  frozenInstall:
-    description: "The frozen install command"
-    value: ${{ steps.detect-package-manager.outputs.frozen-install }}
-  globalInstall:
-    description: "The global install command"
-    value: ${{ steps.detect-package-manager.outputs.global-install }}
-  uninstall:
-    description: "The uninstall command"
-    value: ${{ steps.detect-package-manager.outputs.uninstall }}
-  globalUninstall:
-    description: "The global uninstall command"
-    value: ${{ steps.detect-package-manager.outputs.global-uninstall }}
-  update:
-    description: "The update command"
-    value: ${{ steps.detect-package-manager.outputs.update }}
-  run:
-    description: "The run command"
-    value: ${{ steps.detect-package-manager.outputs.run }}
-  exec:
-    description: "The exec command"
-    value: ${{ steps.detect-package-manager.outputs.exec }}
-  execLocal:
-    description: "The exec local command"
-    value: ${{ steps.detect-package-manager.outputs.exec-local }}
+  installCmd:
+    description: "The install command (e.g. npm install, pnpm install, yarn install)"
+    value: ${{ steps.detect-package-manager.outputs.install-cmd }}
+  frozenInstallCmd:
+    description: "The frozen install command (e.g. npm ci, pnpm install --immutable, yarn install --immutable)"
+    value: ${{ steps.detect-package-manager.outputs.frozen-install-cmd }}
+  globalInstallCmd:
+    description: "The global install command (e.g. npm install -g, pnpm install -g, yarn global add)"
+    value: ${{ steps.detect-package-manager.outputs.global-install-cmd }}
+  uninstallCmd:
+    description: "The uninstall command (e.g. npm uninstall, pnpm uninstall, yarn remove)"
+    value: ${{ steps.detect-package-manager.outputs.uninstall-cmd }}
+  globalUninstallCmd:
+    description: "The global uninstall command (e.g. npm uninstall -g, pnpm uninstall -g, yarn global remove)"
+    value: ${{ steps.detect-package-manager.outputs.global-uninstall-cmd }}
+  updateCmd:
+    description: "The update command (e.g. npm update, pnpm update, yarn upgrade)"
+    value: ${{ steps.detect-package-manager.outputs.update-cmd }}
+  runCmd:
+    description: "The run command (e.g. npm run, pnpm run, yarn run)"
+    value: ${{ steps.detect-package-manager.outputs.run-cmd }}
+  execCmd:
+    description: "The exec command (e.g. npx, pnpm dlx, yarn dlx)"
+    value: ${{ steps.detect-package-manager.outputs.exec-cmd }}
+  execLocalCmd:
+    description: "The exec local command (e.g. npx, pnpm dlx, yarn dlx)"
+    value: ${{ steps.detect-package-manager.outputs.exec-local-cmd }}
 
 runs:
   using: "composite"
@@ -56,12 +56,12 @@ runs:
         NAME=$(echo "$PM_OUTPUT" | jq -r '.name')
         LOCK_FILE_PATH=$(echo "$PM_OUTPUT" | jq -r '.lockFilePath')
         AGENT=$(echo "$PM_OUTPUT" | jq -r '.agent')
-        INSTALL=$(echo "$PM_OUTPUT" | jq -r '.install')
-        FROZEN_INSTALL=$(echo "$PM_OUTPUT" | jq -r '.["frozen-install"]')
-        GLOBAL_INSTALL=$(echo "$PM_OUTPUT" | jq -r '.["global-install"]')
-        UNINSTALL=$(echo "$PM_OUTPUT" | jq -r '.uninstall')
-        GLOBAL_UNINSTALL=$(echo "$PM_OUTPUT" | jq -r '.["global-uninstall"]')
-        UPDATE=$(echo "$PM_OUTPUT" | jq -r '.update')
+        INSTALL_CMD=$(echo "$PM_OUTPUT" | jq -r '.install')
+        UNINSTALL_CMD=$(echo "$PM_OUTPUT" | jq -r '.uninstall')
+        FROZEN_INSTALL_CMD=$(echo "$PM_OUTPUT" | jq -r '.["frozen-install"]')
+        GLOBAL_INSTALL_CMD=$(echo "$PM_OUTPUT" | jq -r '.["global-install"]')
+        GLOBAL_UNINSTALL_CMD=$(echo "$PM_OUTPUT" | jq -r '.["global-uninstall"]')
+        UPDATE_CMD=$(echo "$PM_OUTPUT" | jq -r '.update')
         RUN_CMD=$(echo "$PM_OUTPUT" | jq -r '.run')
         EXEC_CMD=$(echo "$PM_OUTPUT" | jq -r '.exec')
         EXEC_LOCAL_CMD=$(echo "$PM_OUTPUT" | jq -r '.["exec-local"]')
@@ -70,15 +70,15 @@ runs:
         echo "name=$NAME" >> $GITHUB_OUTPUT
         echo "lock-file-path=$LOCK_FILE_PATH" >> $GITHUB_OUTPUT
         echo "agent=$AGENT" >> $GITHUB_OUTPUT
-        echo "install=$INSTALL" >> $GITHUB_OUTPUT
-        echo "frozen-install=$FROZEN_INSTALL" >> $GITHUB_OUTPUT
-        echo "global-install=$GLOBAL_INSTALL" >> $GITHUB_OUTPUT
-        echo "uninstall=$UNINSTALL" >> $GITHUB_OUTPUT
-        echo "global-uninstall=$GLOBAL_UNINSTALL" >> $GITHUB_OUTPUT
-        echo "update=$UPDATE" >> $GITHUB_OUTPUT
-        echo "run=$RUN_CMD" >> $GITHUB_OUTPUT
-        echo "exec=$EXEC_CMD" >> $GITHUB_OUTPUT
-        echo "exec-local=$EXEC_LOCAL_CMD" >> $GITHUB_OUTPUT
+        echo "install-cmd=$INSTALL_CMD" >> $GITHUB_OUTPUT
+        echo "uninstall-cmd=$UNINSTALL_CMD" >> $GITHUB_OUTPUT
+        echo "frozen-install-cmd=$FROZEN_INSTALL_CMD" >> $GITHUB_OUTPUT
+        echo "global-install-cmd=$GLOBAL_INSTALL_CMD" >> $GITHUB_OUTPUT
+        echo "global-uninstall-cmd=$GLOBAL_UNINSTALL_CMD" >> $GITHUB_OUTPUT
+        echo "update-cmd=$UPDATE_CMD" >> $GITHUB_OUTPUT
+        echo "run-cmd=$RUN_CMD" >> $GITHUB_OUTPUT
+        echo "exec-cmd=$EXEC_CMD" >> $GITHUB_OUTPUT
+        echo "exec-local-cmd=$EXEC_LOCAL_CMD" >> $GITHUB_OUTPUT
       shell: bash
       env:
         WORKING_DIRECTORY: ${{ inputs.working-directory }}

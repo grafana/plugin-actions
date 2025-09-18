@@ -18,7 +18,7 @@ install_pnpm_if_not_present() {
 # to determine the correct installation command
 # and the exec command to run create-plugin update
 if [ -f yarn.lock ]; then
-	install_deps=("yarn" "install")
+	install_deps=("yarn" "install" "--no-immutable")
 	create_plugin_update=("yarn" "create" "@grafana/plugin" "update")
 elif [ -f pnpm-lock.yaml ]; then
 	install_pnpm_if_not_present

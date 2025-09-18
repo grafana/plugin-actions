@@ -1,3 +1,4 @@
+const core = require('@actions/core');
 const https = require('https');
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
@@ -127,7 +128,7 @@ function httpGet(url, maxRetries = 3, retryDelay = 1000) {
               error.responseBody = buffer.substring(0, 500); // Include first 500 chars for debugging
               
               if (attempts < maxRetries) {
-                console.warn(`JSON parse error on attempt ${attempts}/${maxRetries} for ${url}. Retrying in ${retryDelay * attempts}ms...`);
+                core.warning(`JSON parse error on attempt ${attempts}/${maxRetries} for ${url}. Retrying in ${retryDelay * attempts}ms...`);
                 timeoutId = setTimeout(makeRequest, retryDelay * attempts); // Exponential backoff
               } else {
                 reject(error);

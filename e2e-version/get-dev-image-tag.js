@@ -1,13 +1,12 @@
 const https = require('https');
 
-// Constants
 const DOCKERHUB_API_URL = 'https://registry.hub.docker.com/v2/repositories/grafana/grafana-dev/tags?page_size=25';
 const GRAFANA_DEV_TAG_REGEX = /^(\d+\.\d+\.\d+)-(\d+)$/;
 const HTTP_TIMEOUT_MS = 10000;
 const RETRYABLE_ERROR_CODES = ['ECONNRESET', 'ENOTFOUND', 'ECONNREFUSED', 'ETIMEDOUT'];
 
 /**
- * Main entry point for the GitHub Action
+ * Main entry point
  */
 module.exports = async ({ core }) => {
   try {

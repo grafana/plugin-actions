@@ -1,6 +1,6 @@
 const core = require('@actions/core');
 const semver = require('semver');
-const npmToDockerImage = require('./npm-to-docker-image');
+const getDevImageTag = require('./get-dev-image-tag');
 const fs = require('fs/promises');
 const path = require('path');
 
@@ -70,7 +70,7 @@ async function run() {
 
     if (!skipGrafanaDevImage) {
       // get the most recent grafana-dev image
-      const tag = await npmToDockerImage({ core });
+      const tag = await getDevImageTag({ core });
       if (tag) {
         images.unshift({ name: 'grafana-dev', version: tag });
       }

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/grafana/plugin-actions/compare/e2e-version/v1.1.0...e2e-version/v1.1.1) (2025-09-24)
+
+
+### 🔧 Chores
+
+* refactor dev image tag name resolver  ([#118](https://github.com/grafana/plugin-actions/issues/118)) ([6252220](https://github.com/grafana/plugin-actions/commit/6252220e7005d1030d1484a483b88719eae4ed2e))
+
 ## [1.1.0](https://github.com/grafana/plugin-actions/compare/e2e-version/v1.0.2...e2e-version/v1.1.0) (2025-09-19)
 
 

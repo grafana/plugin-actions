@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/grafana/plugin-actions/compare/e2e-version/v1.1.1...e2e-version/v1.1.2) (2025-09-26)
+
+
+### 🐛 Bug Fixes
+
+* revert plugin-directory input in e2e-versions ([#121](https://github.com/grafana/plugin-actions/issues/121)) ([518813a](https://github.com/grafana/plugin-actions/commit/518813aca6975f1a2d337276f080e7eea31f917b))
+
 ## [1.1.1](https://github.com/grafana/plugin-actions/compare/e2e-version/v1.1.0...e2e-version/v1.1.1) (2025-09-24)
 
 

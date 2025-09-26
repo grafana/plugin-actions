@@ -26,10 +26,6 @@ inputs:
     required: false
     description: 'The maximum number of versions to resolve. Default is 6, 0 means no limit.'
     default: "6"
-  plugin-directory:
-    required: false
-    description: 'The directory where the plugin.json file is located. Default is `src`.'
-    default: src
 
 output:
   matrix:

@@ -45,7 +45,9 @@ runs:
       id: compare-versions
       run: |
         if [ "$LATEST_VERSION" != "$CONFIG_VERSION" ]; then
+          LATEST_MAJOR=$(echo "$LATEST_VERSION" | cut -d. -f1)
           echo "update_needed=true" >> "$GITHUB_OUTPUT"
+          echo "major_version=$LATEST_MAJOR" >> "$GITHUB_OUTPUT"
         else
           echo "update_needed=false" >> "$GITHUB_OUTPUT"
         fi
@@ -54,13 +56,6 @@ runs:
         LATEST_VERSION: ${{ steps.get-latest-version.outputs.latest_version }}
         CONFIG_VERSION: ${{ steps.get-config-version.outputs.config_version }}
 
-    - name: Update the configs
-      if: steps.compare-versions.outputs.update_needed == 'true'
-      run: |
-        ${{ github.action_path }}/pm.sh update
-        ${{ github.action_path }}/pm.sh install
-      shell: bash
-
     - name: Create branch
       if: steps.compare-versions.outputs.update_needed == 'true'
       run: |
@@ -68,12 +63,33 @@ runs:
         git config --local user.email 144369747+grafana-plugins-platform-bot[bot]@users.noreply.github.com
 
         git checkout -b update-grafana-create-plugin-${LATEST_VERSION}
-        git add .
-        git commit -m "chore: update configuration to create-plugin $LATEST_VERSION"
-        git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} update-grafana-create-plugin-${LATEST_VERSION}
       shell: bash
       env:
         LATEST_VERSION: ${{ steps.get-latest-version.outputs.latest_version }}
+        GITHUB_TOKEN: ${{ inputs.token }}
+
+    - name: Update the configs
+      if: steps.compare-versions.outputs.update_needed == 'true'
+      run: |
+        ${{ github.action_path }}/pm.sh update
+        ${{ github.action_path }}/pm.sh install
+      shell: bash
+
+    # Create Plugin v6 update command uses a --commit flag which will automatically commit the changes
+    # for versions before v6 we need to commit the changes manually
+    - name: Commit changes and push
+      if: steps.compare-versions.outputs.update_needed == 'true'
+      run: |
+        git config --global --type bool push.autoSetupRemote true
+        if [ "$LATEST_MAJOR" -lt 6 ]; then
+          git add .
+          git commit -m "chore: update configuration to create-plugin $LATEST_VERSION"
+        fi
+        git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}
+      shell: bash
+      env:
+        LATEST_VERSION: ${{ steps.get-latest-version.outputs.latest_version }}
+        LATEST_MAJOR: ${{ steps.compare-versions.outputs.major_version }}
         GITHUB_TOKEN: ${{ inputs.token }}
 
     - name: Create or Update PR

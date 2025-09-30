@@ -36,7 +36,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: grafana/plugin-actions/create-plugin-update@create-plugin-update/v1.0.2
+      - uses: grafana/plugin-actions/create-plugin-update@create-plugin-update/v1.1.0
 ```
 <!-- x-release-please-end-version -->
 

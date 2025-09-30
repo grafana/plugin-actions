@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.0](https://github.com/grafana/plugin-actions/compare/create-plugin-update/v1.0.2...create-plugin-update/v1.1.0) (2025-09-30)
+
+
+### 🎉 Features
+
+* **create-plugin-update:** support create-plugin v6 commit flag ([d92dec2](https://github.com/grafana/plugin-actions/commit/d92dec26f8d15121cd63a561f9b10be706914969))
+* support create-plugin commit flag ([#123](https://github.com/grafana/plugin-actions/issues/123)) ([d92dec2](https://github.com/grafana/plugin-actions/commit/d92dec26f8d15121cd63a561f9b10be706914969))
+
+
+### 🐛 Bug Fixes
+
+* Disable immutable yarn installs ([#114](https://github.com/grafana/plugin-actions/issues/114)) ([d3b5481](https://github.com/grafana/plugin-actions/commit/d3b5481e69625e28da59ea65020d5b92a9dfb43d))
+
 ## [1.0.2](https://github.com/grafana/plugin-actions/compare/create-plugin-update/v1.0.1...create-plugin-update/v1.0.2) (2025-08-04)
 
 

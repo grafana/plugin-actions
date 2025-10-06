@@ -44,5 +44,4 @@ jobs:
 
 ## Options
 
-- `node-version`: The version of node to use with the action. Defaults to `20`.
-- `schema-url`: URL to the Grafana plugin schema JSON file. Defaults to `"https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json"`.
+- `node-version`: The version of node to use with the action. Defaults to `24`.

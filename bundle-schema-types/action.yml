@@ -123,7 +123,7 @@ runs:
         if [ -z "$PR_NUMBER" ]; then
           gh pr create --base main --head ${{ steps.create-branch.outputs.branch-name }} --title "Chore: Update plugin schema types" --body "$PR_BODY" --label "types-update"
           PR_NUMBER=$(gh pr list --base main --head ${{ steps.create-branch.outputs.branch-name }} --json number -q '.[0].number')
-          gh pr merge $PR_NUMBER
+          gh pr merge --disable-auto $PR_NUMBER
         fi
       shell: bash
 

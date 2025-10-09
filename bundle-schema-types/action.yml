@@ -65,7 +65,7 @@ runs:
         jq '.title = "PluginSchema"' plugin.schema.json > plugin-schema-modified.json
         # Create the plugin-schema subdirectory if it doesn't exist
         mkdir -p ../plugin-extension-types/types/plugin-schema
-        npx -y --package=json-schema-to-typescript json2ts plugin-schema-modified.json > ../plugin-extension-types/types/plugin-schema/index.d.ts
+        npx -y --package=json-schema-to-typescript json2ts plugin-schema-modified.json --ignoreMinAndMaxItems > ../plugin-extension-types/types/plugin-schema/index.d.ts
         echo "Generated TypeScript types from plugin schema"
       shell: bash
 

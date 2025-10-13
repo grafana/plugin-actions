@@ -33,7 +33,7 @@ runs:
         merge-multiple: true
 
     - name: Delete any existing comment
-      uses: thollander/actions-comment-pull-request@e4a76dd2b0a3c2027c3fd84147a67c22ee4c90fa # v3
+      uses: thollander/actions-comment-pull-request@24bffb9b452ba05a4f3f77933840a6a841d1b32b # v3
       if: ${{ github.event.number != null }}
       with:
         comment-tag: gf-playwright-test-results
@@ -81,7 +81,7 @@ runs:
         TABLE_OUTPUT: ${{ steps.generate-table.outputs.table }}
 
     - name: Comment PR with Execution Details
-      uses: thollander/actions-comment-pull-request@e4a76dd2b0a3c2027c3fd84147a67c22ee4c90fa # v3
+      uses: thollander/actions-comment-pull-request@24bffb9b452ba05a4f3f77933840a6a841d1b32b # v3
       if: ${{ inputs.pr-comment-summary == 'true' && github.event.number != null && steps.generate-table.outputs.table != '' }}
       with:
         create-if-not-exists: true

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/grafana/plugin-actions/compare/bundle-size/v1.0.2...bundle-size/v1.0.3) (2025-10-15)
+
+
+### 🔧 Chores
+
+* **deps:** update actions/github-script action to v7.1.0 ([#148](https://github.com/grafana/plugin-actions/issues/148)) ([8917ab7](https://github.com/grafana/plugin-actions/commit/8917ab7aede754f1d98a1f4008aebf402cfcf5f9))
+
 ## [1.0.2](https://github.com/grafana/plugin-actions/compare/bundle-size/v1.0.1...bundle-size/v1.0.2) (2025-08-04)
 
 

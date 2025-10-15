@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/grafana/plugin-actions/compare/create-plugin-update/v1.1.0...create-plugin-update/v1.1.1) (2025-10-15)
+
+
+### 🔧 Chores
+
+* **deps:** update actions/checkout action to v4.3.0 ([#143](https://github.com/grafana/plugin-actions/issues/143)) ([c99ec26](https://github.com/grafana/plugin-actions/commit/c99ec265400dbb0d095f7fb0a18463b08e38ce13))
+
 ## [1.1.0](https://github.com/grafana/plugin-actions/compare/create-plugin-update/v1.0.2...create-plugin-update/v1.1.0) (2025-09-30)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/grafana/plugin-actions/compare/bundle-types/v1.0.2...bundle-types/v1.0.3) (2025-10-15)
+
+
+### 🔧 Chores
+
+* **deps:** update actions/create-github-app-token action to v2.1.4 ([#144](https://github.com/grafana/plugin-actions/issues/144)) ([fc465c0](https://github.com/grafana/plugin-actions/commit/fc465c0c762933c2824ffe71bc3c59676a88b1f2))
+
 ## [1.0.2](https://github.com/grafana/plugin-actions/compare/bundle-types/v1.0.1...bundle-types/v1.0.2) (2025-08-04)
 
 

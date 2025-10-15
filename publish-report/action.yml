@@ -26,7 +26,7 @@ runs:
         credentials_json: "${{ fromJSON(steps.get-secrets.outputs.secrets).GCP_UPLOAD_ARTIFACTS_KEY }}"
 
     - name: "Set up Cloud SDK"
-      uses: "google-github-actions/setup-gcloud@6a7c903a70c8625ed6700fa299f5ddb4ca6022e9" # v2.1.5
+      uses: "google-github-actions/setup-gcloud@e427ad8a34f8676edf47cf7d7925499adf3eb74f" # v2.2.1
 
     - name: Publish report to Cloud Storage
       shell: bash

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/grafana/plugin-actions/compare/publish-report/v1.0.2...publish-report/v1.0.3) (2025-10-15)
+
+
+### 🔧 Chores
+
+* **deps:** update google-github-actions/auth action to v2.1.13 ([#142](https://github.com/grafana/plugin-actions/issues/142)) ([f255629](https://github.com/grafana/plugin-actions/commit/f25562922beb611eda934d09f328b818663fc8be))
+
 ## [1.0.2](https://github.com/grafana/plugin-actions/compare/publish-report/v1.0.1...publish-report/v1.0.2) (2025-08-04)
 
 

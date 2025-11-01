@@ -18,6 +18,10 @@ inputs:
     description: "Grafana access policy token. https://grafana.com/developers/plugin-tools/publish-a-plugin/sign-a-plugin#generate-an-access-policy-token"
     required: false
     default: ""
+  sign_root_urls:
+    description: "Root URLs for plugin signing"
+    required: false
+    default: ""
   grafana_token:
     description: "[deprecated] Grafana API Key to sign a plugin. Prefer `policy_token`."
     required: false
@@ -67,6 +71,7 @@ runs:
       uses: grafana/plugin-actions/package-plugin@main # zizmor: ignore[unpinned-uses]
       with:
         policy_token: ${{ inputs.policy_token }}
+        sign_root_urls: ${{ inputs.sign_root_urls }}
         node-version: "${{ inputs.node-version }}"
         go-version: "${{ inputs.go-version }}"
         backend-target: "${{ inputs.backend-target }}"

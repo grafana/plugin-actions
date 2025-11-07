@@ -4,8 +4,7 @@ description: "Runs create-plugin update within a Grafana plugin and opens a PR w
 inputs:
   token:
     description: "Token for the repository. Can be passed in using `{{ secrets.GITHUB_TOKEN }}`."
-    required: false
-    default: "${{ github.token }}"
+    required: true
   base:
     description: "Sets the pull request base branch"
     required: false

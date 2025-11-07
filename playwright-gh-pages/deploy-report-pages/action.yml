@@ -92,11 +92,10 @@ runs:
       shell: bash
       run: |
         if [[ "$PAGES_BRANCH" == "main" || "$PAGES_BRANCH" == "master" ]]; then
-          echo "ERROR: Cannot deploy to main/master branch with force_orphan - this would destroy repository history!"
+          echo "ERROR: Cannot deploy to main/master branch"
           echo "Please use a dedicated branch like 'gh-pages' for Pages deployment."
           exit 1
         fi
-        echo "✅ Pages branch '$PAGES_BRANCH' is safe for orphan deployment"
       env:
         PAGES_BRANCH: ${{ inputs.pages-branch }}
 

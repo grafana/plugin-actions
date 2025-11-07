@@ -88,6 +88,18 @@ runs:
         comment-tag: gf-playwright-test-results
         message: ${{ steps.generate-table.outputs.table }}
 
+    - name: Validate pages branch safety
+      shell: bash
+      run: |
+        if [[ "$PAGES_BRANCH" == "main" || "$PAGES_BRANCH" == "master" ]]; then
+          echo "ERROR: Cannot deploy to main/master branch with force_orphan - this would destroy repository history!"
+          echo "Please use a dedicated branch like 'gh-pages' for Pages deployment."
+          exit 1
+        fi
+        echo "✅ Pages branch '$PAGES_BRANCH' is safe for orphan deployment"
+      env:
+        PAGES_BRANCH: ${{ inputs.pages-branch }}
+
     - name: Push the new files to github pages
       uses: peaceiris/actions-gh-pages@4f9cc6602d3f66b9c108549d475ec49e8ef4d45e # v4.0.0
       with:
@@ -95,6 +107,7 @@ runs:
         github_token: ${{ inputs.github-token }}
         publish_dir: all-reports
         destination_dir: ${{ steps.timestampid.outputs.timestamp }}/${{ steps.set-initiator.outputs.job_initiator }}
+        force_orphan: true
 
 
     - name: Checkout code
@@ -119,7 +132,7 @@ runs:
           echo "No changes to commit"
         else
           git commit -m "Delete folders older than $RETENTION_DAYS days"
-          git push origin $PAGES_BRANCH
+          git push -f origin $PAGES_BRANCH
         fi
       env:
         RETENTION_DAYS: ${{ inputs.retention-days }}

@@ -13,7 +13,7 @@ This GitHub Action automates the process of running `create-plugin update` withi
 Detailed setup instructions can be found in the [Grafana developer portal](https://grafana.com/developers/plugin-tools/set-up/set-up-github#the-create-plugin-update-workflow).
 
 - Add a workflow to your Github repository as in the example below.
-- Set up the necessary secrets. As this action will push to and open a PR in the plugins repostory make sure the token you supply has the correct privileges.
+- Set up the necessary secrets. As this action will push to and open a PR in the plugins repostory create a fine-grained personal access token for your repository with `contents: read and write`, `pull requests: read and write` and `workflows: read and write` and pass it to the action.
 
 ## Workflow example
 
@@ -32,11 +32,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: grafana/plugin-actions/create-plugin-update@create-plugin-update/v1.1.0
-<<<<<<< Updated upstream
-=======
         with:
           token: ${{ secrets.GH_PAT_TOKEN }}
->>>>>>> Stashed changes
 ```
 
 <!-- x-release-please-end-version -->

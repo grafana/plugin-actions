@@ -42,6 +42,6 @@ jobs:
 
 The following options can be passed to this action:
 
-- `token`: A github token with write access to pull requests and content (**required**).
+- `token`: A github token with write access to `pull requests`, `content` and `workflows` (**required**).
 - `base`: The base branch to open the pull request against (defaults to `main`).
 - `node-version`: The version of node to use (defaults to `20`).

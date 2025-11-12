@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/grafana/plugin-actions/compare/deploy-report-pages/v1.0.2...deploy-report-pages/v1.1.0) (2025-11-12)
+
+
+### 🎉 Features
+
+* pw report publish - cleanup git history ([#181](https://github.com/grafana/plugin-actions/issues/181)) ([45c626b](https://github.com/grafana/plugin-actions/commit/45c626bb8962fc1c60088c76ab7f2eb4995aafb3))
+
 ## [1.0.2](https://github.com/grafana/plugin-actions/compare/deploy-report-pages/v1.0.1...deploy-report-pages/v1.0.2) (2025-10-20)
 
 

@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.0](https://github.com/grafana/plugin-actions/compare/bundle-size/v1.0.3...bundle-size/v1.1.0) (2025-11-13)
+
+
+### 🎉 Features
+
+* **bundle-size:** prefilter for `MAIN_STATS_ARTIFACT` ([#174](https://github.com/grafana/plugin-actions/issues/174)) ([4294e19](https://github.com/grafana/plugin-actions/commit/4294e198084cc8f81f80cb52c43f07d7f543196b))
+
+
+### 🔧 Chores
+
+* **deps:** update actions/setup-node action to v6 ([#175](https://github.com/grafana/plugin-actions/issues/175)) ([8e19900](https://github.com/grafana/plugin-actions/commit/8e19900577d14a8ac66c5e8299ce51522590c219))
+
 ## [1.0.3](https://github.com/grafana/plugin-actions/compare/bundle-size/v1.0.2...bundle-size/v1.0.3) (2025-10-21)
 
 

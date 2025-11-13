@@ -55,6 +55,11 @@ runs:
         LATEST_VERSION: ${{ steps.get-latest-version.outputs.latest_version }}
         CONFIG_VERSION: ${{ steps.get-config-version.outputs.config_version }}
 
+    - name: Install dependencies
+      if: steps.compare-versions.outputs.update_needed == 'true'
+      run: ${{ github.action_path }}/pm.sh install
+      shell: bash
+
     - name: Create branch
       if: steps.compare-versions.outputs.update_needed == 'true'
       run: |

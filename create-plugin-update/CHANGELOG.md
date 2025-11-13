@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.0.1](https://github.com/grafana/plugin-actions/compare/create-plugin-update/v2.0.0...create-plugin-update/v2.0.1) (2025-11-13)
+
+
+### 🐛 Bug Fixes
+
+* **cp-update:** make sure create-plugin has access to npm deps before running update ([dd34868](https://github.com/grafana/plugin-actions/commit/dd34868a33d0757cefd13d9753d31d9401d3e17b))
+* make sure create-plugin has access to npm dependencies ([#183](https://github.com/grafana/plugin-actions/issues/183)) ([dd34868](https://github.com/grafana/plugin-actions/commit/dd34868a33d0757cefd13d9753d31d9401d3e17b))
+
 ## [2.0.0](https://github.com/grafana/plugin-actions/compare/create-plugin-update/v1.1.0...create-plugin-update/v2.0.0) (2025-11-13)
 
 

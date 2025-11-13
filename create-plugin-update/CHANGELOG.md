@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.0.0](https://github.com/grafana/plugin-actions/compare/create-plugin-update/v1.1.0...create-plugin-update/v2.0.0) (2025-11-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* make token required ([#180](https://github.com/grafana/plugin-actions/issues/180))
+
+### 🎉 Features
+
+* make token required ([#180](https://github.com/grafana/plugin-actions/issues/180)) ([d198906](https://github.com/grafana/plugin-actions/commit/d198906dcbf0b99d6f51326906d2b5e11ca57d47))
+
+
+### 🔧 Chores
+
+* **deps:** update actions/checkout action to v4.3.0 ([#143](https://github.com/grafana/plugin-actions/issues/143)) ([c99ec26](https://github.com/grafana/plugin-actions/commit/c99ec265400dbb0d095f7fb0a18463b08e38ce13))
+* **deps:** update actions/checkout action to v5 ([#159](https://github.com/grafana/plugin-actions/issues/159)) ([e9255a9](https://github.com/grafana/plugin-actions/commit/e9255a9752322e5b4b097bd73d0b4cc2cee8c9f1))
+* **deps:** update actions/setup-node action to v5 ([#164](https://github.com/grafana/plugin-actions/issues/164)) ([78fa21c](https://github.com/grafana/plugin-actions/commit/78fa21caec491398393602502ae28fe3184c3a13))
+* **deps:** update actions/setup-node action to v6 ([#175](https://github.com/grafana/plugin-actions/issues/175)) ([8e19900](https://github.com/grafana/plugin-actions/commit/8e19900577d14a8ac66c5e8299ce51522590c219))
+
 ## [1.1.0](https://github.com/grafana/plugin-actions/compare/create-plugin-update/v1.0.2...create-plugin-update/v1.1.0) (2025-09-30)
 
 

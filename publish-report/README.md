@@ -25,7 +25,7 @@ A Playwright report is only generated in case Playwright tests were executed, so
 ```yml
 - name: Publish report to GCS
 if: ${{ (always() && steps.run-tests.outcome == 'success') || (failure() && steps.run-tests.outcome == 'failure') && github.event.organization.login == 'grafana' }}
-uses: grafana/plugin-actions/publish-report@publish-report/v1.0.2
+uses: grafana/plugin-actions/publish-report@publish-report/v1.0.3
 with:
     grafana-version: ${{ matrix.GRAFANA_IMAGE.VERSION }}
 ```
@@ -35,7 +35,7 @@ with:
 ```yml
 - name: Publish report to GCS
 if: ${{ (always() && steps.run-tests.outcome == 'success') || (failure() && steps.run-tests.outcome == 'failure') && github.event.organization.login == 'grafana' }}
-uses: grafana/plugin-actions/publish-report@publish-report/v1.0.2
+uses: grafana/plugin-actions/publish-report@publish-report/v1.0.3
 with:
     grafana-version: ${{ matrix.GRAFANA_IMAGE.VERSION }}
     directory: packages/grafana-datasource/playwright-report/

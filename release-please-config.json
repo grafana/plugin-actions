@@ -73,6 +73,10 @@
       "package-name": "is-compatible",
       "extra-files": ["README.md"]
     },
+    "package-manager-detect": {
+      "package-name": "package-plugin",
+      "extra-files": ["README.md"]
+    },
     "package-plugin": {
       "package-name": "package-plugin",
       "extra-files": ["README.md"]

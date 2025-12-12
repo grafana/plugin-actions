@@ -9,6 +9,9 @@ outputs:
   name:
     description: "The name of the package manager (e.g. npm, pnpm, yarn)"
     value: ${{ steps.detect-package-manager.outputs.name }}
+  version:
+    description: "The version of the package manager (e.g. 10.1.0, 10.1.1)"
+    value: ${{ steps.detect-package-manager.outputs.version }}
   lockFilePath:
     description: "The path to the lock file (e.g. package-lock.json, pnpm-lock.yaml, yarn.lock)"
     value: ${{ steps.detect-package-manager.outputs.lock-file-path }}

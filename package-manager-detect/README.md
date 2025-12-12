@@ -27,7 +27,19 @@ This workflow outputs the following information / commands for the node package 
 
 ## Usage
 
-- Add a workflow to your Github repository as in the example below.
+Add the following to your workflow after checkout and before nodejs setup. Make sure to supply an id so you can reference the output later.
+
+```yaml
+- uses: grafana/plugin-actions/package-manager-detect@package-manager-detect/v1.0.0
+- id: packageManager
+```
+
+After this you can reference the various package manager commands like so:
+
+```yaml
+- name: Install dependencies
+  run: ${{ steps.packageManager.outputs.frozenInstallCmd }}
+```
 
 ## Workflow example
 
@@ -78,4 +90,4 @@ jobs:
 
 The following options can be passed to this action:
 
-- `working-directory`: The working directory to run the action in.
+- `working-directory` (optional): The working directory to run the action in. Defaults to `.`.

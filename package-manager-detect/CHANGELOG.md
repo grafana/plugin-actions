@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/grafana/plugin-actions/compare/package-manager-detect/v1.0.0...package-manager-detect/v1.0.1) (2025-12-12)
+
+
+### 🐛 Bug Fixes
+
+* output version from pm-detect ([#189](https://github.com/grafana/plugin-actions/issues/189)) ([ea28584](https://github.com/grafana/plugin-actions/commit/ea2858495f7be5326e809749f7dfc3fb00ae3108))
+
 ## 1.0.0 (2025-12-12)
 
 

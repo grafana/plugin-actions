@@ -61,7 +61,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - uses: grafana/plugin-actions/package-manager-detect@package-manager-detect/v1.0.0
+      - uses: grafana/plugin-actions/package-manager-detect@package-manager-detect/v1.0.1
       - id: packageManager
 
       - name: Setup Node.js

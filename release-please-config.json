@@ -74,7 +74,7 @@
       "extra-files": ["README.md"]
     },
     "package-manager-detect": {
-      "package-name": "package-plugin",
+      "package-name": "package-manager-detect",
       "extra-files": ["README.md"]
     },
     "package-plugin": {

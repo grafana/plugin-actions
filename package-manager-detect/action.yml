@@ -54,6 +54,7 @@ runs:
 
         # Parse the JSON and extract individual values
         NAME=$(echo "$PM_OUTPUT" | jq -r '.name')
+        VERSION=$(echo "$PM_OUTPUT" | jq -r '.version')
         LOCK_FILE_PATH=$(echo "$PM_OUTPUT" | jq -r '.lockFilePath')
         AGENT=$(echo "$PM_OUTPUT" | jq -r '.agent')
         INSTALL_CMD=$(echo "$PM_OUTPUT" | jq -r '.install')
@@ -68,6 +69,7 @@ runs:
 
         # Set outputs
         echo "name=$NAME" >> $GITHUB_OUTPUT
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
         echo "lock-file-path=$LOCK_FILE_PATH" >> $GITHUB_OUTPUT
         echo "agent=$AGENT" >> $GITHUB_OUTPUT
         echo "install-cmd=$INSTALL_CMD" >> $GITHUB_OUTPUT

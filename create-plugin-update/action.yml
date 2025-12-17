@@ -67,7 +67,7 @@ runs:
         git config --local user.email 144369747+grafana-plugins-platform-bot[bot]@users.noreply.github.com
 
         git remote -v
-        git switch -c update-grafana-create-plugin-${LATEST_VERSION}
+        git checkout -b update-grafana-create-plugin-${LATEST_VERSION}
       shell: bash
       env:
         LATEST_VERSION: ${{ steps.get-latest-version.outputs.latest_version }}

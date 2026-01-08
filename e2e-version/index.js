@@ -1,7 +1,6 @@
 const core = require('@actions/core');
 const semver = require('semver');
 const getDevImageTag = require('./get-dev-image-tag');
-const getReactImageTag = require('./get-react-image-tag');
 const fs = require('fs/promises');
 const path = require('path');
 
@@ -103,11 +102,8 @@ async function run() {
     }
 
     if (!skipGrafanaReactImage) {
-      // get the most recent grafana React image
-      const reactTag = await getReactImageTag({ core });
-      if (reactTag) {
-        images.push({ name: 'grafana', version: reactTag });
-      }
+      // Add hardcoded Grafana React image
+      images.push({ name: 'grafana', version: '12.4.0-react19' });
     }
 
     console.log('Resolved images: ', images);

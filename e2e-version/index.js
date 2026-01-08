@@ -23,7 +23,9 @@ async function run() {
 
     // Determine default for React image based on repository owner
     // Include by default for Grafana org repositories, skip for others
-    const repositoryOwner = process.env.GITHUB_REPOSITORY_OWNER || '';
+    // GITHUB_REPOSITORY is in format "owner/repo", GITHUB_REPOSITORY_OWNER might not be available
+    const githubRepository = process.env.GITHUB_REPOSITORY || '';
+    const repositoryOwner = process.env.GITHUB_REPOSITORY_OWNER || githubRepository.split('/')[0] || '';
     const isGrafanaOrg = repositoryOwner.toLowerCase() === 'grafana';
     const reactImageInputValue = core.getInput(SkipGrafanaReactImageInput);
 

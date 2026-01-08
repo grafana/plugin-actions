@@ -5,7 +5,7 @@ const fs = require('fs/promises');
 const path = require('path');
 
 const SkipGrafanaDevImageInput = 'skip-grafana-dev-image';
-const SkipGrafanaReactImageInput = 'skip-grafana-react-image';
+const SkipGrafanaReact19PreviewImageInput = 'skip-grafana-react-19-preview-image';
 const VersionResolverTypeInput = 'version-resolver-type';
 const GrafanaDependencyInput = 'grafana-dependency';
 const LimitInput = 'limit';
@@ -29,19 +29,20 @@ async function run() {
 
     // Check if input was explicitly provided by checking environment variable
     // GitHub Actions sets inputs as environment variables with INPUT_ prefix
-    const reactImageInputEnv = process.env[`INPUT_${SkipGrafanaReactImageInput.toUpperCase().replace(/-/g, '_')}`];
+    const reactImageInputEnv =
+      process.env[`INPUT_${SkipGrafanaReact19PreviewImageInput.toUpperCase().replace(/-/g, '_')}`];
     const isExplicitlyProvided = reactImageInputEnv !== undefined;
-    const reactImageInputValue = core.getInput(SkipGrafanaReactImageInput);
+    const reactImageInputValue = core.getInput(SkipGrafanaReact19PreviewImageInput);
 
     // If input is not explicitly provided, use org-based defaults
     // If input is explicitly provided, always honor it
-    let skipGrafanaReactImage;
+    let skipGrafanaReact19PreviewImage;
     if (!isExplicitlyProvided) {
       // Input not provided: use defaults based on org
-      skipGrafanaReactImage = !isGrafanaOrg; // false for Grafana org (include), true for external (skip)
+      skipGrafanaReact19PreviewImage = !isGrafanaOrg; // false for Grafana org (include), true for external (skip)
     } else {
       // Input explicitly provided: always honor it
-      skipGrafanaReactImage = reactImageInputValue === 'true';
+      skipGrafanaReact19PreviewImage = reactImageInputValue === 'true';
     }
 
     const grafanaDependency = core.getInput(GrafanaDependencyInput);
@@ -101,8 +102,8 @@ async function run() {
       }
     }
 
-    if (!skipGrafanaReactImage) {
-      // Add hardcoded Grafana React image
+    if (!skipGrafanaReact19PreviewImage) {
+      // Add hardcoded Grafana React 19 preview image
       images.push({ name: 'grafana', version: 'dev-preview-react19' });
     }
 

@@ -27,18 +27,22 @@ async function run() {
     const githubRepository = process.env.GITHUB_REPOSITORY || '';
     const repositoryOwner = process.env.GITHUB_REPOSITORY_OWNER || githubRepository.split('/')[0] || '';
     const isGrafanaOrg = repositoryOwner.toLowerCase() === 'grafana';
+
+    // Check if input was explicitly provided by checking environment variable
+    // GitHub Actions sets inputs as environment variables with INPUT_ prefix
+    const reactImageInputEnv = process.env[`INPUT_${SkipGrafanaReactImageInput.toUpperCase().replace(/-/g, '_')}`];
+    const isExplicitlyProvided = reactImageInputEnv !== undefined;
     const reactImageInputValue = core.getInput(SkipGrafanaReactImageInput);
 
-    // For Grafana org: include by default (skip = false), but respect explicit true
-    // For external: skip by default (skip = true), unless explicitly set to false
+    // If input is not explicitly provided, use org-based defaults
+    // If input is explicitly provided, always honor it
     let skipGrafanaReactImage;
-    if (isGrafanaOrg) {
-      // Grafana org: include by default (false), but allow explicit opt-out
-      // If explicitly set to 'true', skip it. Otherwise (default or 'false'), include it.
-      skipGrafanaReactImage = reactImageInputValue === 'true';
+    if (!isExplicitlyProvided) {
+      // Input not provided: use defaults based on org
+      skipGrafanaReactImage = !isGrafanaOrg; // false for Grafana org (include), true for external (skip)
     } else {
-      // External: skip by default (true), unless explicitly set to false
-      skipGrafanaReactImage = reactImageInputValue !== 'false';
+      // Input explicitly provided: always honor it
+      skipGrafanaReactImage = reactImageInputValue === 'true';
     }
 
     const grafanaDependency = core.getInput(GrafanaDependencyInput);

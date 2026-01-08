@@ -29,13 +29,13 @@ async function run() {
     const isGrafanaOrg = repositoryOwner.toLowerCase() === 'grafana';
     const reactImageInputValue = core.getInput(SkipGrafanaReactImageInput);
 
-    // For Grafana org: always include by default (skip = false)
+    // For Grafana org: include by default (skip = false), but respect explicit true
     // For external: skip by default (skip = true), unless explicitly set to false
     let skipGrafanaReactImage;
     if (isGrafanaOrg) {
-      // Grafana org: always include (can't be overridden to skip)
-      // This matches the requirement: "included by default for internal repos"
-      skipGrafanaReactImage = false;
+      // Grafana org: include by default (false), but allow explicit opt-out
+      // If explicitly set to 'true', skip it. Otherwise (default or 'false'), include it.
+      skipGrafanaReactImage = reactImageInputValue === 'true';
     } else {
       // External: skip by default (true), unless explicitly set to false
       skipGrafanaReactImage = reactImageInputValue !== 'false';

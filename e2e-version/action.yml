@@ -7,6 +7,11 @@ inputs:
     required: false
     description: 'Optionally, you can skip the Grafana dev image'
     type: boolean
+  skip-grafana-react-image:
+    default: 'true'
+    required: false
+    description: 'Skip the Grafana React image (e.g., grafana/grafana:12.4.0-react19). Defaults to false (include) for Grafana org repositories, true (skip) for others. Can be explicitly overridden.'
+    type: boolean
   version-resolver-type:
     required: true 
     type: choice

@@ -1,10 +1,12 @@
 const core = require('@actions/core');
 const semver = require('semver');
 const getDevImageTag = require('./get-dev-image-tag');
+const getReactImageTag = require('./get-react-image-tag');
 const fs = require('fs/promises');
 const path = require('path');
 
 const SkipGrafanaDevImageInput = 'skip-grafana-dev-image';
+const SkipGrafanaReactImageInput = 'skip-grafana-react-image';
 const VersionResolverTypeInput = 'version-resolver-type';
 const GrafanaDependencyInput = 'grafana-dependency';
 const LimitInput = 'limit';
@@ -18,6 +20,25 @@ const VersionResolverTypes = {
 async function run() {
   try {
     const skipGrafanaDevImage = core.getBooleanInput(SkipGrafanaDevImageInput);
+
+    // Determine default for React image based on repository owner
+    // Include by default for Grafana org repositories, skip for others
+    const repositoryOwner = process.env.GITHUB_REPOSITORY_OWNER || '';
+    const isGrafanaOrg = repositoryOwner.toLowerCase() === 'grafana';
+    const reactImageInputValue = core.getInput(SkipGrafanaReactImageInput);
+
+    // For Grafana org: always include by default (skip = false)
+    // For external: skip by default (skip = true), unless explicitly set to false
+    let skipGrafanaReactImage;
+    if (isGrafanaOrg) {
+      // Grafana org: always include (can't be overridden to skip)
+      // This matches the requirement: "included by default for internal repos"
+      skipGrafanaReactImage = false;
+    } else {
+      // External: skip by default (true), unless explicitly set to false
+      skipGrafanaReactImage = reactImageInputValue !== 'false';
+    }
+
     const grafanaDependency = core.getInput(GrafanaDependencyInput);
     const versionResolverType = core.getInput(VersionResolverTypeInput) || VersionResolverTypes.PluginGrafanaDependency;
     const limit = parseInt(core.getInput(LimitInput));
@@ -72,6 +93,14 @@ async function run() {
       const tag = await getDevImageTag({ core });
       if (tag) {
         images.unshift({ name: 'grafana-dev', version: tag });
+      }
+    }
+
+    if (!skipGrafanaReactImage) {
+      // get the most recent grafana React image
+      const reactTag = await getReactImageTag({ core });
+      if (reactTag) {
+        images.push({ name: 'grafana', version: reactTag });
       }
     }
 

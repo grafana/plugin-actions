@@ -27,10 +27,10 @@ async function run() {
     const repositoryOwner = process.env.GITHUB_REPOSITORY_OWNER || githubRepository.split('/')[0] || '';
     const isGrafanaOrg = repositoryOwner.toLowerCase() === 'grafana';
 
-    // Check if input was explicitly provided by checking environment variable
-    // GitHub Actions sets inputs as environment variables with INPUT_ prefix (uppercase, dashes to underscores)
-    const reactImageInputEnvName = `INPUT_${SkipGrafanaReact19PreviewImageInput.toUpperCase().replace(/-/g, '_')}`;
-    const isExplicitlyProvided = process.env[reactImageInputEnvName] !== undefined;
+    // Check if input was explicitly provided by checking if getInput returns non-empty string
+    // core.getInput() returns empty string when input is not provided
+    const reactImageInputValue = core.getInput(SkipGrafanaReact19PreviewImageInput);
+    const isExplicitlyProvided = reactImageInputValue !== '';
 
     // If input is not explicitly provided, use org-based defaults
     // If input is explicitly provided, always honor it using getBooleanInput

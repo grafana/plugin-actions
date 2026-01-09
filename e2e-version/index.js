@@ -28,21 +28,19 @@ async function run() {
     const isGrafanaOrg = repositoryOwner.toLowerCase() === 'grafana';
 
     // Check if input was explicitly provided by checking environment variable
-    // GitHub Actions sets inputs as environment variables with INPUT_ prefix
-    const reactImageInputEnv =
-      process.env[`INPUT_${SkipGrafanaReact19PreviewImageInput.toUpperCase().replace(/-/g, '_')}`];
-    const isExplicitlyProvided = reactImageInputEnv !== undefined;
-    const reactImageInputValue = core.getInput(SkipGrafanaReact19PreviewImageInput);
+    // GitHub Actions sets inputs as environment variables with INPUT_ prefix (uppercase, dashes to underscores)
+    const reactImageInputEnvName = `INPUT_${SkipGrafanaReact19PreviewImageInput.toUpperCase().replace(/-/g, '_')}`;
+    const isExplicitlyProvided = process.env[reactImageInputEnvName] !== undefined;
 
     // If input is not explicitly provided, use org-based defaults
-    // If input is explicitly provided, always honor it
+    // If input is explicitly provided, always honor it using getBooleanInput
     let skipGrafanaReact19PreviewImage;
     if (!isExplicitlyProvided) {
       // Input not provided: use defaults based on org
       skipGrafanaReact19PreviewImage = !isGrafanaOrg; // false for Grafana org (include), true for external (skip)
     } else {
       // Input explicitly provided: always honor it
-      skipGrafanaReact19PreviewImage = reactImageInputValue === 'true';
+      skipGrafanaReact19PreviewImage = core.getBooleanInput(SkipGrafanaReact19PreviewImageInput);
     }
 
     const grafanaDependency = core.getInput(GrafanaDependencyInput);

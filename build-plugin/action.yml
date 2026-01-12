@@ -143,7 +143,7 @@ runs:
         PLUGIN_VERSION: ${{ steps.package-plugin.outputs.plugin-version }}
 
     - name: Create Github release
-      uses: softprops/action-gh-release@62c96d0c4e8a889135c1f3a25910db8dbe0e85f7 # v2.3.4
+      uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v2.5.0
       with:
         draft: true
         generate_release_notes: true

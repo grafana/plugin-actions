@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.2.0](https://github.com/grafana/plugin-actions/compare/e2e-version/v1.1.2...e2e-version/v1.2.0) (2026-01-12)
+
+
+### 🎉 Features
+
+* support react image in e2e matrix ([#192](https://github.com/grafana/plugin-actions/issues/192)) ([f850aa0](https://github.com/grafana/plugin-actions/commit/f850aa03aa7f7de9d2165278ca75281adb31bc01))
+
+
+### 🔧 Chores
+
+* **deps:** update dependency jest to v30 ([#165](https://github.com/grafana/plugin-actions/issues/165)) ([b52814f](https://github.com/grafana/plugin-actions/commit/b52814fde791b29d80b42b3fbf6d5479f7f5d2c3))
+
 ## [1.1.2](https://github.com/grafana/plugin-actions/compare/e2e-version/v1.1.1...e2e-version/v1.1.2) (2025-09-26)
 
 

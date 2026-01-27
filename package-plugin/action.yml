@@ -20,6 +20,10 @@ inputs:
     description: "Grafana access policy token. https://grafana.com/developers/plugin-tools/publish-a-plugin/sign-a-plugin#generate-an-access-policy-token"
     required: false
     default: ""
+  sign_root_urls:
+    description: "Root URLs for plugin signing"
+    required: false
+    default: ""
   go-version:
     description: "Version of go"
     required: false
@@ -100,7 +104,14 @@ runs:
       shell: bash
 
     - name: Sign plugin
-      run: ${{ github.action_path }}/pm.sh sign
+      run: |
+        if [ -n "${{ inputs.sign_root_urls }}" ]; then
+          echo "Signing private plugin including rootUrls"
+          ${{ github.action_path }}/pm.sh sign -- --rootUrls "${{ inputs.sign_root_urls }}"
+        else
+          echo "Signing public plugin"
+          ${{ github.action_path }}/pm.sh sign
+        fi
       shell: bash
       env:
         GRAFANA_ACCESS_POLICY_TOKEN: ${{ inputs.policy_token }}

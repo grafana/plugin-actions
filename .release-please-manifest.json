@@ -3,7 +3,7 @@
   "bundle-size": "1.1.0",
   "bundle-types": "1.0.2",
   "create-plugin-update": "2.0.1",
-  "e2e-version": "1.2.0",
+  "e2e-version": "1.2.1",
   "is-compatible": "1.0.2",
   "package-plugin": "1.0.2",
   "playwright-gh-pages/deploy-report-pages": "1.1.0",

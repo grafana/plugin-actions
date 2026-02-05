@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/grafana/plugin-actions/compare/e2e-version/v1.2.0...e2e-version/v1.2.1) (2026-02-05)
+
+
+### 🔧 Chores
+
+* switch to enterprise image by default ([#198](https://github.com/grafana/plugin-actions/issues/198)) ([22550b7](https://github.com/grafana/plugin-actions/commit/22550b795140f7f2c3e799def6dc5e3ac5697ccf))
+
 ## [1.2.0](https://github.com/grafana/plugin-actions/compare/e2e-version/v1.1.2...e2e-version/v1.2.0) (2026-01-12)
 
 

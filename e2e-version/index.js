@@ -102,7 +102,7 @@ async function run() {
 
     if (!skipGrafanaReact19PreviewImage) {
       // Add hardcoded Grafana React 19 preview image
-      images.push({ name: 'grafana', version: 'dev-preview-react19' });
+      images.push({ name: 'grafana-enterprise', version: 'dev-preview-react19' });
     }
 
     console.log('Resolved images: ', images);

@@ -9,7 +9,7 @@ inputs:
     type: boolean
   skip-grafana-react-19-preview-image:
     required: false
-    description: 'Skip the Grafana React 19 preview image (e.g., grafana/grafana:dev-preview-react19). Defaults to false (include) for Grafana org repositories, true (skip) for others. Can be explicitly overridden.'
+    description: 'Skip the Grafana React 19 preview image (e.g., grafana/gafana-enterprise:dev-preview-react19). Defaults to false (include) for Grafana org repositories, true (skip) for others. Can be explicitly overridden.'
     type: boolean
   version-resolver-type:
     required: true 

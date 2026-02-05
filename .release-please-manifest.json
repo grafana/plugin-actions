@@ -8,7 +8,7 @@
   "package-plugin": "1.0.2",
   "playwright-gh-pages/deploy-report-pages": "1.1.0",
   "playwright-gh-pages/upload-report-artifacts": "1.0.1",
-  "publish-report": "1.0.2",
+  "publish-report": "1.0.3",
   "wait-for-grafana": "1.0.2",
   "package-manager-detect": "1.0.1"
 }

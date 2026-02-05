@@ -39,7 +39,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: grafana/plugin-actions/bundle-types@bundle-types/v1.0.2
+      - uses: grafana/plugin-actions/bundle-types@bundle-types/v1.0.3
 ```
 <!-- x-release-please-end-version -->
 

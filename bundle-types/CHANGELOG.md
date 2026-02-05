@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.3](https://github.com/grafana/plugin-actions/compare/bundle-types/v1.0.2...bundle-types/v1.0.3) (2026-02-05)
+
+
+### 🔧 Chores
+
+* **deps:** update actions/create-github-app-token action to v2.1.4 ([#144](https://github.com/grafana/plugin-actions/issues/144)) ([fc465c0](https://github.com/grafana/plugin-actions/commit/fc465c0c762933c2824ffe71bc3c59676a88b1f2))
+* **deps:** update actions/setup-node action to v5 ([#164](https://github.com/grafana/plugin-actions/issues/164)) ([78fa21c](https://github.com/grafana/plugin-actions/commit/78fa21caec491398393602502ae28fe3184c3a13))
+* **deps:** update actions/setup-node action to v6 ([#175](https://github.com/grafana/plugin-actions/issues/175)) ([8e19900](https://github.com/grafana/plugin-actions/commit/8e19900577d14a8ac66c5e8299ce51522590c219))
+
 ## [1.0.2](https://github.com/grafana/plugin-actions/compare/bundle-types/v1.0.1...bundle-types/v1.0.2) (2025-08-04)
 
 

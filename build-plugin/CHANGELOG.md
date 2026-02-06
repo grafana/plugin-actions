@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.3](https://github.com/grafana/plugin-actions/compare/build-plugin/v1.0.2...build-plugin/v1.0.3) (2026-02-05)
+
+
+### 🔧 Chores
+
+* **deps:** update actions/attest-build-provenance action to v3 ([#158](https://github.com/grafana/plugin-actions/issues/158)) ([39a0e52](https://github.com/grafana/plugin-actions/commit/39a0e52b82cd3d7b1f9e51c993e06f06cdf5f78c))
+* **deps:** update softprops/action-gh-release action to v2.3.4 ([#156](https://github.com/grafana/plugin-actions/issues/156)) ([c4393f0](https://github.com/grafana/plugin-actions/commit/c4393f091fd9f2ff7b7c6a09ca9d95c582cc174f))
+
 ## [1.0.2](https://github.com/grafana/plugin-actions/compare/build-plugin/v1.0.1...build-plugin/v1.0.2) (2025-08-04)
 
 

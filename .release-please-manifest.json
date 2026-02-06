@@ -5,7 +5,7 @@
   "create-plugin-update": "2.0.1",
   "e2e-version": "1.2.1",
   "is-compatible": "1.0.2",
-  "package-plugin": "1.0.2",
+  "package-plugin": "1.0.3",
   "playwright-gh-pages/deploy-report-pages": "1.1.0",
   "playwright-gh-pages/upload-report-artifacts": "1.0.1",
   "publish-report": "1.0.2",

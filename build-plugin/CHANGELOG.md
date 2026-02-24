@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.1.0](https://github.com/grafana/plugin-actions/compare/build-plugin/v1.0.2...build-plugin/v1.1.0) (2026-02-24)
+
+
+### 🎉 Features
+
+* update default Go version to 1.25 ([#202](https://github.com/grafana/plugin-actions/issues/202)) ([0deef9d](https://github.com/grafana/plugin-actions/commit/0deef9dc67d91214981d6ba1ba52b722305ab4c0))
+
+
+### 🔧 Chores
+
+* **deps:** update actions/attest-build-provenance action to v3 ([#158](https://github.com/grafana/plugin-actions/issues/158)) ([39a0e52](https://github.com/grafana/plugin-actions/commit/39a0e52b82cd3d7b1f9e51c993e06f06cdf5f78c))
+* **deps:** update softprops/action-gh-release action to v2.3.4 ([#156](https://github.com/grafana/plugin-actions/issues/156)) ([c4393f0](https://github.com/grafana/plugin-actions/commit/c4393f091fd9f2ff7b7c6a09ca9d95c582cc174f))
+* Update default go version to 1.25 and document versions input ([0deef9d](https://github.com/grafana/plugin-actions/commit/0deef9dc67d91214981d6ba1ba52b722305ab4c0))
+
 ## [1.0.2](https://github.com/grafana/plugin-actions/compare/build-plugin/v1.0.1...build-plugin/v1.0.2) (2025-08-04)
 
 

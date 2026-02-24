@@ -64,3 +64,5 @@ jobs:
 ## Options
 
 - `policy_token`: Grafana access policy token. https://grafana.com/developers/plugin-tools/publish-a-plugin/sign-a-plugin#generate-an-access-policy-token
+- `go-version`: (Optional) Go version to use for building backend plugins. Defaults to "1.25".
+- `node-version`: (Optional) Node.js version to use. Defaults to "20".

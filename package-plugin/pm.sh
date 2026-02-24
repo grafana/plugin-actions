@@ -32,5 +32,5 @@ echo "Running '$1' with $pm..."
 if [ "$1" = "install" ]; then
 	"$pm" install
 else
-	"$pm" run "$1"
+	"$pm" run "$1" -- "${@:3}"
 fi

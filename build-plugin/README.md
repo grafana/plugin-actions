@@ -29,7 +29,7 @@ name: Release
 on:
   push:
     tags:
-      - "v*" # Run workflow on version tags, e.g. v1.1.0.
+      - "v*" # Run workflow on version tags, e.g. v1.2.0.
 
 jobs:
   release:
@@ -41,7 +41,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: grafana/plugin-actions/build-plugin@build-plugin/v1.1.0
+      - uses: grafana/plugin-actions/build-plugin@build-plugin/v1.2.0
         with:
           # see https://grafana.com/developers/plugin-tools/publish-a-plugin/sign-a-plugin#generate-an-access-policy-token to generate it
           # save the value in your repository secrets
@@ -73,7 +73,7 @@ name: Release
 on:
   push:
     tags:
-      - "v*" # Run workflow on version tags, e.g. v1.1.0.
+      - "v*" # Run workflow on version tags, e.g. v1.2.0.
 
 jobs:
   release:
@@ -86,7 +86,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: grafana/plugin-actions/build-plugin@build-plugin/v1.1.0
+      - uses: grafana/plugin-actions/build-plugin@build-plugin/v1.2.0
         with:
           policy_token: ${{ secrets.GRAFANA_ACCESS_POLICY_TOKEN }}
           attestation: true # new line
@@ -108,7 +108,7 @@ To enable changelog generation in your workflow:
 <!-- x-release-please-start-version -->
 
 ```yaml
-- uses: grafana/plugin-actions/build-plugin@build-plugin/v1.1.0
+- uses: grafana/plugin-actions/build-plugin@build-plugin/v1.2.0
   with:
     policy_token: ${{ secrets.GRAFANA_ACCESS_POLICY_TOKEN }}
     use_changelog_generator: true
@@ -128,7 +128,7 @@ If your target branch is protected, the default github.token cannot push changes
 
 ```yaml
 - name: Build plugin
-  uses: grafana/plugin-actions/build-plugin@build-plugin/v1.1.0
+  uses: grafana/plugin-actions/build-plugin@build-plugin/v1.2.0
   with:
     use_changelog_generator: true
     token: ${{ secrets.CHANGELOG_PAT }}  # Replace default github.token
@@ -141,7 +141,7 @@ If your plugin requires a different Go version than the default, you can specify
 <!-- x-release-please-start-version -->
 
 ```yaml
-- uses: grafana/plugin-actions/build-plugin@build-plugin/v1.1.0
+- uses: grafana/plugin-actions/build-plugin@build-plugin/v1.2.0
   with:
     policy_token: ${{ secrets.GRAFANA_ACCESS_POLICY_TOKEN }}
     go-version: '1.23'

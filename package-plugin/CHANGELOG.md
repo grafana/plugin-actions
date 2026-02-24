@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/grafana/plugin-actions/compare/package-plugin/v1.1.0...package-plugin/v1.2.0) (2026-02-24)
+
+
+### 🎉 Features
+
+* support signing of private plugins ([#177](https://github.com/grafana/plugin-actions/issues/177)) ([765ad2d](https://github.com/grafana/plugin-actions/commit/765ad2d0a4172d3dd7925bab0255915eb5c6b468))
+
 ## [1.1.0](https://github.com/grafana/plugin-actions/compare/package-plugin/v1.0.2...package-plugin/v1.1.0) (2026-02-24)
 
 

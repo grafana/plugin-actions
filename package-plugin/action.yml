@@ -105,15 +105,16 @@ runs:
 
     - name: Sign plugin
       run: |
-        if [ -n "${{ inputs.sign_root_urls }}" ]; then
+        if [ -n "$SIGN_ROOT_URLS" ]; then
           echo "Signing private plugin including rootUrls"
-          ${{ github.action_path }}/pm.sh sign -- --rootUrls "${{ inputs.sign_root_urls }}"
+          ${{ github.action_path }}/pm.sh sign -- --rootUrls "$SIGN_ROOT_URLS"
         else
           echo "Signing public plugin"
           ${{ github.action_path }}/pm.sh sign
         fi
       shell: bash
       env:
+        SIGN_ROOT_URLS: ${{ inputs.sign_root_urls }}
         GRAFANA_ACCESS_POLICY_TOKEN: ${{ inputs.policy_token }}
         GRAFANA_API_KEY: ${{ inputs.grafana_token }}
       if: ${{ inputs.policy_token != '' }}

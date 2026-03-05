@@ -44,9 +44,7 @@ runs:
       id: compare-versions
       run: |
         if [ "$LATEST_VERSION" != "$CONFIG_VERSION" ]; then
-          LATEST_MAJOR=$(echo "$LATEST_VERSION" | cut -d. -f1)
           echo "update_needed=true" >> "$GITHUB_OUTPUT"
-          echo "major_version=$LATEST_MAJOR" >> "$GITHUB_OUTPUT"
         else
           echo "update_needed=false" >> "$GITHUB_OUTPUT"
         fi
@@ -76,28 +74,34 @@ runs:
       if: steps.compare-versions.outputs.update_needed == 'true'
       run: |
         ${{ github.action_path }}/pm.sh update
-        ${{ github.action_path }}/pm.sh install
+      shell: bash
+
+    - name: Check if PR generation is needed
+      id: check-changes
+      if: steps.compare-versions.outputs.update_needed == 'true'
+      run: |
+        # Check if the number of commits is 1 and the commit message contains "chore: update .config/.cprc.json to version"
+        if [ $(git rev-list --count HEAD) -eq 1 ] && git log -1 --pretty=%B | grep -q "chore: update .config/.cprc.json to version"; then
+          echo "should_push=false" >> "$GITHUB_OUTPUT"
+        else
+          echo "should_push=true" >> "$GITHUB_OUTPUT"
+        fi
       shell: bash
 
     # Create Plugin v6 update command uses a --commit flag which will automatically commit the changes
     # for versions before v6 we need to commit the changes manually
     - name: Commit changes and push
-      if: steps.compare-versions.outputs.update_needed == 'true'
+      if: steps.compare-versions.outputs.update_needed == 'true' && steps.check-changes.outputs.should_push == 'true'
       run: |
         git config --global --type bool push.autoSetupRemote true
-        if [ "$LATEST_MAJOR" -lt 6 ]; then
-          git add .
-          git commit -m "chore: update configuration to create-plugin $LATEST_VERSION"
-        fi
         git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}
       shell: bash
       env:
         LATEST_VERSION: ${{ steps.get-latest-version.outputs.latest_version }}
-        LATEST_MAJOR: ${{ steps.compare-versions.outputs.major_version }}
         GITHUB_TOKEN: ${{ inputs.token }}
 
     - name: Create or Update PR
-      if: steps.compare-versions.outputs.update_needed == 'true'
+      if: steps.compare-versions.outputs.update_needed == 'true' && steps.check-changes.outputs.should_push == 'true'
       env:
         GH_TOKEN: ${{ inputs.token }}
         LATEST_VERSION: ${{ steps.get-latest-version.outputs.latest_version }}

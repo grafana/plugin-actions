@@ -67,7 +67,7 @@ runs:
 
     - name: Exit if version is already up to date
       if: steps.compare-versions.outputs.update_needed == 'false'
-      run: echo "::notice::Plugin is already using the latest version. No update needed."
+      run: echo "::notice::Plugin is already using the latest create-plugin version. No update needed."
       shell: bash
 
     - name: Install dependencies
@@ -99,7 +99,6 @@ runs:
       id: check-changes
       if: steps.compare-versions.outputs.update_needed == 'true'
       run: |
-
         if [ -n "$(git log ${BASE}..HEAD --oneline)" ]; then
           echo "should_push=true" >> "$GITHUB_OUTPUT"
         else
@@ -111,7 +110,7 @@ runs:
 
     - name: Exit if no update is needed
       if: steps.compare-versions.outputs.update_needed == 'true' && steps.check-changes.outputs.should_push == 'false'
-      run: echo "::notice::No updates needed."
+      run: echo "::notice::create-plugin update produced no file changes (only a version bump in .cprc.json). Skipping branch push."
       shell: bash
 
     - name: Push branch
@@ -121,7 +120,6 @@ runs:
         git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}
       shell: bash
       env:
-        LATEST_VERSION: ${{ steps.get-latest-version.outputs.latest_version }}
         GITHUB_TOKEN: ${{ inputs.token }}
 
     - name: Create or Update PR

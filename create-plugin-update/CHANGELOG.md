@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2](https://github.com/grafana/plugin-actions/compare/create-plugin-update/v2.0.1...create-plugin-update/v2.0.2) (2026-03-09)
+
+
+### 🐛 Bug Fixes
+
+* only open PR if create-plugin ran migrations ([#208](https://github.com/grafana/plugin-actions/issues/208)) ([88be477](https://github.com/grafana/plugin-actions/commit/88be477d6f3d0e4f108995299d877b0495ece8e3))
+
 ## [2.0.1](https://github.com/grafana/plugin-actions/compare/create-plugin-update/v2.0.0...create-plugin-update/v2.0.1) (2025-11-13)
 
 

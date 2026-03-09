@@ -84,7 +84,7 @@ runs:
     - name: Update the configs
       if: steps.compare-versions.outputs.update_needed == 'true'
       run: |
-        ${{ steps.package-manager.outputs.execCmd }} update --commit
+        ${{ steps.package-manager.outputs.execCmd }} @grafana/create-plugin update --commit
       shell: bash
 
     # check if the update command created any commits in the current branch,

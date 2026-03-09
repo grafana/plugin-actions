@@ -53,6 +53,11 @@ runs:
         LATEST_VERSION: ${{ steps.get-latest-version.outputs.latest_version }}
         CONFIG_VERSION: ${{ steps.get-config-version.outputs.config_version }}
 
+    - name: Exit if version is already up to date
+      if: steps.compare-versions.outputs.update_needed == 'false'
+      run: echo "::notice::Plugin is already using the latest version. No update needed."
+      shell: bash
+
     - name: Install dependencies
       if: steps.compare-versions.outputs.update_needed == 'true'
       run: ${{ github.action_path }}/pm.sh install
@@ -91,6 +96,11 @@ runs:
       shell: bash
       env:
         BASE: ${{ inputs.base }}
+
+    - name: Exit if no update is needed
+      if: steps.compare-versions.outputs.update_needed == 'true' && steps.check-changes.outputs.should_push == 'false'
+      run: echo "::notice::No updates needed."
+      shell: bash
 
     - name: Push branch
       if: steps.compare-versions.outputs.update_needed == 'true' && steps.check-changes.outputs.should_push == 'true'

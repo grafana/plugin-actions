@@ -17,22 +17,28 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Checkout Repository
+      uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      with:
+        persist-credentials: false
+        ref: ${{ inputs.base }}
+
+    - name: Detect package manager
+      id: package-manager
+      uses: grafana/plugin-actions/package-manager-detect@package-manager-detect/v1.0.1
+
     - name: Setup Node.js
       uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
       with:
         node-version: "${{ inputs.node-version }}"
+        cache: ${{ steps.package-manager.outputs.name }}
+        cache-dependency-path: ${{ steps.package-manager.outputs.lockFilePath }}
 
     - name: Get latest version of create-plugin package
       id: get-latest-version
       run: |
         echo "latest_version=$(npx -y @grafana/create-plugin@latest version | sed 's/.*@//' | sed 's/ *$//' | sed '/^$/d')" >> "$GITHUB_OUTPUT"
       shell: bash
-
-    - name: Checkout Repository
-      uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-      with:
-        persist-credentials: false
-        ref: ${{ inputs.base }}
 
     - name: Get version from .config/.cprc.json
       id: get-config-version
@@ -60,7 +66,7 @@ runs:
 
     - name: Install dependencies
       if: steps.compare-versions.outputs.update_needed == 'true'
-      run: ${{ github.action_path }}/pm.sh install
+      run: ${{ steps.package-manager.outputs.frozenInstallCmd }}
       shell: bash
 
     - name: Create branch
@@ -78,7 +84,7 @@ runs:
     - name: Update the configs
       if: steps.compare-versions.outputs.update_needed == 'true'
       run: |
-        ${{ github.action_path }}/pm.sh update
+        ${{ steps.package-manager.outputs.execCmd }} update --commit
       shell: bash
 
     # check if the update command created any commits in the current branch,

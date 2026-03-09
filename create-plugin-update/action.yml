@@ -17,22 +17,34 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Checkout Repository
+      uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      with:
+        persist-credentials: false
+        ref: ${{ inputs.base }}
+
+    - name: Detect package manager
+      id: package-manager
+      uses: grafana/plugin-actions/package-manager-detect@package-manager-detect/v1.0.1
+
+    - name: Install pnpm
+      if: steps.package-manager.outputs.name == 'pnpm'
+      uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
+      with:
+        version: ${{ steps.package-manager.outputs.version }}
+
     - name: Setup Node.js
       uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
       with:
         node-version: "${{ inputs.node-version }}"
+        cache: ${{ steps.package-manager.outputs.name }}
+        cache-dependency-path: ${{ steps.package-manager.outputs.lockFilePath }}
 
     - name: Get latest version of create-plugin package
       id: get-latest-version
       run: |
         echo "latest_version=$(npx -y @grafana/create-plugin@latest version | sed 's/.*@//' | sed 's/ *$//' | sed '/^$/d')" >> "$GITHUB_OUTPUT"
       shell: bash
-
-    - name: Checkout Repository
-      uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-      with:
-        persist-credentials: false
-        ref: ${{ inputs.base }}
 
     - name: Get version from .config/.cprc.json
       id: get-config-version
@@ -44,9 +56,7 @@ runs:
       id: compare-versions
       run: |
         if [ "$LATEST_VERSION" != "$CONFIG_VERSION" ]; then
-          LATEST_MAJOR=$(echo "$LATEST_VERSION" | cut -d. -f1)
           echo "update_needed=true" >> "$GITHUB_OUTPUT"
-          echo "major_version=$LATEST_MAJOR" >> "$GITHUB_OUTPUT"
         else
           echo "update_needed=false" >> "$GITHUB_OUTPUT"
         fi
@@ -55,9 +65,14 @@ runs:
         LATEST_VERSION: ${{ steps.get-latest-version.outputs.latest_version }}
         CONFIG_VERSION: ${{ steps.get-config-version.outputs.config_version }}
 
+    - name: Exit if version is already up to date
+      if: steps.compare-versions.outputs.update_needed == 'false'
+      run: echo "::notice::Plugin is already using the latest create-plugin version. No update needed."
+      shell: bash
+
     - name: Install dependencies
       if: steps.compare-versions.outputs.update_needed == 'true'
-      run: ${{ github.action_path }}/pm.sh install
+      run: ${{ steps.package-manager.outputs.frozenInstallCmd }}
       shell: bash
 
     - name: Create branch
@@ -75,29 +90,40 @@ runs:
     - name: Update the configs
       if: steps.compare-versions.outputs.update_needed == 'true'
       run: |
-        ${{ github.action_path }}/pm.sh update
-        ${{ github.action_path }}/pm.sh install
+        ${{ steps.package-manager.outputs.execCmd }} @grafana/create-plugin update --commit
       shell: bash
 
-    # Create Plugin v6 update command uses a --commit flag which will automatically commit the changes
-    # for versions before v6 we need to commit the changes manually
-    - name: Commit changes and push
+    # check if the update command created any commits in the current branch,
+    # if not we can skip pushing the branch and PR creation
+    - name: Check branch status
+      id: check-changes
       if: steps.compare-versions.outputs.update_needed == 'true'
       run: |
-        git config --global --type bool push.autoSetupRemote true
-        if [ "$LATEST_MAJOR" -lt 6 ]; then
-          git add .
-          git commit -m "chore: update configuration to create-plugin $LATEST_VERSION"
+        if [ -n "$(git log ${BASE}..HEAD --oneline)" ]; then
+          echo "should_push=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "should_push=false" >> "$GITHUB_OUTPUT"
         fi
+      shell: bash
+      env:
+        BASE: ${{ inputs.base }}
+
+    - name: Exit if no update is needed
+      if: steps.compare-versions.outputs.update_needed == 'true' && steps.check-changes.outputs.should_push == 'false'
+      run: echo "::notice::create-plugin update produced no file changes (only a version bump in .cprc.json). Skipping branch push."
+      shell: bash
+
+    - name: Push branch
+      if: steps.compare-versions.outputs.update_needed == 'true' && steps.check-changes.outputs.should_push == 'true'
+      run: |
+        git config --global --type bool push.autoSetupRemote true
         git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}
       shell: bash
       env:
-        LATEST_VERSION: ${{ steps.get-latest-version.outputs.latest_version }}
-        LATEST_MAJOR: ${{ steps.compare-versions.outputs.major_version }}
         GITHUB_TOKEN: ${{ inputs.token }}
 
     - name: Create or Update PR
-      if: steps.compare-versions.outputs.update_needed == 'true'
+      if: steps.compare-versions.outputs.update_needed == 'true' && steps.check-changes.outputs.should_push == 'true'
       env:
         GH_TOKEN: ${{ inputs.token }}
         LATEST_VERSION: ${{ steps.get-latest-version.outputs.latest_version }}

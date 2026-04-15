@@ -17,7 +17,8 @@ global.fetch = jest.fn(() =>
   })
 );
 
-const { run, VersionResolverTypeInput, VersionResolverTypes, GrafanaDependencyInput } = await import('./index.mjs');
+const { run, VersionResolverTypeInput, VersionResolverTypes, GrafanaDependencyInput, PluginPathInput, LimitInput } =
+  await import('./index.mjs');
 
 describe('plugin-grafana-dependency mode', () => {
   it.each([
@@ -53,7 +54,10 @@ describe('plugin-grafana-dependency mode', () => {
       if (name === GrafanaDependencyInput) {
         return t.grafanaDependency;
       }
-      if (name === 'limit') {
+      if (name === PluginPathInput) {
+        return '';
+      }
+      if (name === LimitInput) {
         return '6';
       }
       if (name === 'skip-grafana-nightly-image') {

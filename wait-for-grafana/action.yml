@@ -17,13 +17,18 @@ inputs:
     description: "Interval between checks in seconds"
     required: true
     default: "0.5"
+  startupTimeout:
+    description: "Seconds to wait for the TCP port to bind before health polling begins. Grafana 13 and dev-preview images can take longer to start on contested runners."
+    required: true
+    default: "300"
 runs:
   using: "composite"
   steps:
-    - run: ${{ github.action_path }}/wait-for-grafana.sh "${GRAFANA_URL}" "${GRAFANA_RESPONSE_CODE}" "${GRAFANA_TIMEOUT}" "${GRAFANA_INTERVAL}"
+    - run: ${{ github.action_path }}/wait-for-grafana.sh "${GRAFANA_URL}" "${GRAFANA_RESPONSE_CODE}" "${GRAFANA_TIMEOUT}" "${GRAFANA_INTERVAL}" "${GRAFANA_STARTUP_TIMEOUT}"
       shell: bash
       env:
         GRAFANA_URL: ${{ inputs.url }}
         GRAFANA_RESPONSE_CODE: ${{ inputs.responseCode }}
         GRAFANA_TIMEOUT: ${{ inputs.timeout }}
         GRAFANA_INTERVAL: ${{ inputs.interval }}
+        GRAFANA_STARTUP_TIMEOUT: ${{ inputs.startupTimeout }}

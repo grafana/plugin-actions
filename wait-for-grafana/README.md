@@ -26,7 +26,7 @@ The maximum time to wait for the server's TCP port to bind, in seconds. Default 
 
 This covers the window between the container starting and Grafana's HTTP listener becoming active. During this phase the action polls every 5 seconds. Once the port responds (with any status other than `000`), normal health polling begins using the `timeout` and `interval` values above.
 
-Newer or dev-preview Grafana images (e.g. Grafana 13, `dev-preview-react19`) can take longer to start on contested CI runners. Increasing this value gives them more time without affecting the health-check phase.
+On contested CI runners, Grafana's HTTP listener can take longer to bind than the default health-check window allows, regardless of Grafana version. Increasing this value gives the process more time to start without affecting the health-check phase.
 
 ## How to use?
 

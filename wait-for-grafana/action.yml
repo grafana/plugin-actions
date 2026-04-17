@@ -18,7 +18,7 @@ inputs:
     required: true
     default: "0.5"
   startupTimeout:
-    description: "Seconds to wait for the TCP port to bind before health polling begins. Grafana 13 and dev-preview images can take longer to start on contested runners."
+    description: "Seconds to wait for the TCP port to bind before health polling begins. On contested CI runners, Grafana's HTTP listener can take longer to start than the default health-check window allows."
     required: true
     default: "300"
 runs:

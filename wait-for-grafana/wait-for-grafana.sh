@@ -13,8 +13,12 @@ echo "Health timeout (after bind): $timeout seconds"
 echo "Interval: $interval seconds"
 
 # Phase 1: wait for TCP port to bind.
-# curl exit code 7 = ECONNREFUSED: the process isn't listening yet, safe to keep waiting.
-# Any other non-zero exit code (e.g. 6 = DNS failure) indicates misconfiguration — fail fast.
+# Fail fast only on codes that indicate misconfiguration and will never self-resolve:
+#   exit 3 = URL malformed, exit 6 = could not resolve host.
+# All other non-zero exits are transient startup conditions — keep waiting:
+#   exit 7 = ECONNREFUSED (port not yet bound)
+#   exit 52 = got nothing (port open but server not yet responding)
+#   exit 56 = recv error (connection accepted then reset during startup)
 startup_end=$((SECONDS + startup_timeout))
 port_bound=false
 
@@ -22,8 +26,8 @@ while [ $SECONDS -lt $startup_end ]; do
   response=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 2 "$url")
   curl_exit=$?
 
-  if [ $curl_exit -ne 0 ] && [ $curl_exit -ne 7 ]; then
-    echo "curl failed with exit code $curl_exit (not a connection-refused error) — failing fast"
+  if [ $curl_exit -eq 3 ] || [ $curl_exit -eq 6 ]; then
+    echo "curl failed with exit code $curl_exit — misconfiguration error, failing fast"
     exit 1
   fi
 

@@ -20,6 +20,14 @@ The maximum time to wait for the server to respond, in seconds. Default is `60`.
 
 The time to wait between each check, in seconds. Default is `0.5`.
 
+### `startupTimeout` (optional)
+
+The maximum time to wait for the server's TCP port to bind, in seconds. Default is `300`.
+
+This covers the window between the container starting and Grafana's HTTP listener becoming active. During this phase the action polls every 5 seconds. Once the port responds (with any status other than `000`), normal health polling begins using the `timeout` and `interval` values above.
+
+On contested CI runners, Grafana's HTTP listener can take longer to bind than the default health-check window allows, regardless of Grafana version. Increasing this value gives the process more time to start without affecting the health-check phase.
+
 ## How to use?
 
 You can use this action in your workflow to wait for a Grafana server to become available before running tests or other operations. Here's an example of how to use it:

@@ -8,30 +8,32 @@ startup_timeout="${5:-300}"
 
 echo "Checking URL: $url"
 echo "Expected response code: $expected_response_code"
-echo "Startup timeout (TCP bind): $startup_timeout seconds"
-echo "Health timeout (after bind): $timeout seconds"
+echo "Startup timeout: $startup_timeout seconds"
+echo "Health timeout: $timeout seconds"
 echo "Interval: $interval seconds"
 
 # Phase 1: wait for the server to return any HTTP status.
-# Any curl error is treated as a transient startup condition — keep waiting.
-# This covers ECONNREFUSED, recv errors, connection resets, and any other
-# transient state that can occur while the process is starting up.
+# Any curl error (connection refused, recv error, etc.) is treated as
+# "not ready yet" — keep waiting until startup_timeout expires.
+# Note: this action targets localhost; persistent errors such as DNS
+# failures will eventually cause startup_timeout to expire naturally.
 startup_end=$((SECONDS + startup_timeout))
-port_bound=false
+server_up=false
 
 while [ $SECONDS -lt $startup_end ]; do
-  response=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 2 "$url")
+  response=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 2 --max-time 5 "$url")
+  curl_exit=$?
 
   if [ "$response" != "000" ]; then
-    port_bound=true
+    server_up=true
     break
   fi
 
-  echo "Waiting for server to start. Current status: $response"
+  echo "Waiting for server to start (curl exit: $curl_exit). Current status: $response"
   sleep 5
 done
 
-if [ "$port_bound" = false ]; then
+if [ "$server_up" = false ]; then
   echo "Startup timeout reached. Server did not respond within $startup_timeout seconds"
   exit 1
 fi

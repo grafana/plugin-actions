@@ -8,42 +8,39 @@ startup_timeout="${5:-300}"
 
 echo "Checking URL: $url"
 echo "Expected response code: $expected_response_code"
-echo "Startup timeout (TCP bind): $startup_timeout seconds"
-echo "Health timeout (after bind): $timeout seconds"
+echo "Startup timeout: $startup_timeout seconds"
+echo "Health timeout: $timeout seconds"
 echo "Interval: $interval seconds"
 
-# Phase 1: wait for TCP port to bind.
-# curl exit code 7 = ECONNREFUSED: the process isn't listening yet, safe to keep waiting.
-# Any other non-zero exit code (e.g. 6 = DNS failure) indicates misconfiguration — fail fast.
+# Phase 1: wait for the server to return any HTTP status.
+# Any curl error (connection refused, recv error, etc.) is treated as
+# "not ready yet" — keep waiting until startup_timeout expires.
+# Note: this action targets localhost; persistent errors such as DNS
+# failures will eventually cause startup_timeout to expire naturally.
 startup_end=$((SECONDS + startup_timeout))
-port_bound=false
+server_up=false
 
 while [ $SECONDS -lt $startup_end ]; do
-  response=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 2 "$url")
+  response=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 2 --max-time 5 "$url")
   curl_exit=$?
 
-  if [ $curl_exit -ne 0 ] && [ $curl_exit -ne 7 ]; then
-    echo "curl failed with exit code $curl_exit (not a connection-refused error) — failing fast"
-    exit 1
-  fi
-
   if [ "$response" != "000" ]; then
-    port_bound=true
+    server_up=true
     break
   fi
 
-  echo "Waiting for TCP bind (curl exit: $curl_exit). Current status: $response"
+  echo "Waiting for server to start (curl exit: $curl_exit). Current status: $response"
   sleep 5
 done
 
-if [ "$port_bound" = false ]; then
-  echo "Startup timeout reached. Server TCP port did not bind within $startup_timeout seconds"
+if [ "$server_up" = false ]; then
+  echo "Startup timeout reached. Server did not respond within $startup_timeout seconds"
   exit 1
 fi
 
-echo "TCP port bound. Waiting for server to respond with status code $expected_response_code..."
+echo "Server is responding. Waiting for status code $expected_response_code..."
 
-# Phase 2: port is open, wait for a healthy response.
+# Phase 2: server is up, wait for a healthy response.
 # --connect-timeout and --max-time bound each curl call so a stalled connection
 # cannot outlast the health window.
 # Fail fast on 4xx — indicates a URL misconfiguration, not a timing issue.
@@ -66,5 +63,5 @@ while [ $SECONDS -lt $health_end ]; do
   sleep "$interval"
 done
 
-echo "Timeout reached. Server did not respond with status code $expected_response_code within $timeout seconds after TCP bind"
+echo "Timeout reached. Server did not respond with status code $expected_response_code within $timeout seconds"
 exit 1

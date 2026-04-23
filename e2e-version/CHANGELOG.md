@@ -3,6 +3,10 @@
 ## [2.0.0](https://github.com/grafana/plugin-actions/compare/e2e-version/v1.2.1...e2e-version/v2.0.0) (2026-04-23)
 
 
+### ⚠ BREAKING CHANGES
+
+* output matrix now returns `grafana-enterprise:nightly` instead of `grafana-dev` with a specific build tag
+
 ### 🎉 Features
 
 * switch e2e-version to use nightly image instead of grafana-dev ([#216](https://github.com/grafana/plugin-actions/issues/216)) ([1c101ef](https://github.com/grafana/plugin-actions/commit/1c101efc8e5bb6450d6b982ee1d0c668cb21d64f))

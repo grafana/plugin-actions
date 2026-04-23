@@ -86,7 +86,8 @@ async function run() {
 
     if (limit !== 0 && versionResolverType === VersionResolverTypes.PluginGrafanaDependency && versions.length !== 0) {
       // limit the number of versions to avoid starting too many jobs
-      versions = evenlyPickVersions(versions, skipGrafanaNightlyImage ? limit : limit - 1);
+      const stableVersionLimit = Math.max(0, skipGrafanaNightlyImage ? limit : limit - 1);
+      versions = evenlyPickVersions(versions, stableVersionLimit);
     }
 
     // official grafana-enterprise image

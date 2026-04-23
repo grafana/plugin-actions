@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.3](https://github.com/grafana/plugin-actions/compare/wait-for-grafana/v1.0.2...wait-for-grafana/v1.0.3) (2026-04-23)
+
+
+### 🐛 Bug Fixes
+
+* **wait-for-grafana:** remove Phase 1 fail-fast; any curl error is transient ([#215](https://github.com/grafana/plugin-actions/issues/215)) ([73f926e](https://github.com/grafana/plugin-actions/commit/73f926e88fa685399274533eccfd0293ddbe8755))
+* **wait-for-grafana:** two-phase polling with smarter timeout handling ([#213](https://github.com/grafana/plugin-actions/issues/213)) ([952ecf2](https://github.com/grafana/plugin-actions/commit/952ecf2aa4563940e4f84c503baaf2116e1908b4))
+
 ## [1.0.2](https://github.com/grafana/plugin-actions/compare/wait-for-grafana/v1.0.1...wait-for-grafana/v1.0.2) (2025-08-04)
 
 

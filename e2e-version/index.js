@@ -19,14 +19,9 @@ const VersionResolverTypes = {
 async function run() {
   try {
     // support the old input name as a deprecated alias
-    const skipNightlyExplicit = core.getInput(SkipGrafanaNightlyImageInput);
-    const skipDevExplicit = core.getInput(SkipGrafanaDevImageInput);
     const skipGrafanaNightlyImage =
-      skipNightlyExplicit !== ''
-        ? core.getBooleanInput(SkipGrafanaNightlyImageInput)
-        : skipDevExplicit !== ''
-          ? core.getBooleanInput(SkipGrafanaDevImageInput)
-          : false;
+      core.getBooleanInput(SkipGrafanaNightlyImageInput) ||
+      core.getBooleanInput(SkipGrafanaDevImageInput);
 
     // Determine default for React image based on repository owner
     // Include by default for Grafana org repositories, skip for others

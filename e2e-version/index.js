@@ -1,9 +1,9 @@
 const core = require('@actions/core');
 const semver = require('semver');
-const getDevImageTag = require('./get-dev-image-tag');
 const fs = require('fs/promises');
 const path = require('path');
 
+const SkipGrafanaNightlyImageInput = 'skip-grafana-nightly-image';
 const SkipGrafanaDevImageInput = 'skip-grafana-dev-image';
 const SkipGrafanaReact19PreviewImageInput = 'skip-grafana-react-19-preview-image';
 const VersionResolverTypeInput = 'version-resolver-type';
@@ -18,7 +18,15 @@ const VersionResolverTypes = {
 
 async function run() {
   try {
-    const skipGrafanaDevImage = core.getBooleanInput(SkipGrafanaDevImageInput);
+    // support the old input name as a deprecated alias
+    const skipNightlyExplicit = core.getInput(SkipGrafanaNightlyImageInput);
+    const skipDevExplicit = core.getInput(SkipGrafanaDevImageInput);
+    const skipGrafanaNightlyImage =
+      skipNightlyExplicit !== ''
+        ? core.getBooleanInput(SkipGrafanaNightlyImageInput)
+        : skipDevExplicit !== ''
+          ? core.getBooleanInput(SkipGrafanaDevImageInput)
+          : false;
 
     // Determine default for React image based on repository owner
     // Include by default for Grafana org repositories, skip for others
@@ -83,7 +91,7 @@ async function run() {
 
     if (limit !== 0 && versionResolverType === VersionResolverTypes.PluginGrafanaDependency && versions.length !== 0) {
       // limit the number of versions to avoid starting too many jobs
-      versions = evenlyPickVersions(versions, skipGrafanaDevImage ? limit : limit - 1);
+      versions = evenlyPickVersions(versions, skipGrafanaNightlyImage ? limit : limit - 1);
     }
 
     // official grafana-enterprise image
@@ -92,12 +100,8 @@ async function run() {
       version,
     }));
 
-    if (!skipGrafanaDevImage) {
-      // get the most recent grafana-dev image
-      const tag = await getDevImageTag({ core });
-      if (tag) {
-        images.unshift({ name: 'grafana-dev', version: tag });
-      }
+    if (!skipGrafanaNightlyImage) {
+      images.unshift({ name: 'grafana-enterprise', version: 'nightly' });
     }
 
     if (!skipGrafanaReact19PreviewImage) {

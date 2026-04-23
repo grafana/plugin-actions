@@ -48,6 +48,13 @@ describe('plugin-grafana-dependency mode', () => {
       if (name === GrafanaDependencyInput) {
         return t.grafanaDependency;
       }
+      if (name === 'limit') {
+        return '6';
+      }
+      if (name === 'skip-grafana-nightly-image') {
+        return 'true';
+      }
+      return '';
     });
     getBooleanInput.mockReturnValue(true);
     const images = await run();

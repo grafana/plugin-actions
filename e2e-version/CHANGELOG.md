@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/grafana/plugin-actions/compare/e2e-version/v1.2.1...e2e-version/v1.3.0) (2026-04-23)
+
+
+### 🎉 Features
+
+* switch e2e-version to use nightly image instead of grafana-dev ([#216](https://github.com/grafana/plugin-actions/issues/216)) ([1c101ef](https://github.com/grafana/plugin-actions/commit/1c101efc8e5bb6450d6b982ee1d0c668cb21d64f))
+
 ## [1.2.1](https://github.com/grafana/plugin-actions/compare/e2e-version/v1.2.0...e2e-version/v1.2.1) (2026-02-05)
 
 

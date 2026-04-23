@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.3.0](https://github.com/grafana/plugin-actions/compare/e2e-version/v1.2.1...e2e-version/v1.3.0) (2026-04-23)
+## [2.0.0](https://github.com/grafana/plugin-actions/compare/e2e-version/v1.2.1...e2e-version/v2.0.0) (2026-04-23)
 
 
 ### 🎉 Features

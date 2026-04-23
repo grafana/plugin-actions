@@ -11,6 +11,7 @@ inputs:
     default: false
     required: false
     description: 'Deprecated: use skip-grafana-nightly-image instead'
+    deprecationMessage: 'skip-grafana-dev-image is deprecated, use skip-grafana-nightly-image instead'
     type: boolean
   skip-grafana-react-19-preview-image:
     required: false

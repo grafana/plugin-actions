@@ -65,9 +65,9 @@ describe('plugin-grafana-dependency mode', () => {
 describe('nightly image', () => {
   it('is included by default', async () => {
     getInput.mockImplementation((name) => {
-      if (name === VersionResolverTypeInput) return VersionResolverTypes.PluginGrafanaDependency;
-      if (name === GrafanaDependencyInput) return '>=10.4.4';
-      if (name === 'limit') return '6';
+      if (name === VersionResolverTypeInput) { return VersionResolverTypes.PluginGrafanaDependency; }
+      if (name === GrafanaDependencyInput) { return '>=10.4.4'; }
+      if (name === 'limit') { return '6'; }
       return '';
     });
     getBooleanInput.mockReturnValue(false);
@@ -77,9 +77,9 @@ describe('nightly image', () => {
 
   it('is skipped when skip-grafana-nightly-image is true', async () => {
     getInput.mockImplementation((name) => {
-      if (name === VersionResolverTypeInput) return VersionResolverTypes.PluginGrafanaDependency;
-      if (name === GrafanaDependencyInput) return '>=10.4.4';
-      if (name === 'limit') return '6';
+      if (name === VersionResolverTypeInput) { return VersionResolverTypes.PluginGrafanaDependency; }
+      if (name === GrafanaDependencyInput) { return '>=10.4.4'; }
+      if (name === 'limit') { return '6'; }
       return '';
     });
     getBooleanInput.mockImplementation((name) => name === 'skip-grafana-nightly-image');
@@ -89,9 +89,9 @@ describe('nightly image', () => {
 
   it('is skipped when deprecated skip-grafana-dev-image is true', async () => {
     getInput.mockImplementation((name) => {
-      if (name === VersionResolverTypeInput) return VersionResolverTypes.PluginGrafanaDependency;
-      if (name === GrafanaDependencyInput) return '>=10.4.4';
-      if (name === 'limit') return '6';
+      if (name === VersionResolverTypeInput) { return VersionResolverTypes.PluginGrafanaDependency; }
+      if (name === GrafanaDependencyInput) { return '>=10.4.4'; }
+      if (name === 'limit') { return '6'; }
       return '';
     });
     getBooleanInput.mockImplementation((name) => name === 'skip-grafana-dev-image');

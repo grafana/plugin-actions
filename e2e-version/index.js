@@ -18,10 +18,9 @@ const VersionResolverTypes = {
 
 async function run() {
   try {
-    // support the old input name as a deprecated alias
+    // skip-grafana-dev-image is a deprecated alias for skip-grafana-nightly-image
     const skipGrafanaNightlyImage =
-      core.getBooleanInput(SkipGrafanaNightlyImageInput) ||
-      core.getBooleanInput(SkipGrafanaDevImageInput);
+      core.getBooleanInput(SkipGrafanaNightlyImageInput) || core.getBooleanInput(SkipGrafanaDevImageInput);
 
     // Determine default for React image based on repository owner
     // Include by default for Grafana org repositories, skip for others

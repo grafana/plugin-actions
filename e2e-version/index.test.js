@@ -61,3 +61,41 @@ describe('plugin-grafana-dependency mode', () => {
     expect(images.map((i) => i.version)).toEqual(t.expectedVersions);
   });
 });
+
+describe('nightly image', () => {
+  it('is included by default', async () => {
+    getInput.mockImplementation((name) => {
+      if (name === VersionResolverTypeInput) return VersionResolverTypes.PluginGrafanaDependency;
+      if (name === GrafanaDependencyInput) return '>=10.4.4';
+      if (name === 'limit') return '6';
+      return '';
+    });
+    getBooleanInput.mockReturnValue(false);
+    const images = await run();
+    expect(images[0]).toEqual({ name: 'grafana-enterprise', version: 'nightly' });
+  });
+
+  it('is skipped when skip-grafana-nightly-image is true', async () => {
+    getInput.mockImplementation((name) => {
+      if (name === VersionResolverTypeInput) return VersionResolverTypes.PluginGrafanaDependency;
+      if (name === GrafanaDependencyInput) return '>=10.4.4';
+      if (name === 'limit') return '6';
+      return '';
+    });
+    getBooleanInput.mockImplementation((name) => name === 'skip-grafana-nightly-image');
+    const images = await run();
+    expect(images.every((i) => i.version !== 'nightly')).toBe(true);
+  });
+
+  it('is skipped when deprecated skip-grafana-dev-image is true', async () => {
+    getInput.mockImplementation((name) => {
+      if (name === VersionResolverTypeInput) return VersionResolverTypes.PluginGrafanaDependency;
+      if (name === GrafanaDependencyInput) return '>=10.4.4';
+      if (name === 'limit') return '6';
+      return '';
+    });
+    getBooleanInput.mockImplementation((name) => name === 'skip-grafana-dev-image');
+    const images = await run();
+    expect(images.every((i) => i.version !== 'nightly')).toBe(true);
+  });
+});

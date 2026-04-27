@@ -8,7 +8,7 @@ const SkipGrafanaDevImageInput = 'skip-grafana-dev-image';
 const SkipGrafanaReact19PreviewImageInput = 'skip-grafana-react-19-preview-image';
 const VersionResolverTypeInput = 'version-resolver-type';
 const GrafanaDependencyInput = 'grafana-dependency';
-const PluginPathInput = 'plugin-directory';
+const PluginDirectoryInput = 'plugin-directory';
 const LimitInput = 'limit';
 const MatrixOutput = 'matrix';
 
@@ -47,7 +47,7 @@ async function run() {
     }
 
     const grafanaDependency = core.getInput(GrafanaDependencyInput);
-    const pluginPath = core.getInput(PluginPathInput);
+    const pluginPath = core.getInput(PluginDirectoryInput);
     const versionResolverType = core.getInput(VersionResolverTypeInput) || VersionResolverTypes.PluginGrafanaDependency;
     const limit = parseInt(core.getInput(LimitInput));
     const availableGrafanaVersions = await getGrafanaStableMinorVersions();
@@ -184,6 +184,6 @@ module.exports = {
   VersionResolverTypeInput,
   VersionResolverTypes,
   GrafanaDependencyInput,
-  PluginPathInput,
+  PluginDirectoryInput,
   LimitInput,
 };

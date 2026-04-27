@@ -8,7 +8,7 @@ const SkipGrafanaDevImageInput = 'skip-grafana-dev-image';
 const SkipGrafanaReact19PreviewImageInput = 'skip-grafana-react-19-preview-image';
 const VersionResolverTypeInput = 'version-resolver-type';
 const GrafanaDependencyInput = 'grafana-dependency';
-const PluginPathInput = 'plugin-path';
+const PluginPathInput = 'plugin-directory';
 const LimitInput = 'limit';
 const MatrixOutput = 'matrix';
 

@@ -32,6 +32,10 @@ inputs:
     required: false
     description: 'Optionally, use this input to pass a semver range of supported Grafana versions to test against. This is only used when version-resolver-type is plugin-grafana-dependency. If not provided, the action will try to read grafanaDependency from the plugin.json file.'
     type: string
+  plugin-directory:
+    required: false
+    description: 'Only applies when version-resolver-type is plugin-grafana-dependency and grafana-dependency is not set. Path to the plugin root directory containing src/plugin.json. Defaults to the repository root. Useful when the plugin is in a subdirectory (e.g. plugin).'
+    type: string
   limit:
     required: false
     description: 'The maximum number of versions to resolve. Default is 6, 0 means no limit.'

@@ -14,6 +14,19 @@ By default, this action includes the `grafana-enterprise:nightly` image in the t
 
 The maximum number of versions to resolve. Default is 6, 0 means no limit.
 
+### `plugin-directory`
+
+Only applies when using `plugin-grafana-dependency` mode without a `grafana-dependency` override. Path to the plugin root directory — the directory that contains the `src/plugin.json` file. Defaults to the repository root. Use this when the plugin is in a subdirectory rather than at the root of the repository.
+
+```yaml
+- name: Resolve Grafana E2E versions
+  id: resolve-versions
+  uses: grafana/plugin-actions/e2e-version@e2e-version/v1.2.1
+  with:
+    version-resolver-type: plugin-grafana-dependency
+    plugin-directory: plugin
+```
+
 ### `version-resolver-type`
 
 The action supports two modes.

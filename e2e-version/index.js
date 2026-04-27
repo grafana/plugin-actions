@@ -8,6 +8,7 @@ const SkipGrafanaDevImageInput = 'skip-grafana-dev-image';
 const SkipGrafanaReact19PreviewImageInput = 'skip-grafana-react-19-preview-image';
 const VersionResolverTypeInput = 'version-resolver-type';
 const GrafanaDependencyInput = 'grafana-dependency';
+const PluginDirectoryInput = 'plugin-directory';
 const LimitInput = 'limit';
 const MatrixOutput = 'matrix';
 
@@ -46,6 +47,7 @@ async function run() {
     }
 
     const grafanaDependency = core.getInput(GrafanaDependencyInput);
+    const pluginPath = core.getInput(PluginDirectoryInput);
     const versionResolverType = core.getInput(VersionResolverTypeInput) || VersionResolverTypes.PluginGrafanaDependency;
     const limit = parseInt(core.getInput(LimitInput));
     const availableGrafanaVersions = await getGrafanaStableMinorVersions();
@@ -74,7 +76,7 @@ async function run() {
         break;
       default:
         const pluginDependency =
-          grafanaDependency === '' ? await getPluginGrafanaDependencyFromPluginJson() : grafanaDependency;
+          grafanaDependency === '' ? await getPluginGrafanaDependencyFromPluginJson(pluginPath) : grafanaDependency;
         console.log(`Found version requirement ${pluginDependency}`);
         for (const grafanaVersion of availableGrafanaVersions) {
           if (semver.satisfies(grafanaVersion.version, pluginDependency)) {
@@ -165,8 +167,9 @@ async function getGrafanaStableMinorVersions() {
   return Array.from(latestMinorVersions).map(([_, semver]) => semver);
 }
 
-async function getPluginGrafanaDependencyFromPluginJson() {
-  const file = await fs.readFile(path.resolve(path.join(process.cwd(), 'src'), 'plugin.json'), 'utf8');
+async function getPluginGrafanaDependencyFromPluginJson(pluginPath) {
+  const basePath = pluginPath || process.cwd();
+  const file = await fs.readFile(path.resolve(path.join(basePath, 'src'), 'plugin.json'), 'utf8');
   const json = JSON.parse(file);
   if (!json.dependencies.grafanaDependency) {
     throw new Error('Could not find plugin grafanaDependency');
@@ -181,4 +184,6 @@ module.exports = {
   VersionResolverTypeInput,
   VersionResolverTypes,
   GrafanaDependencyInput,
+  PluginDirectoryInput,
+  LimitInput,
 };

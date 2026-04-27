@@ -17,7 +17,7 @@ global.fetch = jest.fn(() =>
   })
 );
 
-const { run, VersionResolverTypeInput, VersionResolverTypes, GrafanaDependencyInput, PluginPathInput, LimitInput } =
+const { run, VersionResolverTypeInput, VersionResolverTypes, GrafanaDependencyInput, PluginDirectoryInput, LimitInput } =
   await import('./index.mjs');
 
 describe('plugin-grafana-dependency mode', () => {
@@ -54,7 +54,7 @@ describe('plugin-grafana-dependency mode', () => {
       if (name === GrafanaDependencyInput) {
         return t.grafanaDependency;
       }
-      if (name === PluginPathInput) {
+      if (name === PluginDirectoryInput) {
         return '';
       }
       if (name === LimitInput) {

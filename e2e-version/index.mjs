@@ -7,7 +7,7 @@ const SkipGrafanaNightlyImageInput = 'skip-grafana-nightly-image';
 const SkipGrafanaDevImageInput = 'skip-grafana-dev-image';
 const VersionResolverTypeInput = 'version-resolver-type';
 const GrafanaDependencyInput = 'grafana-dependency';
-const PluginPathInput = 'plugin-directory';
+const PluginDirectoryInput = 'plugin-directory';
 const LimitInput = 'limit';
 const MatrixOutput = 'matrix';
 
@@ -23,7 +23,7 @@ async function run() {
       core.getBooleanInput(SkipGrafanaNightlyImageInput) || core.getBooleanInput(SkipGrafanaDevImageInput);
 
     const grafanaDependency = core.getInput(GrafanaDependencyInput);
-    const pluginPath = core.getInput(PluginPathInput);
+    const pluginPath = core.getInput(PluginDirectoryInput);
     const versionResolverType = core.getInput(VersionResolverTypeInput) || VersionResolverTypes.PluginGrafanaDependency;
     const limit = parseInt(core.getInput(LimitInput));
     const availableGrafanaVersions = await getGrafanaStableMinorVersions();
@@ -150,4 +150,4 @@ async function getPluginGrafanaDependencyFromPluginJson(pluginPath) {
 }
 run();
 
-export { run, VersionResolverTypeInput, VersionResolverTypes, GrafanaDependencyInput, PluginPathInput, LimitInput };
+export { run, VersionResolverTypeInput, VersionResolverTypes, GrafanaDependencyInput, PluginDirectoryInput, LimitInput };

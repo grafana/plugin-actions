@@ -7,7 +7,7 @@ const SkipGrafanaNightlyImageInput = 'skip-grafana-nightly-image';
 const SkipGrafanaDevImageInput = 'skip-grafana-dev-image';
 const VersionResolverTypeInput = 'version-resolver-type';
 const GrafanaDependencyInput = 'grafana-dependency';
-const PluginPathInput = 'plugin-path';
+const PluginPathInput = 'plugin-directory';
 const LimitInput = 'limit';
 const MatrixOutput = 'matrix';
 

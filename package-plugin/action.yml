@@ -73,6 +73,14 @@ runs:
       run: ${{ github.action_path }}/pm.sh build
       shell: bash
 
+    - name: Build plugin documentation
+      shell: bash
+      run: |
+        DOCS_PATH=$(cat dist/plugin.json | jq -r '.docsPath // empty')
+        if [ -n "$DOCS_PATH" ]; then
+          npx --yes @grafana/plugin-docs-cli build
+        fi
+
     - name: Check for backend
       id: check-for-backend
       run: |

@@ -2,4 +2,10 @@
 # the repo. Unless a later match takes precedence,
 # these will be requested for review when someone opens a pull request.
 
-* @grafana/plugins-platform-frontend @grafana/plugins-platform-backend
+* @grafana/grafana-catalog
+
+# Frontend-platform-owned actions (based on contribution history)
+/bundle-schema-types/  @grafana/grafana-frontend-platform
+/bundle-size/          @grafana/grafana-frontend-platform
+/bundle-types/         @grafana/grafana-frontend-platform
+/create-plugin-update/ @grafana/grafana-frontend-platform

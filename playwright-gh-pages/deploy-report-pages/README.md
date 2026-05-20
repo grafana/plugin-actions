@@ -4,14 +4,14 @@ This GitHub Action automates the process of publishing test artifacts to GitHub 
 
 ## Usage
 
-See full blown examples [here](../README.txt).
+See full blown examples [here](../README.md).
 
 ## Inputs
 
 | Input Name           | Description                                                                    | Required | Default                  |
 | -------------------- | ------------------------------------------------------------------------------ | -------- | ------------------------ |
-| `github-token`       | Token for the repository. Can be passed in using `{{ secrets.GITHUB_TOKEN }}`. | Yes      | N/A                      |
+| `github-token`       | Token for the repository. Pass `${{ secrets.GITHUB_TOKEN }}` from the publish job. | Yes      | N/A                      |
 | `retention-days`     | Number of days to retain the reports.                                          | Yes      | 30                       |
-| `pr-comment-summary` | Whether to comment the PR with the test results.                               | Yes      | true                     |
+| `pr-comment-summary` | Whether to manage a PR comment with the test results. Set this to `false` if you do not want the action to create or delete PR comments. | Yes      | true                     |
 | `artifact-pattern`   | Pattern to match the artifacts.                                                | Yes      | `gf-playwright-report-*` |
 | `pages-branch`       | Branch to deploy the reports to.                                               | Yes      | `gh-pages`               |

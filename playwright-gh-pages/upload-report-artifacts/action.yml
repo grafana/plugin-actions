@@ -8,18 +8,18 @@ outputs:
 
 inputs:
   github-token:
-    description: "Deprecated and unused. This input is ignored and will be removed in a future major release."
-    required: false
+    description: "Token for the repository. Can be passed in using `{{ secrets.GITHUB_TOKEN }}`."
+    required: true
     default: ${{ github.token }}
   test-outcome:
-    description: "Outcome of the test step. For example `${{ steps.run-tests.outcome }}`."
+    description: "Outcome of the test step. For example `{{ steps.run-tests.outcome }}`."
     required: true
   grafana-image:
-    description: "Grafana image used in the test. Default is `${{ matrix.GRAFANA_IMAGE.NAME }}`."
+    description: "Grafana image used in the test. Default is `{{ matrix.GRAFANA_IMAGE.NAME }}`."
     default: ${{ matrix.GRAFANA_IMAGE.NAME }}
     required: true
   grafana-version:
-    description: "Grafana version used in the test. Default is `${{ matrix.GRAFANA_IMAGE.VERSION }}`."
+    description: "Grafana version used in the test. Default is `{{ matrix.GRAFANA_IMAGE.VERSION }}`."
     default: ${{ matrix.GRAFANA_IMAGE.VERSION }}
     required: true
   artifact-prefix:

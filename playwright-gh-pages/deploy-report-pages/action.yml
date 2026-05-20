@@ -3,7 +3,7 @@ description: 'Deploys test artifacts to GitHub Pages and comments on the PR with
 
 inputs:
   github-token:
-    description: 'Token for the repository. Can be passed in using `${{ secrets.GITHUB_TOKEN }}`.'
+    description: 'Token for the repository. Can be passed in using `{{ secrets.GITHUB_TOKEN }}`.'
     required: true
   retention-days:
     description: 'Number of days to retain the reports. Default is 30.'

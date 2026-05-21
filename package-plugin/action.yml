@@ -36,20 +36,20 @@ inputs:
     type: choice
     description: "Backend target for the plugin backend build"
     options:
-        - build:backend
-        - build:darwin
-        - build:darwinARM64
-        - build:debug
-        - build:debugDarwinAMD64
-        - build:debugDarwinARM64
-        - build:debugLinuxAMD64
-        - build:debugLinuxARM64
-        - build:debugWindowsAMD64
-        - build:linux
-        - build:linuxARM
-        - build:linuxARM64
-        - build:windows
-        - buildAll
+      - build:backend
+      - build:darwin
+      - build:darwinARM64
+      - build:debug
+      - build:debugDarwinAMD64
+      - build:debugDarwinARM64
+      - build:debugLinuxAMD64
+      - build:debugLinuxARM64
+      - build:debugWindowsAMD64
+      - build:linux
+      - build:linuxARM
+      - build:linuxARM64
+      - build:windows
+      - buildAll
     required: false
     default: "buildAll"
 
@@ -78,7 +78,7 @@ runs:
       run: |
         DOCS_PATH=$(cat dist/plugin.json | jq -r '.docsPath // empty')
         if [ -n "$DOCS_PATH" ]; then
-          npx --yes @grafana/plugin-docs-cli build
+          npx --yes @grafana/plugin-docs-cli@0.0.11-canary.2636.26226198477.0 build
         fi
 
     - name: Check for backend

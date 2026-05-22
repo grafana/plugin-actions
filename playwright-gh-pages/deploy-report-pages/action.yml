@@ -34,7 +34,7 @@ runs:
 
     - name: Delete any existing comment
       uses: thollander/actions-comment-pull-request@24bffb9b452ba05a4f3f77933840a6a841d1b32b # v3.0.1
-      if: ${{ github.event.number != null }}
+      if: ${{ inputs.pr-comment-summary == 'true' && github.event.number != null }}
       with:
         comment-tag: gf-playwright-test-results
         mode: delete

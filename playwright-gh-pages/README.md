@@ -38,15 +38,19 @@ If you’re already using GitHub Pages for other content, ensure that it does no
 
 ## GitHub Pages Visibility
 
-By default, all GitHub Pages sites are publicly accessible on the Internet. However, GitHub Enterprise customers can restrict access by configuring access control for private and internal repositories. This allows greater flexibility in managing who can view your Pages site. For more details, refer to the official GitHub [documentation](https://docs.github.com/en/enterprise-cloud@latest/pages/getting-started-with-github-pages/changing-the-visibility-of-your-github-pages-site#about-access-control-for-github-pages-sites).
+By default, all GitHub Pages sites are publicly accessible on the Internet. Published Playwright reports can include HTML output, screenshots, traces, and internal URLs, so review the contents before enabling this workflow for sensitive repositories. GitHub Enterprise customers can restrict access by configuring access control for private and internal repositories. For more details, refer to the official GitHub [documentation](https://docs.github.com/en/enterprise-cloud@latest/pages/getting-started-with-github-pages/changing-the-visibility-of-your-github-pages-site#about-access-control-for-github-pages-sites).
 
 ## Permissions Needed
 
-To use these actions, you need to set up the necessary permissions:
+Use job-scoped permissions instead of granting write access to the entire workflow:
 
-- `contents: write`: This permission is needed to push changes to the repository, such as updating the GitHub Pages branch with the latest test reports.
-- `id-token: write`: This permission is required for authentication purposes when interacting with GitHub APIs.
-- `pull-requests: write`: This permission allows the action to create and update pull requests with comments containing the test results and links to the reports.
+- Set `contents: read` at the workflow level so test jobs can check out the repository.
+- Add `contents: write` only to the job that publishes reports to the Pages branch.
+- Add `pull-requests: write` only if you want `deploy-report-pages` to manage a pull request comment. This permission is not needed when `pr-comment-summary: false`.
+
+The `playwright-gh-pages` actions do not use OIDC, so `id-token: write` is not required for report publishing.
+
+If your workflow runs on `pull_request`, remember that pull requests from forks receive a read-only `GITHUB_TOKEN`. In that case the publish job may be unable to push the Pages branch or update the PR comment. Avoid switching these examples to `pull_request_target` just to get a write-capable token unless you have separately reviewed the security implications of running untrusted code with elevated permissions.
 
 ## Workflow usage
 
@@ -64,9 +68,7 @@ on:
       - main
 
 permissions:
-  contents: write
-  id-token: write
-  pull-requests: write
+  contents: read
 
 jobs:
   resolve-versions:
@@ -132,13 +134,15 @@ jobs:
         uses: grafana/plugin-actions/playwright-gh-pages/upload-report-artifacts@main
         if: ${{ (always() && !cancelled()) }}
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
           test-outcome: ${{ steps.run-tests.outcome }}
 
   deploy-pages:
-    if: ${{ (always() && !cancelled()) }}
+    if: ${{ always() && !cancelled() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false) }}
     needs: [playwright-tests]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
 
@@ -163,9 +167,7 @@ on:
       - main
 
 permissions:
-  contents: write
-  id-token: write
-  pull-requests: write
+  contents: read
 
 jobs:
   e2e:
@@ -207,9 +209,12 @@ jobs:
       # repeat steps but for another Grafana version if necessary
 
   deploy-pages:
-    if: ${{ (always() && !cancelled()) }}
-    needs: [playwright-tests]
+    if: ${{ always() && !cancelled() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false) }}
+    needs: [e2e]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
 
@@ -223,3 +228,9 @@ jobs:
 ## Inputs
 
 For details on what the available inputs for the Actions, refer to the [README](./deploy-report-pages/README.md) of `deploy-report-pages` and the [README](./upload-report-artifacts/README.md) of `upload-report-artifacts`
+
+If you want to skip publishing for forked pull requests while still allowing scheduled runs, pushes, and same-repository pull requests, use this condition on the publish job:
+
+```yaml
+if: ${{ always() && !cancelled() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false) }}
+```

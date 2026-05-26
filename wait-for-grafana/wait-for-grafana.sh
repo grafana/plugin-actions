@@ -4,7 +4,7 @@ url="$1"
 expected_response_code="$2"
 timeout="$3"
 interval="$4"
-startup_timeout="${5:-300}"
+startup_timeout="${5:-60}"
 
 echo "Checking URL: $url"
 echo "Expected response code: $expected_response_code"

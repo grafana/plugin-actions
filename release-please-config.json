@@ -69,6 +69,10 @@
       "package-name": "e2e-version",
       "extra-files": ["README.md"]
     },
+    "grafana-startup-logs": {
+      "package-name": "grafana-startup-logs",
+      "extra-files": ["README.md"]
+    },
     "is-compatible": {
       "package-name": "is-compatible",
       "extra-files": ["README.md"]

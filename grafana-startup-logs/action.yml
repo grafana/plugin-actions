@@ -1,0 +1,118 @@
+name: "Grafana startup logs"
+description: "On a wait-for-grafana failure, dump docker compose status, a level-filtered summary of Grafana's own logs, and upload the full redacted logs as a short-retention artifact."
+inputs:
+  url:
+    description: "URL passed to wait-for-grafana. The port is used as a container-discovery fallback when service/container inputs are not set."
+    required: false
+    default: "http://localhost:3000/"
+  service:
+    description: "Compose service name for Grafana. Empty triggers heuristic discovery (first compose service whose name contains 'grafana', then port-based docker ps lookup). Set to 'none' to skip docker compose entirely and use plain docker logs."
+    required: false
+    default: ""
+  container:
+    description: "Explicit container name. Wins over service when set. Used with plain docker logs."
+    required: false
+    default: ""
+  compose-file:
+    description: "Path to docker-compose file. Empty uses the default discovery (docker-compose.yaml in working-directory)."
+    required: false
+    default: ""
+  working-directory:
+    description: "Working directory for docker commands."
+    required: false
+    default: "."
+  level:
+    description: "Comma-separated log levels to include in the filtered summary group. Multi-line continuations after a matching line are included until the next timestamp-led line."
+    required: false
+    default: "error,warn,crit,eror"
+  tail:
+    description: "Tail line count for the unfiltered log group printed inline. Set to 0 to skip the unfiltered group (the artifact still contains the full logs)."
+    required: false
+    default: "500"
+  upload-artifact:
+    description: "Whether to upload the full redacted logs as an actions artifact. Set to false for repos that consider container logs sensitive enough to keep inline-only."
+    required: false
+    default: "true"
+  artifact-name:
+    description: "Artifact name. Defaults to a name that includes the matrix job context so concurrent matrix cells do not collide."
+    required: false
+    default: "grafana-startup-logs"
+  artifact-retention-days:
+    description: "Artifact retention. Default is shorter than the GitHub-default 90 days to limit the window during which container logs are downloadable from CI."
+    required: false
+    default: "7"
+  redact-patterns:
+    description: "Newline-separated regex patterns redacted from all output and from the artifact. Applied on top of GitHub Actions' built-in secret masking, which only covers values registered via secrets context or ::add-mask::."
+    required: false
+    default: |
+      Bearer\s+[A-Za-z0-9._\-]+
+      glsa_[A-Za-z0-9_]+
+      glc_[A-Za-z0-9_]+
+      eyJ[A-Za-z0-9._\-]+
+      [?&](token|api_key|apikey|auth|password|secret)=[^&[:space:]]+
+      (password|secret|api[_-]?key|token)[\"']?\s*[:=]\s*[\"']?[^\s\"',}]+
+  additional-secrets:
+    description: "Newline-separated literal values to register with GitHub Actions' secret masker (::add-mask::) before any docker commands run. Use this for plugin-specific env vars (HL_TOKEN, etc.) that the workflow exposed but did not pass via the secrets context."
+    required: false
+    default: ""
+
+outputs:
+  artifact-url:
+    description: "URL of the uploaded artifact, when upload-artifact is true and the upload succeeded."
+    value: ${{ steps.upload.outputs.artifact-url }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Register additional secrets with the masker
+      shell: bash
+      env:
+        GSL_ADDITIONAL_SECRETS: ${{ inputs.additional-secrets }}
+      run: |
+        # Each non-empty line is masked from subsequent log output.
+        # ::add-mask:: directives only affect log streams, not artifact contents —
+        # the redact-patterns regex pipeline covers the artifact side.
+        while IFS= read -r line; do
+          [ -n "$line" ] || continue
+          echo "::add-mask::$line"
+        done <<< "$GSL_ADDITIONAL_SECRETS"
+
+    - name: Collect and redact Grafana startup logs
+      id: collect
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        GSL_URL: ${{ inputs.url }}
+        GSL_SERVICE: ${{ inputs.service }}
+        GSL_CONTAINER: ${{ inputs.container }}
+        GSL_COMPOSE_FILE: ${{ inputs.compose-file }}
+        GSL_LEVEL: ${{ inputs.level }}
+        GSL_TAIL: ${{ inputs.tail }}
+        GSL_REDACT_PATTERNS: ${{ inputs.redact-patterns }}
+      run: ${{ github.action_path }}/grafana-startup-logs.sh
+
+    - name: Upload full redacted logs as artifact
+      id: upload
+      if: ${{ inputs.upload-artifact == 'true' && steps.collect.outputs.log-file != '' }}
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+      with:
+        name: ${{ inputs.artifact-name }}
+        path: ${{ steps.collect.outputs.log-dir }}
+        retention-days: ${{ inputs.artifact-retention-days }}
+        if-no-files-found: warn
+
+    - name: Write artifact link to job summary
+      if: ${{ inputs.upload-artifact == 'true' && steps.upload.outputs.artifact-url != '' }}
+      shell: bash
+      env:
+        GSL_ARTIFACT_URL: ${{ steps.upload.outputs.artifact-url }}
+        GSL_ARTIFACT_NAME: ${{ inputs.artifact-name }}
+        GSL_RETENTION: ${{ inputs.artifact-retention-days }}
+      run: |
+        {
+          echo "### Grafana startup logs"
+          echo
+          echo "- Artifact: [\`$GSL_ARTIFACT_NAME\`]($GSL_ARTIFACT_URL)"
+          echo "- Retention: $GSL_RETENTION days"
+          echo "- Contents are redacted per the action's regex pipeline. Treat the artifact as semi-sensitive: it contains application logs, not secrets, but unredacted patterns may slip through."
+        } >> "$GITHUB_STEP_SUMMARY"

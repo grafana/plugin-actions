@@ -62,3 +62,5 @@ If the server doesn't respond with the expected status code within the specified
 ## Limitations
 
 This action is designed to check for a simple HTTP response. It doesn't verify the content of the response or perform any authentication. If you need more complex health checks, you might need to create a custom script or use a different action.
+
+The action runs using the runner's pre-installed `bash` and `curl` — no Node.js or additional dependencies are required.

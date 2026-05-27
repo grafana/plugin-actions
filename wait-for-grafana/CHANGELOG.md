@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4](https://github.com/grafana/plugin-actions/compare/wait-for-grafana/v1.0.3...wait-for-grafana/v1.0.4) (2026-05-27)
+
+
+### 🐛 Bug Fixes
+
+* **wait-for-grafana:** clarify no Node.js dependencies required ([#230](https://github.com/grafana/plugin-actions/issues/230)) ([2c15348](https://github.com/grafana/plugin-actions/commit/2c1534883538f28a7b0778c613103b0cb2f9db00))
+
 ## [1.0.3](https://github.com/grafana/plugin-actions/compare/wait-for-grafana/v1.0.2...wait-for-grafana/v1.0.3) (2026-04-23)
 
 

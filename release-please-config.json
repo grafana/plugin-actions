@@ -89,10 +89,6 @@
       "package-name": "upload-report-artifacts",
       "extra-files": ["README.md"]
     },
-    "publish-report": {
-      "package-name": "publish-report",
-      "extra-files": ["README.md"]
-    },
     "wait-for-grafana": {
       "package-name": "wait-for-grafana",
       "extra-files": ["README.md"]

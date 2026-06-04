@@ -29,27 +29,33 @@ At the time of writing, the most recent release of Grafana is 10.3.1. If the plu
 [
   {
     "name": "grafana-enterprise",
-    "version": "nightly"
+    "version": "nightly",
+    "enabledToggles": ""
   },
   {
     "name": "grafana-enterprise",
-    "version": "10.3.1"
+    "version": "10.3.1",
+    "enabledToggles": ""
   },
   {
     "name": "grafana-enterprise",
-    "version": "10.0.10"
+    "version": "10.0.10",
+    "enabledToggles": ""
   },
   {
     "name": "grafana-enterprise",
-    "version": "9.2.20"
+    "version": "9.2.20",
+    "enabledToggles": ""
   },
   {
     "name": "grafana-enterprise",
-    "version": "8.4.11"
+    "version": "8.4.11",
+    "enabledToggles": ""
   },
   {
     "name": "grafana-enterprise",
-    "version": "8.1.8"
+    "version": "8.1.8",
+    "enabledToggles": ""
   }
 ]
 ```
@@ -67,27 +73,33 @@ At the time of writing, the most recent release of Grafana is 10.2.2. The output
 [
   {
     "name": "grafana-enterprise",
-    "version": "nightly"
+    "version": "nightly",
+    "enabledToggles": ""
   },
   {
     "name": "grafana-enterprise",
-    "version": "10.3.1"
+    "version": "10.3.1",
+    "enabledToggles": ""
   },
   {
     "name": "grafana-enterprise",
-    "version": "10.2.3"
+    "version": "10.2.3",
+    "enabledToggles": ""
   },
   {
     "name": "grafana-enterprise",
-    "version": "10.1.6"
+    "version": "10.1.6",
+    "enabledToggles": ""
   },
   {
     "name": "grafana-enterprise",
-    "version": "10.0.10"
+    "version": "10.0.10",
+    "enabledToggles": ""
   },
   {
     "name": "grafana-enterprise",
-    "version": "9.5.15"
+    "version": "9.5.15",
+    "enabledToggles": ""
   }
 ]
 ```
@@ -95,6 +107,26 @@ At the time of writing, the most recent release of Grafana is 10.2.2. The output
 ### Output
 
 The result of this action is a JSON array that lists the latest patch version for each Grafana minor version. These values can be employed to define a version matrix in a subsequent workflow job.
+
+Each entry has three fields:
+
+- `name` – the Grafana image name (e.g. `grafana-enterprise`).
+- `version` – the Grafana version/tag to run.
+- `enabledToggles` – a comma-separated list of Grafana feature toggles to enable for this entry, or an empty string when none. Pass it to Grafana via the `GF_FEATURE_TOGGLES_ENABLE` environment variable.
+
+#### React 19
+
+React 19 is exercised by running the latest Grafana `13.1` release with the `react19` feature toggle enabled, rather than a dedicated `dev-preview-react19` image. When not skipped (see [`skip-grafana-react-19-preview-image`](#skip-grafana-react-19-preview-image) below), the matrix gains an entry like:
+
+```json
+{ "name": "grafana-enterprise", "version": "13.1.5", "enabledToggles": "react19" }
+```
+
+If no stable `13.1` release exists yet, the entry is omitted (the action does not fail).
+
+### `skip-grafana-react-19-preview-image`
+
+Controls whether the React 19 variant described above is added to the matrix. Defaults to included for Grafana org repositories and skipped for others; set it explicitly to override.
 
 ## Workflow example
 
@@ -133,7 +165,7 @@ jobs:
       - name: Start Grafana
         run: |
           docker-compose pull
-          GRAFANA_VERSION=${{ matrix.GRAFANA_IMAGE.VERSION }} GRAFANA_IMAGE=${{ matrix.GRAFANA_IMAGE.NAME }} docker-compose up -d
+          GRAFANA_VERSION=${{ matrix.GRAFANA_IMAGE.VERSION }} GRAFANA_IMAGE=${{ matrix.GRAFANA_IMAGE.NAME }} GF_FEATURE_TOGGLES_ENABLE=${{ matrix.GRAFANA_IMAGE.enabledToggles }} docker-compose up -d
       ...
 ```
 <!-- x-release-please-end-version -->
@@ -170,7 +202,7 @@ jobs:
       - name: Start Grafana
         run: |
           docker-compose pull
-          GRAFANA_VERSION=${{ matrix.GRAFANA_IMAGE.VERSION }} GRAFANA_IMAGE=${{ matrix.GRAFANA_IMAGE.NAME }} docker-compose up -d
+          GRAFANA_VERSION=${{ matrix.GRAFANA_IMAGE.VERSION }} GRAFANA_IMAGE=${{ matrix.GRAFANA_IMAGE.NAME }} GF_FEATURE_TOGGLES_ENABLE=${{ matrix.GRAFANA_IMAGE.enabledToggles }} docker-compose up -d
       ...
 ```
 <!-- x-release-please-end-version -->

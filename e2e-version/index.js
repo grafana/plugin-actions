@@ -16,6 +16,13 @@ const VersionResolverTypes = {
   VersionSupportPolicy: 'version-support-policy',
 };
 
+// Each key is a Grafana minor version (major.minor). For each entry, the action
+// resolves the latest stable patch of that minor and appends a matrix variant
+// with the given feature toggles enabled. Add entries here to extend coverage.
+const FeatureToggleVariants = {
+  '13.1': { name: 'grafana-enterprise', enabledToggles: 'react19' },
+};
+
 async function run() {
   try {
     // skip-grafana-dev-image is a deprecated alias for skip-grafana-nightly-image
@@ -93,15 +100,16 @@ async function run() {
     const images = versions.map((version) => ({
       name: 'grafana-enterprise',
       version,
+      enabledToggles: '',
     }));
 
     if (!skipGrafanaNightlyImage) {
-      images.unshift({ name: 'grafana-enterprise', version: 'nightly' });
+      images.unshift({ name: 'grafana-enterprise', version: 'nightly', enabledToggles: '' });
     }
 
     if (!skipGrafanaReact19PreviewImage) {
-      // Add hardcoded Grafana React 19 preview image
-      images.push({ name: 'grafana-enterprise', version: 'dev-preview-react19' });
+      // Append feature-toggle variants (e.g. React 19) resolved to real Grafana releases
+      images.push(...resolveFeatureToggleVariants(availableGrafanaVersions));
     }
 
     console.log('Resolved images: ', images);
@@ -134,6 +142,28 @@ function evenlyPickVersions(allItems, limit) {
   }
 
   return semver.rsort(result);
+}
+
+/**
+ * Resolves the feature-toggle matrix variants defined in {@link FeatureToggleVariants}.
+ * For each registered minor version, finds its latest stable patch from the available
+ * versions and returns a matrix item with the configured feature toggles enabled.
+ * Minors with no matching stable release are skipped (logged, not fatal).
+ *
+ * @param {semver.SemVer[]} availableGrafanaVersions latest patch per minor
+ * @returns {{ name: string, version: string, enabledToggles: string }[]}
+ **/
+function resolveFeatureToggleVariants(availableGrafanaVersions) {
+  const variants = [];
+  for (const [minor, { name, enabledToggles }] of Object.entries(FeatureToggleVariants)) {
+    const match = availableGrafanaVersions.find((v) => `${v.major}.${v.minor}` === minor);
+    if (match) {
+      variants.push({ name, version: match.version, enabledToggles });
+    } else {
+      console.log(`Skipping feature-toggle variant for ${minor}: no stable release found`);
+    }
+  }
+  return variants;
 }
 
 async function getGrafanaStableMinorVersions() {

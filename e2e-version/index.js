@@ -16,12 +16,12 @@ const VersionResolverTypes = {
   VersionSupportPolicy: 'version-support-policy',
 };
 
-// Each key is a Grafana minor version (major.minor). For each entry, the action
-// resolves the latest stable patch of that minor and appends a matrix variant
-// with the given feature toggles enabled. Add entries here to extend coverage.
-const FeatureToggleVariants = {
-  '13.1': { name: 'grafana-enterprise', enabledToggles: 'react19' },
-};
+// The feature-toggle variant definitions are fetched at runtime from this URL so they
+// can be updated (adding/removing variants) by merging a PR to main, without requiring
+// consumers to bump the pinned action version. See feature-toggle-variants.json.
+// Each key is a Grafana minor version (major.minor) mapping to { name, enabledToggles }.
+const FeatureToggleVariantsUrl =
+  'https://raw.githubusercontent.com/grafana/plugin-actions/main/e2e-version/feature-toggle-variants.json';
 
 async function run() {
   try {
@@ -109,7 +109,7 @@ async function run() {
 
     if (!skipGrafanaReact19PreviewImage) {
       // Append feature-toggle variants (e.g. React 19) resolved to real Grafana releases
-      images.push(...resolveFeatureToggleVariants(availableGrafanaVersions));
+      images.push(...(await resolveFeatureToggleVariants(availableGrafanaVersions)));
     }
 
     console.log('Resolved images: ', images);
@@ -145,17 +145,44 @@ function evenlyPickVersions(allItems, limit) {
 }
 
 /**
- * Resolves the feature-toggle matrix variants defined in {@link FeatureToggleVariants}.
+ * Fetches the feature-toggle variant definitions from {@link FeatureToggleVariantsUrl}.
+ * On any failure (network error, non-2xx response, malformed payload) a warning is logged
+ * and an empty object is returned so variants are simply skipped (not fatal).
+ *
+ * @returns {Promise<Record<string, { name: string, enabledToggles: string }>>}
+ **/
+async function fetchFeatureToggleVariants() {
+  try {
+    const response = await fetch(FeatureToggleVariantsUrl);
+    if (!response.ok) {
+      console.warn(`Could not fetch feature toggle variants (HTTP ${response.status}); skipping variants`);
+      return {};
+    }
+    const json = await response.json();
+    if (!json || typeof json !== 'object' || Array.isArray(json)) {
+      console.warn('Feature toggle variants payload is not an object; skipping variants');
+      return {};
+    }
+    return json;
+  } catch (error) {
+    console.warn(`Could not fetch feature toggle variants: ${error.message}; skipping variants`);
+    return {};
+  }
+}
+
+/**
+ * Resolves the feature-toggle matrix variants fetched from {@link FeatureToggleVariantsUrl}.
  * For each registered minor version, finds its latest stable patch from the available
  * versions and returns a matrix item with the configured feature toggles enabled.
  * Minors with no matching stable release are skipped (logged, not fatal).
  *
  * @param {semver.SemVer[]} availableGrafanaVersions latest patch per minor
- * @returns {{ name: string, version: string, enabledToggles: string }[]}
+ * @returns {Promise<{ name: string, version: string, enabledToggles: string }[]>}
  **/
-function resolveFeatureToggleVariants(availableGrafanaVersions) {
+async function resolveFeatureToggleVariants(availableGrafanaVersions) {
+  const definitions = await fetchFeatureToggleVariants();
   const variants = [];
-  for (const [minor, { name, enabledToggles }] of Object.entries(FeatureToggleVariants)) {
+  for (const [minor, { name, enabledToggles }] of Object.entries(definitions)) {
     const match = availableGrafanaVersions.find((v) => `${v.major}.${v.minor}` === minor);
     if (match) {
       variants.push({ name, version: match.version, enabledToggles });

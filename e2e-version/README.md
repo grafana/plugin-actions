@@ -124,6 +124,26 @@ React 19 is exercised by running the latest Grafana `13.1` release with the `rea
 
 If no stable `13.1` release exists yet, the entry is omitted (the action does not fail).
 
+#### Updating the feature-toggle variants
+
+The variants (which Grafana minor + which feature toggles) are **not** baked into the action. They are fetched at runtime from [`feature-toggle-variants.json`](./feature-toggle-variants.json) on the `main` branch:
+
+```
+https://raw.githubusercontent.com/grafana/plugin-actions/main/e2e-version/feature-toggle-variants.json
+```
+
+The file is a JSON object keyed by Grafana minor version (`major.minor`):
+
+```json
+{
+  "13.1": { "name": "grafana-enterprise", "enabledToggles": "react19" }
+}
+```
+
+To add or remove a variant, merge a PR that edits this file on `main`. The change takes effect for **all** consumers immediately — regardless of which action version they have pinned — without cutting a new action release or asking consumers to bump their pinned ref. Because the file is served via the GitHub raw CDN, changes can take a few minutes (~5) to propagate.
+
+If the file cannot be fetched (network error, non-2xx, or malformed JSON), the action logs a warning and simply skips the feature-toggle variants; the rest of the matrix is unaffected.
+
 ### `skip-grafana-react-19-preview-image`
 
 Controls whether the React 19 variant described above is added to the matrix. Defaults to included for Grafana org repositories and skipped for others; set it explicitly to override.

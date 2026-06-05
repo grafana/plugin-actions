@@ -2,11 +2,28 @@ const { run, VersionResolverTypeInput, VersionResolverTypes, GrafanaDependencyIn
 const mockVersions = require('./mocks/versions');
 const { getInput, getBooleanInput } = require('@actions/core');
 
-global.fetch = jest.fn(() =>
-  Promise.resolve({
-    json: () => Promise.resolve(mockVersions),
-  })
-);
+// The action makes two fetch calls: the Grafana versions API and the feature-toggle
+// variants JSON. Route by URL so each can be controlled independently per test.
+let versionsPayload = mockVersions;
+let variantsPayload = {};
+let variantsResponseOk = true;
+
+global.fetch = jest.fn((url) => {
+  if (typeof url === 'string' && url.includes('feature-toggle-variants')) {
+    return Promise.resolve({
+      ok: variantsResponseOk,
+      status: variantsResponseOk ? 200 : 500,
+      json: () => Promise.resolve(variantsPayload),
+    });
+  }
+  return Promise.resolve({ json: () => Promise.resolve(versionsPayload) });
+});
+
+beforeEach(() => {
+  versionsPayload = mockVersions;
+  variantsPayload = {};
+  variantsResponseOk = true;
+});
 
 jest.mock('@actions/core', () => ({
   ...jest.requireActual('@actions/core'),
@@ -106,9 +123,8 @@ describe('feature toggle variants (react19)', () => {
   const versionsWith13 = {
     items: [stable('11.0.0'), stable('13.0.5'), stable('13.1.2'), stable('13.1.5'), stable('13.2.1')],
   };
-
-  const mockFetchOnce = (payload) =>
-    global.fetch.mockResolvedValueOnce({ json: () => Promise.resolve(payload) });
+  // The remotely-fetched variant definitions (matches feature-toggle-variants.json).
+  const variantDefs = { '13.1': { name: 'grafana-enterprise', enabledToggles: 'react19' } };
 
   // Resolver inputs that keep the matrix focused: nightly skipped, react19 explicitly enabled.
   const inputs = ({ dependency, skipReact19 }) => {
@@ -127,7 +143,8 @@ describe('feature toggle variants (react19)', () => {
   };
 
   it('appends the latest 13.1 patch with react19 enabled, alongside the baseline 13.1 entry', async () => {
-    mockFetchOnce(versionsWith13);
+    versionsPayload = versionsWith13;
+    variantsPayload = variantDefs;
     inputs({ dependency: '>=13.0.0', skipReact19: false });
     const images = await run();
 
@@ -141,7 +158,8 @@ describe('feature toggle variants (react19)', () => {
   });
 
   it('skips the react19 variant when no 13.1 release exists', async () => {
-    inputs({ dependency: '>=10.4.4', skipReact19: false }); // default mock tops out at 11.x
+    variantsPayload = variantDefs; // default versionsPayload (mockVersions) tops out at 11.x
+    inputs({ dependency: '>=10.4.4', skipReact19: false });
     const images = await run();
 
     expect(Array.isArray(images)).toBe(true);
@@ -149,10 +167,22 @@ describe('feature toggle variants (react19)', () => {
   });
 
   it('skips the react19 variant when skip-grafana-react-19-preview-image is true', async () => {
-    mockFetchOnce(versionsWith13);
+    versionsPayload = versionsWith13;
+    variantsPayload = variantDefs;
     inputs({ dependency: '>=13.0.0', skipReact19: true });
     const images = await run();
 
     expect(images.every((i) => i.enabledToggles !== 'react19')).toBe(true);
+  });
+
+  it('skips variants but still builds the matrix when the variants fetch fails', async () => {
+    versionsPayload = versionsWith13;
+    variantsResponseOk = false; // simulate a non-2xx response from the remote list
+    inputs({ dependency: '>=13.0.0', skipReact19: false });
+    const images = await run();
+
+    expect(images.every((i) => i.enabledToggles !== 'react19')).toBe(true);
+    // baseline entries are unaffected by the variants fetch failing
+    expect(images).toContainEqual({ name: 'grafana-enterprise', version: '13.1.5', enabledToggles: '' });
   });
 });

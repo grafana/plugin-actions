@@ -58,6 +58,10 @@ inputs:
     description: "Create a verifiable attestation for the plugin using Github OIDC. Requires id-token: write and attestations: writes permissions"
     required: false
     default: "false"
+  skip_plugin_validator:
+    description: "Skip the plugin validation step"
+    required: false
+    default: "false"
   use_changelog_generator:
     description: "Whether to generate a changelog for the plugin"
     required: false
@@ -75,6 +79,7 @@ runs:
         node-version: "${{ inputs.node-version }}"
         go-version: "${{ inputs.go-version }}"
         backend-target: "${{ inputs.backend-target }}"
+        skip_plugin_validator: "${{ inputs.skip_plugin_validator }}"
 
     - name: Get plugin metadata
       id: metadata

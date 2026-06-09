@@ -32,6 +32,10 @@ inputs:
     description: "Version of node"
     required: false
     default: "20"
+  skip_plugin_validator:
+    description: "Skip the plugin validation step"
+    required: false
+    default: "false"
   backend-target:
     type: choice
     description: "Backend target for the plugin backend build"
@@ -152,7 +156,7 @@ runs:
         PLUGIN_ARCHIVE_SHA1SUM: ${{ steps.metadata.outputs.archive-sha1sum }}
 
     - name: Validate plugin
-      continue-on-error: true
+      if: ${{ inputs.skip_plugin_validator != 'true' }}
       run: |
         npx -y @grafana/plugin-validator@latest -sourceCodeUri file://./ $PLUGIN_ARCHIVE
       shell: bash

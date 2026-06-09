@@ -114,17 +114,23 @@ runs:
             -f "sha=${HEAD_SHA}"
         fi
 
-        ADDITIONS="[]"
-        DELETIONS="[]"
+        ADDITIONS_FILE=$(mktemp)
+        DELETIONS_FILE=$(mktemp)
+        echo "[]" > "$ADDITIONS_FILE"
+        echo "[]" > "$DELETIONS_FILE"
 
         while IFS= read -r line; do
           STATUS="${line:0:2}"
           FILE="${line:3}"
           if [[ "$STATUS" == "??" || "$STATUS" =~ ^.M$ || "$STATUS" =~ ^M.$ ]]; then
-            CONTENTS=$(base64 -w 0 "$FILE")
-            ADDITIONS=$(echo "$ADDITIONS" | jq --arg path "$FILE" --arg contents "$CONTENTS" '. + [{path: $path, contents: $contents}]')
+            CONTENTS_FILE=$(mktemp)
+            base64 -w 0 "$FILE" > "$CONTENTS_FILE"
+            jq --arg path "$FILE" --rawfile contents "$CONTENTS_FILE" '. + [{path: $path, contents: $contents}]' "$ADDITIONS_FILE" > "${ADDITIONS_FILE}.tmp"
+            mv "${ADDITIONS_FILE}.tmp" "$ADDITIONS_FILE"
+            rm "$CONTENTS_FILE"
           elif [[ "$STATUS" =~ ^.D$ || "$STATUS" =~ ^D.$ ]]; then
-            DELETIONS=$(echo "$DELETIONS" | jq --arg path "$FILE" '. + [{path: $path}]')
+            jq --arg path "$FILE" '. + [{path: $path}]' "$DELETIONS_FILE" > "${DELETIONS_FILE}.tmp"
+            mv "${DELETIONS_FILE}.tmp" "$DELETIONS_FILE"
           fi
         done < <(git status --porcelain --untracked-files=all)
 
@@ -133,19 +139,21 @@ runs:
           --arg branch "$BRANCH_NAME" \
           --arg message "chore: bump @grafana/create-plugin configuration to ${LATEST_VERSION}" \
           --arg headOid "$HEAD_SHA" \
-          --argjson additions "$ADDITIONS" \
-          --argjson deletions "$DELETIONS" \
+          --slurpfile additions "$ADDITIONS_FILE" \
+          --slurpfile deletions "$DELETIONS_FILE" \
           '{
             query: "mutation($input: CreateCommitOnBranchInput!) { createCommitOnBranch(input: $input) { commit { url } } }",
             variables: {
               input: {
                 branch: { repositoryNameWithOwner: $repo, branchName: $branch },
                 message: { headline: $message },
-                fileChanges: { additions: $additions, deletions: $deletions },
+                fileChanges: { additions: $additions[0], deletions: $deletions[0] },
                 expectedHeadOid: $headOid
               }
             }
           }' | gh api graphql --input -
+
+        rm "$ADDITIONS_FILE" "$DELETIONS_FILE"
       shell: bash
       env:
         GH_TOKEN: ${{ inputs.token }}

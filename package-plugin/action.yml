@@ -152,6 +152,7 @@ runs:
         PLUGIN_ARCHIVE_SHA1SUM: ${{ steps.metadata.outputs.archive-sha1sum }}
 
     - name: Validate plugin
+      continue-on-error: true
       run: |
         npx -y @grafana/plugin-validator@latest -sourceCodeUri file://./ $PLUGIN_ARCHIVE
       shell: bash

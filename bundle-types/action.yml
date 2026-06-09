@@ -38,6 +38,15 @@ runs:
         exit 1
       shell: bash
 
+    - name: Check OIDC token availability
+      run: |
+        if [ -z "${ACTIONS_ID_TOKEN_REQUEST_URL}" ]; then
+          echo "::error::This action requires 'id-token: write' permission and GATB to be configured. See the bundle-types README for setup instructions."
+          exit 1
+        fi
+
+      shell: bash
+
     - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
       with:
         node-version: "${{ inputs.node-version }}"
@@ -58,23 +67,12 @@ runs:
         PLUGIN_JSON_PATH: ${{ inputs.plugin-json-path }}
         PACKAGE_JSON_PATH: ${{ inputs.package-json-path }}
 
-    - id: get-secrets
-      uses: grafana/shared-workflows/actions/get-vault-secrets@9f37f656e063f0ad0b0bfc38d49894b57d363936 # v1.2.1
-      with:
-        common_secrets: |
-          GITHUB_APP_ID=plugins-platform-bot-app:app-id
-          GITHUB_APP_PRIVATE_KEY=plugins-platform-bot-app:private-key
-        export_env: false
-
     - name: Generate token
       id: generate-token
-      uses: actions/create-github-app-token@67018539274d69449ef7c02e8e71183d1719ab42 # v2.1.4
+      uses: grafana/shared-workflows/actions/create-github-app-token@46f48da11e78ebdba7a8747ae456b11062fac83e # create-github-app-token/v0.3.1
       with:
-        app-id: ${{ fromJSON(steps.get-secrets.outputs.secrets).GITHUB_APP_ID }}
-        private-key: ${{ fromJSON(steps.get-secrets.outputs.secrets).GITHUB_APP_PRIVATE_KEY }}
-        owner: grafana
-        repositories: |
-            plugin-extension-types
+        github_app: grafana-plugins-platform-bot
+        permission_set: bundle-types
 
 
 

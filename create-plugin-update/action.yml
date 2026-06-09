@@ -75,52 +75,82 @@ runs:
       run: ${{ steps.package-manager.outputs.frozenInstallCmd }}
       shell: bash
 
-    - name: Create branch
-      if: steps.compare-versions.outputs.update_needed == 'true'
-      run: |
-        git config --local user.name grafana-plugins-platform-bot[bot]
-        git config --local user.email 144369747+grafana-plugins-platform-bot[bot]@users.noreply.github.com
-
-        git checkout -b update-grafana-create-plugin-${LATEST_VERSION}
-      shell: bash
-      env:
-        LATEST_VERSION: ${{ steps.get-latest-version.outputs.latest_version }}
-        GITHUB_TOKEN: ${{ inputs.token }}
-
     - name: Update the configs
       if: steps.compare-versions.outputs.update_needed == 'true'
       run: |
-        ${{ steps.package-manager.outputs.execCmd }} @grafana/create-plugin update --commit
+        ${{ steps.package-manager.outputs.execCmd }} @grafana/create-plugin update
       shell: bash
 
-    # check if the update command created any commits in the current branch,
-    # if not we can skip pushing the branch and PR creation
+    # check if the update command produced any file changes,
+    # if not we can skip the commit and PR creation
     - name: Check branch status
       id: check-changes
       if: steps.compare-versions.outputs.update_needed == 'true'
       run: |
-        if [ -n "$(git log ${BASE}..HEAD --oneline)" ]; then
+        if [ -n "$(git status --porcelain --untracked-files=all)" ]; then
           echo "should_push=true" >> "$GITHUB_OUTPUT"
         else
           echo "should_push=false" >> "$GITHUB_OUTPUT"
         fi
       shell: bash
-      env:
-        BASE: ${{ inputs.base }}
 
     - name: Exit if no update is needed
       if: steps.compare-versions.outputs.update_needed == 'true' && steps.check-changes.outputs.should_push == 'false'
       run: echo "::notice::create-plugin update produced no file changes (only a version bump in .cprc.json). Skipping branch push."
       shell: bash
 
-    - name: Push branch
+    - name: Create branch and commit via API
       if: steps.compare-versions.outputs.update_needed == 'true' && steps.check-changes.outputs.should_push == 'true'
       run: |
-        git config --global --type bool push.autoSetupRemote true
-        git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}
+        BRANCH_NAME="update-grafana-create-plugin-${LATEST_VERSION}"
+        HEAD_SHA=$(gh api "repos/${GITHUB_REPOSITORY}/branches/${BASE}" --jq '.commit.sha')
+
+        if gh api "repos/${GITHUB_REPOSITORY}/branches/${BRANCH_NAME}" > /dev/null 2>&1; then
+          HEAD_SHA=$(gh api "repos/${GITHUB_REPOSITORY}/branches/${BRANCH_NAME}" --jq '.commit.sha')
+        else
+          gh api "repos/${GITHUB_REPOSITORY}/git/refs" \
+            -X POST \
+            -f "ref=refs/heads/${BRANCH_NAME}" \
+            -f "sha=${HEAD_SHA}"
+        fi
+
+        ADDITIONS="[]"
+        DELETIONS="[]"
+
+        while IFS= read -r line; do
+          STATUS="${line:0:2}"
+          FILE="${line:3}"
+          if [[ "$STATUS" == "??" || "$STATUS" =~ ^.M$ || "$STATUS" =~ ^M.$ ]]; then
+            CONTENTS=$(base64 -w 0 "$FILE")
+            ADDITIONS=$(echo "$ADDITIONS" | jq --arg path "$FILE" --arg contents "$CONTENTS" '. + [{path: $path, contents: $contents}]')
+          elif [[ "$STATUS" =~ ^.D$ || "$STATUS" =~ ^D.$ ]]; then
+            DELETIONS=$(echo "$DELETIONS" | jq --arg path "$FILE" '. + [{path: $path}]')
+          fi
+        done < <(git status --porcelain --untracked-files=all)
+
+        jq -n \
+          --arg repo "${GITHUB_REPOSITORY}" \
+          --arg branch "$BRANCH_NAME" \
+          --arg message "chore: bump @grafana/create-plugin configuration to ${LATEST_VERSION}" \
+          --arg headOid "$HEAD_SHA" \
+          --argjson additions "$ADDITIONS" \
+          --argjson deletions "$DELETIONS" \
+          '{
+            query: "mutation($input: CreateCommitOnBranchInput!) { createCommitOnBranch(input: $input) { commit { url } } }",
+            variables: {
+              input: {
+                branch: { repositoryNameWithOwner: $repo, branchName: $branch },
+                message: { headline: $message },
+                fileChanges: { additions: $additions, deletions: $deletions },
+                expectedHeadOid: $headOid
+              }
+            }
+          }' | gh api graphql --input -
       shell: bash
       env:
-        GITHUB_TOKEN: ${{ inputs.token }}
+        GH_TOKEN: ${{ inputs.token }}
+        LATEST_VERSION: ${{ steps.get-latest-version.outputs.latest_version }}
+        BASE: ${{ inputs.base }}
 
     - name: Create or Update PR
       if: steps.compare-versions.outputs.update_needed == 'true' && steps.check-changes.outputs.should_push == 'true'

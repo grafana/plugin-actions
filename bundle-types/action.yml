@@ -110,22 +110,56 @@ runs:
       env:
         ENTRY_POINT: ${{ inputs.entry-point }}
 
-    - name: Create branch
+    - name: Create branch and commit via API
       if: ${{ steps.check-diff.outputs.has-changes == 'true' }}
       run: |
         cd ../plugin-extension-types
-        git config --local user.name grafana-plugins-platform-bot[bot]
-        git config --local user.email 144369747+grafana-plugins-platform-bot[bot]@users.noreply.github.com
 
-        git checkout -b $PLUGIN_ID-$PLUGIN_VERSION
-        git add .
-        git commit -m "types: updating $PLUGIN_ID"
-        git push https://x-access-token:${GITHUB_TOKEN}@github.com/grafana/plugin-extension-types $PLUGIN_ID-$PLUGIN_VERSION
+        BRANCH_NAME="${PLUGIN_ID}-${PLUGIN_VERSION}"
+        MAIN_SHA=$(gh api repos/grafana/plugin-extension-types/branches/main --jq '.commit.sha')
+
+        gh api repos/grafana/plugin-extension-types/git/refs \
+          -X POST \
+          -f "ref=refs/heads/${BRANCH_NAME}" \
+          -f "sha=${MAIN_SHA}"
+
+        ADDITIONS="[]"
+        DELETIONS="[]"
+
+        while IFS= read -r line; do
+          STATUS="${line:0:2}"
+          FILE="${line:3}"
+          if [[ "$STATUS" == "??" || "$STATUS" == " M" || "$STATUS" == "MM" ]]; then
+            CONTENTS=$(base64 -w 0 "$FILE")
+            ADDITIONS=$(echo "$ADDITIONS" | jq --arg path "$FILE" --arg contents "$CONTENTS" '. + [{path: $path, contents: $contents}]')
+          elif [[ "$STATUS" == " D" ]]; then
+            DELETIONS=$(echo "$DELETIONS" | jq --arg path "$FILE" '. + [{path: $path}]')
+          fi
+        done < <(git status --porcelain)
+
+        jq -n \
+          --arg repo "grafana/plugin-extension-types" \
+          --arg branch "$BRANCH_NAME" \
+          --arg message "types: updating ${PLUGIN_ID}" \
+          --arg headOid "$MAIN_SHA" \
+          --argjson additions "$ADDITIONS" \
+          --argjson deletions "$DELETIONS" \
+          '{
+            query: "mutation($input: CreateCommitOnBranchInput!) { createCommitOnBranch(input: $input) { commit { url } } }",
+            variables: {
+              input: {
+                branch: { repositoryNameWithOwner: $repo, branchName: $branch },
+                message: { headline: $message },
+                fileChanges: { additions: $additions, deletions: $deletions },
+                expectedHeadOid: $headOid
+              }
+            }
+          }' | gh api graphql --input -
       shell: bash
       env:
+        GH_TOKEN: ${{ steps.generate-token.outputs.token }}
         PLUGIN_ID: ${{ steps.metadata.outputs.plugin-id }}
         PLUGIN_VERSION: ${{ steps.metadata.outputs.plugin-version }}
-        GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
     - name: Create or Update PR
       if: ${{ steps.check-diff.outputs.has-changes == 'true' }}

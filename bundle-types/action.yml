@@ -80,7 +80,7 @@ runs:
       run: |
         cd ..
         gh auth status
-        gh repo clone grafana/plugin-extension-types
+        gh repo clone grafana/plugin-extension-types -- --depth=1
       shell: bash
       env:
         GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
@@ -114,12 +114,14 @@ runs:
         cd ../plugin-extension-types
 
         BRANCH_NAME="${PLUGIN_ID}-${PLUGIN_VERSION}"
-        MAIN_SHA=$(gh api repos/grafana/plugin-extension-types/branches/main --jq '.commit.sha')
+        BASE_SHA=$(git rev-parse HEAD)
 
-        gh api repos/grafana/plugin-extension-types/git/refs \
-          -X POST \
-          -f "ref=refs/heads/${BRANCH_NAME}" \
-          -f "sha=${MAIN_SHA}"
+        if ! gh api repos/grafana/plugin-extension-types/branches/${BRANCH_NAME} --silent 2>/dev/null; then
+          gh api repos/grafana/plugin-extension-types/git/refs \
+            -X POST \
+            -f "ref=refs/heads/${BRANCH_NAME}" \
+            -f "sha=${BASE_SHA}"
+        fi
 
         ADDITIONS="[]"
         DELETIONS="[]"
@@ -133,13 +135,13 @@ runs:
           elif [[ "$STATUS" == " D" ]]; then
             DELETIONS=$(echo "$DELETIONS" | jq --arg path "$FILE" '. + [{path: $path}]')
           fi
-        done < <(git status --porcelain)
+        done < <(git status --porcelain -uall)
 
         jq -n \
           --arg repo "grafana/plugin-extension-types" \
           --arg branch "$BRANCH_NAME" \
           --arg message "types: updating ${PLUGIN_ID}" \
-          --arg headOid "$MAIN_SHA" \
+          --arg headOid "$BASE_SHA" \
           --argjson additions "$ADDITIONS" \
           --argjson deletions "$DELETIONS" \
           '{

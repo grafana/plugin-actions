@@ -147,7 +147,9 @@ describe('feature toggle variants (react19)', () => {
       if (name === VersionResolverTypeInput) { return VersionResolverTypes.PluginGrafanaDependency; }
       if (name === GrafanaDependencyInput) { return dependency; }
       if (name === 'limit') { return '6'; }
-      if (name === 'skip-grafana-react-19-preview-image') { return skipReact19 ? 'true' : 'false'; }
+      // Omit the deprecated input unless using it as a kill-switch; a non-empty value
+      // would mark it "explicitly provided" and trigger a deprecation warning.
+      if (name === 'skip-grafana-react-19-preview-image') { return skipReact19 ? 'true' : ''; }
       return '';
     });
     getBooleanInput.mockImplementation((name) => {

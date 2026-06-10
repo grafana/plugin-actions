@@ -126,7 +126,7 @@ A variant does **not** replace the baseline entry for the same version — the m
 
 #### Defining the variants
 
-The variants are **not** baked into the action. They are fetched at runtime from [`feature-toggle-variants.json`](./feature-toggle-variants.json) on the `main` branch:
+The variants are **not** baked into the action. They are fetched at runtime from [`feature-toggle-variants.json`](https://github.com/grafana/plugin-actions/blob/main/e2e-version/feature-toggle-variants.json) on the `main` branch:
 
 ```
 https://raw.githubusercontent.com/grafana/plugin-actions/main/e2e-version/feature-toggle-variants.json

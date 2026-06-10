@@ -237,6 +237,26 @@ describe('feature toggle variants (react19)', () => {
     expect(images.every((i) => i.enabledToggles !== 'react19')).toBe(true);
   });
 
+  it('skips malformed entries without failing and still resolves valid ones', async () => {
+    versionsPayload = versionsWith13;
+    variantsPayload = [
+      null,
+      'oops',
+      { enabledToggles: 'react19', grafanaDependency: '>=13.1.0 <13.2.0' }, // missing name
+      { name: 'grafana-enterprise', grafanaDependency: '>=13.1.0 <13.2.0' }, // missing enabledToggles
+      { name: '', enabledToggles: 'react19', grafanaDependency: '>=13.1.0 <13.2.0' }, // empty name
+      variant(), // the one valid entry
+    ];
+    inputs({ dependency: '>=13.0.0', skipReact19: false });
+    const images = await run();
+
+    expect(Array.isArray(images)).toBe(true);
+    // only the valid entry resolves; malformed entries are skipped, not fatal
+    expect(images.filter((i) => i.enabledToggles === 'react19')).toEqual([
+      { name: 'grafana-enterprise', version: '13.1.5', enabledToggles: 'react19' },
+    ]);
+  });
+
   it('includes the variant when runInRepositories matches the current repository', async () => {
     process.env.GITHUB_REPOSITORY = 'grafana/some-plugin';
     versionsPayload = versionsWith13;

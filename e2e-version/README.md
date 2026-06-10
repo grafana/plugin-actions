@@ -220,7 +220,7 @@ jobs:
       - name: Start Grafana
         run: |
           docker-compose pull
-          GRAFANA_VERSION=${{ matrix.GRAFANA_IMAGE.VERSION }} GRAFANA_IMAGE=${{ matrix.GRAFANA_IMAGE.NAME }} GF_FEATURE_TOGGLES_ENABLE=${{ matrix.GRAFANA_IMAGE.enabledToggles }} docker-compose up -d
+          GRAFANA_VERSION=${{ matrix.GRAFANA_IMAGE.version }} GRAFANA_IMAGE=${{ matrix.GRAFANA_IMAGE.name }} GF_FEATURE_TOGGLES_ENABLE=${{ matrix.GRAFANA_IMAGE.enabledToggles }} docker-compose up -d
       ...
 ```
 <!-- x-release-please-end-version -->
@@ -257,7 +257,7 @@ jobs:
       - name: Start Grafana
         run: |
           docker-compose pull
-          GRAFANA_VERSION=${{ matrix.GRAFANA_IMAGE.VERSION }} GRAFANA_IMAGE=${{ matrix.GRAFANA_IMAGE.NAME }} GF_FEATURE_TOGGLES_ENABLE=${{ matrix.GRAFANA_IMAGE.enabledToggles }} docker-compose up -d
+          GRAFANA_VERSION=${{ matrix.GRAFANA_IMAGE.version }} GRAFANA_IMAGE=${{ matrix.GRAFANA_IMAGE.name }} GF_FEATURE_TOGGLES_ENABLE=${{ matrix.GRAFANA_IMAGE.enabledToggles }} docker-compose up -d
       ...
 ```
 <!-- x-release-please-end-version -->

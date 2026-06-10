@@ -163,6 +163,14 @@ async function fetchFeatureToggleVariants() {
 }
 
 /**
+ * @param {unknown} value
+ * @returns {boolean} true when value is a non-empty (after trim) string
+ **/
+function isNonEmptyString(value) {
+  return typeof value === 'string' && value.trim() !== '';
+}
+
+/**
  * Determines whether a variant applies to the given repository based on its
  * runInRepositories regex patterns. An omitted or empty list means "run everywhere".
  * Invalid patterns are logged and ignored (treated as non-matching), never fatal.
@@ -199,7 +207,16 @@ function matchesRepository(runInRepositories, repository) {
 async function resolveFeatureToggleVariants(availableGrafanaVersions, repository) {
   const definitions = await fetchFeatureToggleVariants();
   const variants = [];
-  for (const { name, enabledToggles, grafanaDependency, runInRepositories } of definitions) {
+  for (const entry of definitions) {
+    if (!entry || typeof entry !== 'object' || Array.isArray(entry)) {
+      console.warn(`Skipping feature-toggle variant: entry is not an object (${JSON.stringify(entry)})`);
+      continue;
+    }
+    const { name, enabledToggles, grafanaDependency, runInRepositories } = entry;
+    if (!isNonEmptyString(name) || !isNonEmptyString(enabledToggles)) {
+      console.warn('Skipping feature-toggle variant: "name" and "enabledToggles" must be non-empty strings');
+      continue;
+    }
     if (!matchesRepository(runInRepositories, repository)) {
       console.log(`Skipping feature-toggle variant "${enabledToggles}": not enabled for repository ${repository}`);
       continue;

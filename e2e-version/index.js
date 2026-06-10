@@ -19,7 +19,7 @@ const VersionResolverTypes = {
 // The feature-toggle variant definitions are fetched at runtime from this URL so they
 // can be updated (adding/removing variants) by merging a PR to main, without requiring
 // consumers to bump the pinned action version. See feature-toggle-variants.json.
-// Each key is a Grafana minor version (major.minor) mapping to { name, enabledToggles }.
+// The payload is an array of { name, enabledToggles, grafanaDependency, runInRepositories }.
 const FeatureToggleVariantsUrl =
   'https://raw.githubusercontent.com/grafana/plugin-actions/main/e2e-version/feature-toggle-variants.json';
 
@@ -29,27 +29,19 @@ async function run() {
     const skipGrafanaNightlyImage =
       core.getBooleanInput(SkipGrafanaNightlyImageInput) || core.getBooleanInput(SkipGrafanaDevImageInput);
 
-    // Determine default for React image based on repository owner
-    // Include by default for Grafana org repositories, skip for others
-    // GITHUB_REPOSITORY is in format "owner/repo", GITHUB_REPOSITORY_OWNER might not be available
+    // GITHUB_REPOSITORY is in format "owner/repo"; used to match runInRepositories patterns
     const githubRepository = process.env.GITHUB_REPOSITORY || '';
-    const repositoryOwner = process.env.GITHUB_REPOSITORY_OWNER || githubRepository.split('/')[0] || '';
-    const isGrafanaOrg = repositoryOwner.toLowerCase() === 'grafana';
 
-    // Check if input was explicitly provided by checking if getInput returns non-empty string
-    // core.getInput() returns empty string when input is not provided
-    const reactImageInputValue = core.getInput(SkipGrafanaReact19PreviewImageInput);
-    const isExplicitlyProvided = reactImageInputValue !== '';
-
-    // If input is not explicitly provided, use org-based defaults
-    // If input is explicitly provided, always honor it using getBooleanInput
-    let skipGrafanaReact19PreviewImage;
-    if (!isExplicitlyProvided) {
-      // Input not provided: use defaults based on org
-      skipGrafanaReact19PreviewImage = !isGrafanaOrg; // false for Grafana org (include), true for external (skip)
-    } else {
-      // Input explicitly provided: always honor it
-      skipGrafanaReact19PreviewImage = core.getBooleanInput(SkipGrafanaReact19PreviewImageInput);
+    // Deprecated: variant targeting is now controlled centrally via runInRepositories in
+    // feature-toggle-variants.json. The input is still honored as an explicit kill-switch.
+    const skipReact19InputValue = core.getInput(SkipGrafanaReact19PreviewImageInput);
+    let skipFeatureToggleVariants = false;
+    if (skipReact19InputValue !== '') {
+      skipFeatureToggleVariants = core.getBooleanInput(SkipGrafanaReact19PreviewImageInput);
+      console.warn(
+        `${SkipGrafanaReact19PreviewImageInput} is deprecated; variant targeting is now controlled via ` +
+          `runInRepositories in feature-toggle-variants.json`
+      );
     }
 
     const grafanaDependency = core.getInput(GrafanaDependencyInput);
@@ -107,9 +99,9 @@ async function run() {
       images.unshift({ name: 'grafana-enterprise', version: 'nightly', enabledToggles: '' });
     }
 
-    if (!skipGrafanaReact19PreviewImage) {
+    if (!skipFeatureToggleVariants) {
       // Append feature-toggle variants (e.g. React 19) resolved to real Grafana releases
-      images.push(...(await resolveFeatureToggleVariants(availableGrafanaVersions)));
+      images.push(...(await resolveFeatureToggleVariants(availableGrafanaVersions, githubRepository)));
     }
 
     console.log('Resolved images: ', images);
@@ -147,47 +139,86 @@ function evenlyPickVersions(allItems, limit) {
 /**
  * Fetches the feature-toggle variant definitions from {@link FeatureToggleVariantsUrl}.
  * On any failure (network error, non-2xx response, malformed payload) a warning is logged
- * and an empty object is returned so variants are simply skipped (not fatal).
+ * and an empty array is returned so variants are simply skipped (not fatal).
  *
- * @returns {Promise<Record<string, { name: string, enabledToggles: string }>>}
+ * @returns {Promise<{ name: string, enabledToggles: string, grafanaDependency: string, runInRepositories?: string[] }[]>}
  **/
 async function fetchFeatureToggleVariants() {
   try {
     const response = await fetch(FeatureToggleVariantsUrl);
     if (!response.ok) {
       console.warn(`Could not fetch feature toggle variants (HTTP ${response.status}); skipping variants`);
-      return {};
+      return [];
     }
     const json = await response.json();
-    if (!json || typeof json !== 'object' || Array.isArray(json)) {
-      console.warn('Feature toggle variants payload is not an object; skipping variants');
-      return {};
+    if (!Array.isArray(json)) {
+      console.warn('Feature toggle variants payload is not an array; skipping variants');
+      return [];
     }
     return json;
   } catch (error) {
     console.warn(`Could not fetch feature toggle variants: ${error.message}; skipping variants`);
-    return {};
+    return [];
   }
 }
 
 /**
+ * Determines whether a variant applies to the given repository based on its
+ * runInRepositories regex patterns. An omitted or empty list means "run everywhere".
+ * Invalid patterns are logged and ignored (treated as non-matching), never fatal.
+ *
+ * @param {string[]|undefined} runInRepositories regex strings; omitted/empty = match all
+ * @param {string} repository the GITHUB_REPOSITORY value ("owner/repo")
+ * @returns {boolean}
+ **/
+function matchesRepository(runInRepositories, repository) {
+  if (!Array.isArray(runInRepositories) || runInRepositories.length === 0) {
+    return true; // no restriction → run everywhere
+  }
+  return runInRepositories.some((pattern) => {
+    try {
+      return new RegExp(pattern).test(repository);
+    } catch (error) {
+      console.warn(`Invalid runInRepositories pattern "${pattern}": ${error.message}; ignoring`);
+      return false;
+    }
+  });
+}
+
+/**
  * Resolves the feature-toggle matrix variants fetched from {@link FeatureToggleVariantsUrl}.
- * For each registered minor version, finds its latest stable patch from the available
- * versions and returns a matrix item with the configured feature toggles enabled.
- * Minors with no matching stable release are skipped (logged, not fatal).
+ * For each variant, applies its feature toggles to every available Grafana version that
+ * satisfies the variant's grafanaDependency semver range. Variants are filtered by their
+ * runInRepositories patterns against the current repository. Variants with an invalid range
+ * or no satisfying release are skipped (logged, not fatal).
  *
  * @param {semver.SemVer[]} availableGrafanaVersions latest patch per minor
+ * @param {string} repository the GITHUB_REPOSITORY value ("owner/repo")
  * @returns {Promise<{ name: string, version: string, enabledToggles: string }[]>}
  **/
-async function resolveFeatureToggleVariants(availableGrafanaVersions) {
+async function resolveFeatureToggleVariants(availableGrafanaVersions, repository) {
   const definitions = await fetchFeatureToggleVariants();
   const variants = [];
-  for (const [minor, { name, enabledToggles }] of Object.entries(definitions)) {
-    const match = availableGrafanaVersions.find((v) => `${v.major}.${v.minor}` === minor);
-    if (match) {
-      variants.push({ name, version: match.version, enabledToggles });
-    } else {
-      console.log(`Skipping feature-toggle variant for ${minor}: no stable release found`);
+  for (const { name, enabledToggles, grafanaDependency, runInRepositories } of definitions) {
+    if (!matchesRepository(runInRepositories, repository)) {
+      console.log(`Skipping feature-toggle variant "${enabledToggles}": not enabled for repository ${repository}`);
+      continue;
+    }
+    if (!grafanaDependency || semver.validRange(grafanaDependency) === null) {
+      console.warn(
+        `Skipping feature-toggle variant "${enabledToggles}": invalid grafanaDependency range "${grafanaDependency}"`
+      );
+      continue;
+    }
+    const matching = availableGrafanaVersions.filter((v) => semver.satisfies(v.version, grafanaDependency));
+    if (matching.length === 0) {
+      console.log(
+        `Skipping feature-toggle variant "${enabledToggles}": no stable release satisfies ${grafanaDependency}`
+      );
+      continue;
+    }
+    for (const v of matching) {
+      variants.push({ name, version: v.version, enabledToggles });
     }
   }
   return variants;

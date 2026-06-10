@@ -15,7 +15,8 @@ inputs:
     type: boolean
   skip-grafana-react-19-preview-image:
     required: false
-    description: 'Skip the React 19 matrix variant. When enabled, the latest Grafana 13.1 release is added to the matrix with the react19 feature toggle enabled (instead of a dedicated dev-preview image). Defaults to false (include) for Grafana org repositories, true (skip) for others. Can be explicitly overridden.'
+    description: 'Deprecated: feature-toggle variant targeting (incl. React 19) is now controlled centrally via the runInRepositories patterns in feature-toggle-variants.json. When explicitly set to true, this input still acts as a kill-switch that skips all feature-toggle variants.'
+    deprecationMessage: 'skip-grafana-react-19-preview-image is deprecated; variant targeting is now controlled via runInRepositories in feature-toggle-variants.json.'
     type: boolean
   version-resolver-type:
     required: true 

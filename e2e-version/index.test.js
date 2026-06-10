@@ -119,12 +119,27 @@ describe('nightly image', () => {
 
 describe('feature toggle variants (react19)', () => {
   const stable = (version) => ({ version, channels: { stable: true, preview: false, beta: false, nightly: false } });
-  // Includes two 13.1 patches to prove the latest patch wins.
+  // Latest patch per minor resolves to: 11.0.0, 13.0.5, 13.1.5, 13.2.1.
   const versionsWith13 = {
     items: [stable('11.0.0'), stable('13.0.5'), stable('13.1.2'), stable('13.1.5'), stable('13.2.1')],
   };
-  // The remotely-fetched variant definitions (matches feature-toggle-variants.json).
-  const variantDefs = { '13.1': { name: 'grafana-enterprise', enabledToggles: 'react19' } };
+  // The remotely-fetched variant definitions (an array, matching feature-toggle-variants.json).
+  // No runInRepositories → runs everywhere (used by the version-resolution tests).
+  const variant = (overrides = {}) => ({
+    name: 'grafana-enterprise',
+    enabledToggles: 'react19',
+    grafanaDependency: '>=13.1.0 <13.2.0',
+    ...overrides,
+  });
+
+  const originalRepo = process.env.GITHUB_REPOSITORY;
+  afterEach(() => {
+    if (originalRepo === undefined) {
+      delete process.env.GITHUB_REPOSITORY;
+    } else {
+      process.env.GITHUB_REPOSITORY = originalRepo;
+    }
+  });
 
   // Resolver inputs that keep the matrix focused: nightly skipped, react19 explicitly enabled.
   const inputs = ({ dependency, skipReact19 }) => {
@@ -142,23 +157,39 @@ describe('feature toggle variants (react19)', () => {
     });
   };
 
-  it('appends the latest 13.1 patch with react19 enabled, alongside the baseline 13.1 entry', async () => {
+  it('applies react19 to the version satisfying the grafanaDependency range, alongside the baseline', async () => {
     versionsPayload = versionsWith13;
-    variantsPayload = variantDefs;
+    variantsPayload = [variant({ grafanaDependency: '>=13.1.0 <13.2.0' })]; // only 13.1.5 satisfies
     inputs({ dependency: '>=13.0.0', skipReact19: false });
     const images = await run();
 
     expect(images).toContainEqual({ name: 'grafana-enterprise', version: '13.1.5', enabledToggles: 'react19' });
     // baseline 13.1.5 still present (no dedup)
     expect(images).toContainEqual({ name: 'grafana-enterprise', version: '13.1.5', enabledToggles: '' });
+    // no react19 on a version outside the range
+    expect(images).not.toContainEqual({ name: 'grafana-enterprise', version: '13.2.1', enabledToggles: 'react19' });
     // no legacy preview tag
     expect(images.every((i) => i.version !== 'dev-preview-react19')).toBe(true);
     // every non-variant item has an empty toggle string
     expect(images.filter((i) => i.enabledToggles !== 'react19').every((i) => i.enabledToggles === '')).toBe(true);
   });
 
-  it('skips the react19 variant when no 13.1 release exists', async () => {
-    variantsPayload = variantDefs; // default versionsPayload (mockVersions) tops out at 11.x
+  it('applies react19 to every available version satisfying a broader range', async () => {
+    versionsPayload = versionsWith13;
+    variantsPayload = [variant({ grafanaDependency: '>=13.0.0' })]; // 13.0.5, 13.1.5, 13.2.1 satisfy
+    inputs({ dependency: '>=13.0.0', skipReact19: false });
+    const images = await run();
+
+    expect(images).toContainEqual({ name: 'grafana-enterprise', version: '13.0.5', enabledToggles: 'react19' });
+    expect(images).toContainEqual({ name: 'grafana-enterprise', version: '13.1.5', enabledToggles: 'react19' });
+    expect(images).toContainEqual({ name: 'grafana-enterprise', version: '13.2.1', enabledToggles: 'react19' });
+    // 11.0.0 does not satisfy the range → no react19 for it
+    expect(images).not.toContainEqual({ name: 'grafana-enterprise', version: '11.0.0', enabledToggles: 'react19' });
+  });
+
+  it('skips the variant when no available version satisfies the range', async () => {
+    // default versionsPayload (mockVersions) tops out at 11.x, so nothing satisfies >=13.1.0
+    variantsPayload = [variant({ grafanaDependency: '>=13.1.0 <13.2.0' })];
     inputs({ dependency: '>=10.4.4', skipReact19: false });
     const images = await run();
 
@@ -166,9 +197,19 @@ describe('feature toggle variants (react19)', () => {
     expect(images.every((i) => i.enabledToggles !== 'react19')).toBe(true);
   });
 
-  it('skips the react19 variant when skip-grafana-react-19-preview-image is true', async () => {
+  it('skips the variant when grafanaDependency is an invalid range', async () => {
     versionsPayload = versionsWith13;
-    variantsPayload = variantDefs;
+    variantsPayload = [variant({ grafanaDependency: 'not-a-valid-range' })];
+    inputs({ dependency: '>=13.0.0', skipReact19: false });
+    const images = await run();
+
+    expect(Array.isArray(images)).toBe(true);
+    expect(images.every((i) => i.enabledToggles !== 'react19')).toBe(true);
+  });
+
+  it('skips the variant when skip-grafana-react-19-preview-image is true', async () => {
+    versionsPayload = versionsWith13;
+    variantsPayload = [variant()];
     inputs({ dependency: '>=13.0.0', skipReact19: true });
     const images = await run();
 
@@ -184,5 +225,58 @@ describe('feature toggle variants (react19)', () => {
     expect(images.every((i) => i.enabledToggles !== 'react19')).toBe(true);
     // baseline entries are unaffected by the variants fetch failing
     expect(images).toContainEqual({ name: 'grafana-enterprise', version: '13.1.5', enabledToggles: '' });
+  });
+
+  it('skips variants when the payload is not an array', async () => {
+    versionsPayload = versionsWith13;
+    variantsPayload = { '13.1': { enabledToggles: 'react19' } }; // wrong shape (object, not array)
+    inputs({ dependency: '>=13.0.0', skipReact19: false });
+    const images = await run();
+
+    expect(Array.isArray(images)).toBe(true);
+    expect(images.every((i) => i.enabledToggles !== 'react19')).toBe(true);
+  });
+
+  it('includes the variant when runInRepositories matches the current repository', async () => {
+    process.env.GITHUB_REPOSITORY = 'grafana/some-plugin';
+    versionsPayload = versionsWith13;
+    variantsPayload = [variant({ runInRepositories: ['^grafana/'] })];
+    inputs({ dependency: '>=13.0.0', skipReact19: false });
+    const images = await run();
+
+    expect(images).toContainEqual({ name: 'grafana-enterprise', version: '13.1.5', enabledToggles: 'react19' });
+  });
+
+  it('excludes the variant when runInRepositories does not match the current repository', async () => {
+    process.env.GITHUB_REPOSITORY = 'external-org/some-plugin';
+    versionsPayload = versionsWith13;
+    variantsPayload = [variant({ runInRepositories: ['^grafana/'] })];
+    inputs({ dependency: '>=13.0.0', skipReact19: false });
+    const images = await run();
+
+    expect(images.every((i) => i.enabledToggles !== 'react19')).toBe(true);
+    // baseline entries are still present
+    expect(images).toContainEqual({ name: 'grafana-enterprise', version: '13.1.5', enabledToggles: '' });
+  });
+
+  it('ignores invalid runInRepositories patterns without failing', async () => {
+    process.env.GITHUB_REPOSITORY = 'grafana/some-plugin';
+    versionsPayload = versionsWith13;
+    variantsPayload = [variant({ runInRepositories: ['['] })]; // invalid regex
+    inputs({ dependency: '>=13.0.0', skipReact19: false });
+    const images = await run();
+
+    expect(Array.isArray(images)).toBe(true);
+    expect(images.every((i) => i.enabledToggles !== 'react19')).toBe(true);
+  });
+
+  it('runs everywhere when runInRepositories is omitted', async () => {
+    process.env.GITHUB_REPOSITORY = 'external-org/some-plugin';
+    versionsPayload = versionsWith13;
+    variantsPayload = [variant()]; // no runInRepositories
+    inputs({ dependency: '>=13.0.0', skipReact19: false });
+    const images = await run();
+
+    expect(images).toContainEqual({ name: 'grafana-enterprise', version: '13.1.5', enabledToggles: 'react19' });
   });
 });

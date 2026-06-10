@@ -5,7 +5,7 @@ const { getInput, getBooleanInput } = require('@actions/core');
 // The action makes two fetch calls: the Grafana versions API and the feature-toggle
 // variants JSON. Route by URL so each can be controlled independently per test.
 let versionsPayload = mockVersions;
-let variantsPayload = {};
+let variantsPayload = [];
 let variantsResponseOk = true;
 
 global.fetch = jest.fn((url) => {
@@ -21,7 +21,7 @@ global.fetch = jest.fn((url) => {
 
 beforeEach(() => {
   versionsPayload = mockVersions;
-  variantsPayload = {};
+  variantsPayload = [];
   variantsResponseOk = true;
 });
 
@@ -298,5 +298,15 @@ describe('feature toggle variants (react19)', () => {
     const images = await run();
 
     expect(images).toContainEqual({ name: 'grafana-enterprise', version: '13.1.5', enabledToggles: 'react19' });
+  });
+
+  it('excludes the variant when runInRepositories is present but not an array', async () => {
+    process.env.GITHUB_REPOSITORY = 'grafana/some-plugin';
+    versionsPayload = versionsWith13;
+    variantsPayload = [variant({ runInRepositories: 'grafana' })]; // misconfigured (string, not array)
+    inputs({ dependency: '>=13.0.0', skipReact19: false });
+    const images = await run();
+
+    expect(images.every((i) => i.enabledToggles !== 'react19')).toBe(true);
   });
 });

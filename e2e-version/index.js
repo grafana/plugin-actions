@@ -173,15 +173,24 @@ function isNonEmptyString(value) {
 /**
  * Determines whether a variant applies to the given repository based on its
  * runInRepositories regex patterns. An omitted or empty list means "run everywhere".
- * Invalid patterns are logged and ignored (treated as non-matching), never fatal.
+ * A present-but-non-array value is a misconfiguration: it is logged and treated as
+ * non-matching (rather than running everywhere). Invalid patterns are logged and
+ * ignored (treated as non-matching). None of these cases are fatal.
  *
  * @param {string[]|undefined} runInRepositories regex strings; omitted/empty = match all
  * @param {string} repository the GITHUB_REPOSITORY value ("owner/repo")
  * @returns {boolean}
  **/
 function matchesRepository(runInRepositories, repository) {
-  if (!Array.isArray(runInRepositories) || runInRepositories.length === 0) {
-    return true; // no restriction → run everywhere
+  if (runInRepositories === undefined || runInRepositories === null) {
+    return true; // field omitted → run everywhere
+  }
+  if (!Array.isArray(runInRepositories)) {
+    console.warn('Invalid runInRepositories (expected an array of patterns); treating variant as non-matching');
+    return false;
+  }
+  if (runInRepositories.length === 0) {
+    return true; // empty list → run everywhere
   }
   return runInRepositories.some((pattern) => {
     try {

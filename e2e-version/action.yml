@@ -14,7 +14,7 @@ inputs:
     deprecationMessage: 'skip-grafana-dev-image is deprecated, use skip-grafana-nightly-image instead'
     type: boolean
   version-resolver-type:
-    required: true 
+    required: true
     type: choice
     default: plugin-grafana-dependency
     description: >

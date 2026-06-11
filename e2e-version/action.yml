@@ -13,10 +13,6 @@ inputs:
     description: 'Deprecated: use skip-grafana-nightly-image instead'
     deprecationMessage: 'skip-grafana-dev-image is deprecated, use skip-grafana-nightly-image instead'
     type: boolean
-  skip-grafana-react-19-preview-image:
-    required: false
-    description: 'Skip the Grafana React 19 preview image (e.g., grafana/gafana-enterprise:dev-preview-react19). Defaults to false (include) for Grafana org repositories, true (skip) for others. Can be explicitly overridden.'
-    type: boolean
   version-resolver-type:
     required: true 
     type: choice

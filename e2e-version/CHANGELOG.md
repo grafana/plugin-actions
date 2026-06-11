@@ -1,5 +1,21 @@
 # Changelog
 
+## [3.0.0](https://github.com/grafana/plugin-actions/compare/e2e-version/v2.0.0...e2e-version/v3.0.0) (2026-06-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* **e2e-version:** remove broken react19 preview image from matrix ([#249](https://github.com/grafana/plugin-actions/issues/249))
+
+### 🎉 Features
+
+* **e2e-version:** remove broken react19 preview image from matrix ([#249](https://github.com/grafana/plugin-actions/issues/249)) ([5ad957a](https://github.com/grafana/plugin-actions/commit/5ad957abb00a52b65ec3c1fd995395fffb950afe))
+
+
+### 🔧 Chores
+
+* **e2e-version:** bump dependencies ([#228](https://github.com/grafana/plugin-actions/issues/228)) ([4fa9c22](https://github.com/grafana/plugin-actions/commit/4fa9c2225a1fa56e5b04c6feff76cbcd77697dc7))
+
 ## [2.0.0](https://github.com/grafana/plugin-actions/compare/e2e-version/v1.2.1...e2e-version/v2.0.0) (2026-04-23)
 
 

@@ -5,7 +5,6 @@ const path = require('path');
 
 const SkipGrafanaNightlyImageInput = 'skip-grafana-nightly-image';
 const SkipGrafanaDevImageInput = 'skip-grafana-dev-image';
-const SkipGrafanaReact19PreviewImageInput = 'skip-grafana-react-19-preview-image';
 const VersionResolverTypeInput = 'version-resolver-type';
 const GrafanaDependencyInput = 'grafana-dependency';
 const LimitInput = 'limit';
@@ -21,29 +20,6 @@ async function run() {
     // skip-grafana-dev-image is a deprecated alias for skip-grafana-nightly-image
     const skipGrafanaNightlyImage =
       core.getBooleanInput(SkipGrafanaNightlyImageInput) || core.getBooleanInput(SkipGrafanaDevImageInput);
-
-    // Determine default for React image based on repository owner
-    // Include by default for Grafana org repositories, skip for others
-    // GITHUB_REPOSITORY is in format "owner/repo", GITHUB_REPOSITORY_OWNER might not be available
-    const githubRepository = process.env.GITHUB_REPOSITORY || '';
-    const repositoryOwner = process.env.GITHUB_REPOSITORY_OWNER || githubRepository.split('/')[0] || '';
-    const isGrafanaOrg = repositoryOwner.toLowerCase() === 'grafana';
-
-    // Check if input was explicitly provided by checking if getInput returns non-empty string
-    // core.getInput() returns empty string when input is not provided
-    const reactImageInputValue = core.getInput(SkipGrafanaReact19PreviewImageInput);
-    const isExplicitlyProvided = reactImageInputValue !== '';
-
-    // If input is not explicitly provided, use org-based defaults
-    // If input is explicitly provided, always honor it using getBooleanInput
-    let skipGrafanaReact19PreviewImage;
-    if (!isExplicitlyProvided) {
-      // Input not provided: use defaults based on org
-      skipGrafanaReact19PreviewImage = !isGrafanaOrg; // false for Grafana org (include), true for external (skip)
-    } else {
-      // Input explicitly provided: always honor it
-      skipGrafanaReact19PreviewImage = core.getBooleanInput(SkipGrafanaReact19PreviewImageInput);
-    }
 
     const grafanaDependency = core.getInput(GrafanaDependencyInput);
     const versionResolverType = core.getInput(VersionResolverTypeInput) || VersionResolverTypes.PluginGrafanaDependency;
@@ -97,11 +73,6 @@ async function run() {
 
     if (!skipGrafanaNightlyImage) {
       images.unshift({ name: 'grafana-enterprise', version: 'nightly' });
-    }
-
-    if (!skipGrafanaReact19PreviewImage) {
-      // Add hardcoded Grafana React 19 preview image
-      images.push({ name: 'grafana-enterprise', version: 'dev-preview-react19' });
     }
 
     console.log('Resolved images: ', images);

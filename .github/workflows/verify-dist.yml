@@ -1,0 +1,80 @@
+name: Verify dist is up to date
+description: >
+  Verify that the checked-in `dist/` of every bundled JS action is up to date with its source.
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+concurrency:
+  group: check-dist-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # Discover every directory whose package.json defines a `bundle` script, so
+  # each bundled action is verified individually and new ones are picked up
+  # automatically without editing this workflow.
+  discover-actions:
+    runs-on: ubuntu-arm64
+    outputs:
+      dirs: ${{ steps.find.outputs.dirs }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: Find actions with a bundle script
+        id: find
+        run: |
+          dirs=$(find . -name package.json -not -path '*/node_modules/*' -print0 \
+            | xargs -0 -I{} sh -c 'jq -e ".scripts.bundle" "{}" >/dev/null 2>&1 && dirname "{}"' \
+            | sed 's|^\./||' \
+            | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          echo "Bundled actions found: $dirs"
+          echo "dirs=$dirs" >> "$GITHUB_OUTPUT"
+
+  verify-dist:
+    needs: discover-actions
+    if: needs.discover-actions.outputs.dirs != '[]'
+    runs-on: ubuntu-arm64
+    strategy:
+      fail-fast: false
+      matrix:
+        dir: ${{ fromJSON(needs.discover-actions.outputs.dirs) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version-file: ${{ matrix.dir }}/package.json
+          cache-dependency-path: ${{ matrix.dir }}/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ${{ matrix.dir }}
+        run: npm ci
+
+      - name: Rebuild dist
+        working-directory: ${{ matrix.dir }}
+        run: npm run bundle
+
+      - name: Check diff
+        run: |
+          if [ -n "$(git status --porcelain -- '${COMPONENT_DIR}')" ]; then
+            echo "::error::'${COMPONENT_DIR}/dist' is out of date. Run 'npm run bundle' in '${COMPONENT_DIR}' and commit the result."
+            git diff -- '${COMPONENT_DIR}'
+            exit 1
+          fi
+          echo "'${COMPONENT_DIR}' dist is up to date."
+        env:
+          COMPONENT_DIR: ${{ matrix.dir }}

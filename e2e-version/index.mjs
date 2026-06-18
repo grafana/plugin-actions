@@ -1,7 +1,7 @@
-const core = require('@actions/core');
-const semver = require('semver');
-const fs = require('fs/promises');
-const path = require('path');
+import * as core from '@actions/core';
+import semver from 'semver';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 
 const SkipGrafanaNightlyImageInput = 'skip-grafana-nightly-image';
 const SkipGrafanaDevImageInput = 'skip-grafana-dev-image';
@@ -147,9 +147,4 @@ async function getPluginGrafanaDependencyFromPluginJson() {
 }
 run();
 
-module.exports = {
-  run,
-  VersionResolverTypeInput,
-  VersionResolverTypes,
-  GrafanaDependencyInput,
-};
+export { run, VersionResolverTypeInput, VersionResolverTypes, GrafanaDependencyInput };

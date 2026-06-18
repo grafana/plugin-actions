@@ -21,6 +21,7 @@ jobs:
   # each bundled action is verified individually and new ones are picked up
   # automatically without editing this workflow.
   discover-actions:
+    name: Discover actions
     runs-on: ubuntu-arm64
     outputs:
       dirs: ${{ steps.find.outputs.dirs }}
@@ -41,7 +42,9 @@ jobs:
           echo "dirs=$dirs" >> "$GITHUB_OUTPUT"
 
   verify-dist:
-    needs: discover-actions
+    name: Verify dist
+    needs:
+      - discover-actions
     if: needs.discover-actions.outputs.dirs != '[]'
     runs-on: ubuntu-arm64
     strategy:

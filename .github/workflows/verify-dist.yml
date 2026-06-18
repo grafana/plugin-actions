@@ -1,4 +1,4 @@
-name: Verify dist is up to date
+name: Verify dists are up to date
 description: >
   Verify that the checked-in `dist/` of every bundled JS action is up to date with its source.
 

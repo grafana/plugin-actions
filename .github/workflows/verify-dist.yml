@@ -73,9 +73,9 @@ jobs:
 
       - name: Check diff
         run: |
-          if [ -n "$(git status --porcelain -- '${COMPONENT_DIR}')" ]; then
+          if [ -n "$(git status --porcelain -- "${COMPONENT_DIR}")" ]; then
             echo "::error::'${COMPONENT_DIR}/dist' is out of date. Run 'npm run bundle' in '${COMPONENT_DIR}' and commit the result."
-            git diff -- '${COMPONENT_DIR}'
+            git diff -- "${COMPONENT_DIR}"
             exit 1
           fi
           echo "'${COMPONENT_DIR}' dist is up to date."

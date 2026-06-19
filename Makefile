@@ -59,7 +59,6 @@ bundle: check-setup
 # Rebuild and fail if the committed dist/ drifted from source. Used by CI.
 check-drift: bundle
 	@if [ -n "$$(git status --porcelain -- "$(ACTION)")" ]; then \
-		git --no-pager diff -- "$(ACTION)" >&2; \
 		{ \
 		echo ""; \
 		echo "================================================================"; \

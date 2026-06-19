@@ -110,7 +110,7 @@ function evenlyPickVersions(allItems, limit) {
 async function getGrafanaStableMinorVersions() {
   const latestMinorVersions = new Map();
 
-  const response = await fetch('https://grafana.com/api/grafana-enterprise/versions/BLAHBLAH');
+  const response = await fetch('https://grafana.com/api/grafana-enterprise/versions');
   const json = await response.json();
   const grafanaVersions = json.items;
 

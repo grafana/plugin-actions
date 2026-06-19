@@ -63,9 +63,6 @@ jobs:
           node-version-file: ${{ matrix.dir }}/.nvmrc
           cache-dependency-path: ${{ matrix.dir }}/package-lock.json
 
-      # Rebuilds dist/ via the Makefile and fails if it drifted from source.
-      # All the regeneration logic and the "how to fix" guidance live in `make
-      # verify` so local and CI behaviour stay identical.
       - name: Verify dist is up to date
         env:
           ACTION_DIR: ${{ matrix.dir }}

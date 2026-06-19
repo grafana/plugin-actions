@@ -1,30 +1,15 @@
-# Makefile for regenerating / verifying the bundled `dist/` of a GitHub Action.
-#
-# Bundled JS actions ship a checked-in `dist/` that the runtime executes
-# instead of the source. `dist/` is produced by `ncc`, which inlines every
-# dependency and minifies the result, so the output only stays reproducible
-# when the Node version, the bundler, and every inlined dependency are pinned
-# identically everywhere (see .github/workflows/verify-dist.yml).
-#
-# The action directory is passed as a positional argument:
-#   make check  e2e-version   # validate the action is set up for reproducible bundling
-#   make bundle e2e-version   # validate, then rebuild <action>/dist
-#   make verify e2e-version   # rebuild and fail if <action>/dist is out of date (used in CI)
-#   make help
-#
-# `bundle` uses `nvm` to select the Node version from .nvmrc when available
-# (local dev). In CI, where nvm is absent and Node is provisioned by
-# actions/setup-node from the same .nvmrc, it verifies the active Node matches
-# instead. Either way it then runs `npm ci` and `npm run bundle`.
+# Helper for building and checking the bundled dist/ of a GitHub Action
+# Run `make help` for usage instructions.
 
 # nvm requires bash; the default /bin/sh (dash on some Linux) cannot source it.
 SHELL := bash
 
 NVM_DIR ?= $(HOME)/.nvm
 
+KNOWN_TARGETS := help check bundle verify
+
 # Resolve the action directory from the positional goal, e.g. the `e2e-version`
 # in `make check e2e-version`: strip the known verbs, whatever remains is it.
-KNOWN_TARGETS := help check bundle verify
 ACTION := $(firstword $(filter-out $(KNOWN_TARGETS),$(MAKECMDGOALS)))
 
 # Turn the positional action argument into a silent, do-nothing target so
@@ -41,8 +26,6 @@ endif
 .PHONY: help check bundle verify
 
 help:
-	@echo "Regenerate / verify the bundled dist/ of a GitHub Action."
-	@echo ""
 	@echo "Usage:"
 	@echo "  make check  <action>   Validate the action is set up for reproducible bundling"
 	@echo "  make bundle <action>   Validate, then rebuild <action>/dist"

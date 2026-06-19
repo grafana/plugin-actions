@@ -6,38 +6,26 @@ SHELL := bash
 
 NVM_DIR ?= $(HOME)/.nvm
 
-KNOWN_TARGETS := help check bundle verify
-
-# Resolve the action directory from the positional goal, e.g. the `e2e-version`
-# in `make check e2e-version`: strip the known verbs, whatever remains is it.
-ACTION := $(firstword $(filter-out $(KNOWN_TARGETS),$(MAKECMDGOALS)))
-
-# Turn the positional action argument into a silent, do-nothing target so
-# `make check e2e-version` doesn't fail on an unknown goal. An explicit phony
-# target (rather than a `%` catch-all) runs the no-op without make printing
-# "up to date" / "Nothing to be done".
-ifneq ($(ACTION),)
-.PHONY: $(ACTION)
-$(ACTION): ; @:
-endif
+# The action directory is passed as a variable, e.g. `make check-setup ACTION=e2e-version`.
+ACTION ?=
 
 .DEFAULT_GOAL := help
 
-.PHONY: help check bundle verify
+.PHONY: help check-setup bundle check-drift
 
 help:
 	@echo "Usage:"
-	@echo "  make check  <action>   Validate the action is set up for reproducible bundling"
-	@echo "  make bundle <action>   Validate, then rebuild <action>/dist"
-	@echo "  make verify <action>   Rebuild and fail if <action>/dist is out of date (used in CI)"
+	@echo "  make check-setup ACTION=<action>   Validate the action is set up for reproducible bundling"
+	@echo "  make bundle      ACTION=<action>   Validate, then rebuild <action>/dist"
+	@echo "  make check-drift ACTION=<action>   Rebuild and fail if <action>/dist is out of date (used in CI)"
 	@echo ""
 	@echo "Example:"
-	@echo "  make bundle e2e-version"
+	@echo "  make bundle ACTION=e2e-version"
 
 # Validate that the action is set up for reproducible bundling BEFORE building.
 # Each check is its own line, so make stops at the first one that fails.
-check:
-	@test -n "$(ACTION)" || { echo "Error: action name is required, e.g. 'make check e2e-version'" >&2; exit 1; }
+check-setup:
+	@test -n "$(ACTION)" || { echo "Error: ACTION is required, e.g. 'make check-setup ACTION=e2e-version'" >&2; exit 1; }
 	@test -d "$(ACTION)" || { echo "Error: directory '$(ACTION)' not found" >&2; exit 1; }
 	@test -f "$(ACTION)/package.json" || { echo "Error: '$(ACTION)/package.json' not found - '$(ACTION)' is not a bundled JS action" >&2; exit 1; }
 	@command -v jq >/dev/null || { echo "Error: 'jq' is required for config checks (brew install jq)" >&2; exit 1; }
@@ -54,8 +42,8 @@ check:
 	fi
 	@echo "OK: '$(ACTION)' is configured for reproducible bundling (.nvmrc, lockfile, bundle script, pinned deps)."
 
-# Rebuild dist/. Depends on `check`, so config is validated first.
-bundle: check
+# Rebuild dist/. Depends on `check-setup`, so config is validated first.
+bundle: check-setup
 	@echo ">> $(ACTION): rebuilding dist/ ..."
 	@if [ -s "$(NVM_DIR)/nvm.sh" ]; then \
 		. "$(NVM_DIR)/nvm.sh" >/dev/null && cd "$(ACTION)" && nvm install >/dev/null && npm ci && npm run bundle; \
@@ -69,7 +57,7 @@ bundle: check
 	@echo ">> $(ACTION): dist/ regenerated. Review 'git diff -- $(ACTION)/dist' and commit it."
 
 # Rebuild and fail if the committed dist/ drifted from source. Used by CI.
-verify: bundle
+check-drift: bundle
 	@if [ -n "$$(git status --porcelain -- "$(ACTION)")" ]; then \
 		git --no-pager diff -- "$(ACTION)" >&2; \
 		{ \
@@ -78,7 +66,7 @@ verify: bundle
 		echo "'$(ACTION)/dist' is out of date with its source."; \
 		echo ""; \
 		echo "To regenerate it locally:"; \
-		echo "    make bundle $(ACTION)"; \
+		echo "    make bundle ACTION=$(ACTION)"; \
 		echo "then commit the updated dist/ together with your change."; \
 		echo ""; \
 		echo "dist/ is produced by 'ncc', which inlines every dependency and minifies"; \
@@ -91,10 +79,10 @@ verify: bundle
 		echo "    in package.json (e.g. \"@actions/core\": \"3.0.1\", not \"^3.0.1\")"; \
 		echo "  - a committed package-lock.json, always installed with 'npm ci'"; \
 		echo "  - a 'bundle' script in package.json that writes to dist/"; \
-		echo "'make check $(ACTION)' validates all of the above."; \
+		echo "'make check-setup ACTION=$(ACTION)' validates all of the above."; \
 		echo "================================================================"; \
 		} >&2; \
-		if [ -n "$$CI" ]; then echo "::error::'$(ACTION)/dist' is out of date. Run 'make bundle $(ACTION)' and commit dist/. See the log above."; fi; \
+		if [ -n "$$CI" ]; then echo "::error::'$(ACTION)/dist' is out of date. Run 'make bundle ACTION=$(ACTION)' and commit dist/. See the log above."; fi; \
 		exit 1; \
 	fi
 	@echo "OK: '$(ACTION)/dist' is up to date."

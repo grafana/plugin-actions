@@ -64,6 +64,6 @@ jobs:
           cache-dependency-path: ${{ matrix.dir }}/package-lock.json
 
       - name: Verify dist is up to date
+        run: make check-drift ACTION="$ACTION_DIR"
         env:
           ACTION_DIR: ${{ matrix.dir }}
-        run: make verify "$ACTION_DIR"

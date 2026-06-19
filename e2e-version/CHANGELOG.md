@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.1](https://github.com/grafana/plugin-actions/compare/e2e-version/v3.0.0...e2e-version/v3.0.1) (2026-06-19)
+
+
+### 🐛 Bug Fixes
+
+* **e2e-version:** repair broken minified bundle ([#251](https://github.com/grafana/plugin-actions/issues/251)) ([289c855](https://github.com/grafana/plugin-actions/commit/289c855b6a8ff03c1e25c8f01368564261e21a0b))
+
 ## [3.0.0](https://github.com/grafana/plugin-actions/compare/e2e-version/v2.0.0...e2e-version/v3.0.0) (2026-06-11)
 
 

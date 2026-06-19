@@ -1,6 +1,15 @@
-const { run, VersionResolverTypeInput, VersionResolverTypes, GrafanaDependencyInput } = require('./index');
-const mockVersions = require('./mocks/versions');
-const { getInput, getBooleanInput } = require('@actions/core');
+import { jest, describe, it, expect } from '@jest/globals';
+import mockVersions from './mocks/versions.js';
+
+const getInput = jest.fn();
+const getBooleanInput = jest.fn();
+
+jest.unstable_mockModule('@actions/core', () => ({
+  getInput,
+  getBooleanInput,
+  setFailed: jest.fn(),
+  setOutput: jest.fn(),
+}));
 
 global.fetch = jest.fn(() =>
   Promise.resolve({
@@ -8,11 +17,7 @@ global.fetch = jest.fn(() =>
   })
 );
 
-jest.mock('@actions/core', () => ({
-  ...jest.requireActual('@actions/core'),
-  getInput: jest.fn(),
-  getBooleanInput: jest.fn(),
-}));
+const { run, VersionResolverTypeInput, VersionResolverTypes, GrafanaDependencyInput } = await import('./index.mjs');
 
 describe('plugin-grafana-dependency mode', () => {
   it.each([

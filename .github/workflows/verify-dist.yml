@@ -74,7 +74,28 @@ jobs:
       - name: Check diff
         run: |
           if [ -n "$(git status --porcelain -- "${COMPONENT_DIR}")" ]; then
-            echo "::error::'${COMPONENT_DIR}/dist' is out of date. Run 'npm run bundle' in '${COMPONENT_DIR}' and commit the result."
+            git diff -- "${COMPONENT_DIR}"
+            echo ""
+            echo "================================================================"
+            echo "'${COMPONENT_DIR}/dist' is out of date with its source."
+            echo ""
+            echo "To regenerate it, from '${COMPONENT_DIR}':"
+            echo "  nvm use            # match the Node version in .nvmrc"
+            echo "  npm ci             # install EXACT locked versions (never 'npm install')"
+            echo "  npm run bundle     # rebuild dist/"
+            echo "Then commit the updated dist/ together with your change."
+            echo ""
+            echo "The bundle is produced by 'ncc', which inlines every dependency and"
+            echo "minifies the result, so the output drifts unless the Node version, the"
+            echo "bundler, and every inlined dependency are pinned identically everywhere."
+            echo "If you are setting up a NEW bundled action, make sure it has:"
+            echo "  - a .nvmrc pinning an exact Node version (e.g. 24.11.0)"
+            echo "  - exact (caret-free) versions for the inlined runtime deps and @vercel/ncc"
+            echo "    in package.json (e.g. \"@actions/core\": \"3.0.1\", not \"^3.0.1\")"
+            echo "  - a committed package-lock.json, always installed with 'npm ci'"
+            echo "  - a 'bundle' script in package.json that writes to dist/"
+            echo "================================================================"
+            echo "::error::'${COMPONENT_DIR}/dist' is out of date. From '${COMPONENT_DIR}' run 'nvm use && npm ci && npm run bundle' and commit dist/. See the log above for setting up a new bundled action."
             exit 1
           fi
           echo "'${COMPONENT_DIR}' dist is up to date."

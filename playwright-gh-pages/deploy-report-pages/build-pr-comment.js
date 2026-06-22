@@ -1,22 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 
-const troubleshootingSection = `\n<details>
-
-<summary> Troubleshooting</summary>
-
-### 404 when clicking on \`View report\`
-
-By default, the \`deploy-report-pages\` Action deploys reports to the \`gh-pages\` branch. However, **you need to take an extra step** to ensure that GitHub Pages can build and serve the site from this branch. To do so:
-
-1. Go to the **Settings** tab of your repository.
-2. In the left-hand sidebar, click on **Pages**.
-3. Under **Source**, select **Deploy from a branch**, then choose the gh-pages branch.
-
-This action needs to be completed **manually** in order for your GitHub Pages site to be built and accessible from the \`gh-pages\` branch. Once configured, GitHub will automatically build and serve the site whenever new reports are deployed.
-
-</details>`;
-
 async function buildPrComment() {
   // Ensure we are in the right directory
   const reportsDir = 'all-reports';
@@ -51,6 +35,12 @@ async function buildPrComment() {
   let rows = [];
   let uploadReportDisabled = false;
 
+  const reportBaseUrl = process.env.REPORT_BASE_URL;
+  if (!reportBaseUrl) {
+    console.error('REPORT_BASE_URL environment variable is required but was not set.');
+    process.exit(1);
+  }
+
   // Iterate through subdirectories
   fs.readdirSync(reportsDir).forEach((dir) => {
     const dirPath = path.join(reportsDir, dir);
@@ -73,14 +63,7 @@ async function buildPrComment() {
     uploadReportDisabled = getValue('UPLOAD_REPORT_ENABLED') === 'false';
 
     // Construct report link
-    const repoOwner = process.env.GITHUB_REPOSITORY_OWNER;
-    const repoName = process.env.GITHUB_REPOSITORY_NAME;
-    const timestamp = process.env.TIMESTAMP;
-    const jobInitiator = process.env.JOB_INITIATOR;
-
-    const reportLink = pluginName
-      ? `https://${repoOwner}.github.io/${repoName}/${timestamp}/${jobInitiator}/${pluginName}-${grafanaImage}-${grafanaVersion}/`
-      : `https://${repoOwner}.github.io/${repoName}/${timestamp}/${jobInitiator}/${grafanaImage}-${grafanaVersion}/`;
+    const reportLink = `${reportBaseUrl}/${dir}/index.html`;
 
     // Map result to emoji
     const resultEmoji = testOutput === 'success' ? '✅' : '❌';
@@ -108,11 +91,10 @@ async function buildPrComment() {
 
   const ciLink = `https://github.com/${process.env.GITHUB_REPOSITORY_OWNER}/${process.env.GITHUB_REPOSITORY_NAME}/blob/${process.env.DEFAULT_BRANCH}/.github/workflows/ci.yml`;
   if (uploadReportDisabled) {
-    table += `
-    \n ⚠️  To make Playwright reports for failed tests publicly accessible on GitHub Pages, set the \`upload-report\` input to \`true\` in your [CI workflow](${ciLink}). For more details, refer to the [Developer Portal documentation](https://grafana.com/developers/plugin-tools/e2e-test-a-plugin/ci).\n`;
-  } else {
-    table += troubleshootingSection;
+    table += `\n⚠️  To make Playwright reports for failed tests accessible, set the \`upload-report\` input to \`true\` in your [CI workflow](${ciLink}). For more details, refer to the [Developer Portal documentation](https://grafana.com/developers/plugin-tools/e2e-test-a-plugin/ci).\n`;
   }
+
+  table += `\n> ℹ️ Reports require a Grafana Google Workspace sign-in to view and are retained for 90 days.`;
 
   console.log(table);
 }

@@ -1,15 +1,15 @@
-# Publishing Playwright reports to Github Pages
+# Publishing Playwright reports to Google Cloud Storage
 
-When testing a Grafana plugin using the [`@grafana/plugin-e2e`](https://www.npmjs.com/package/@grafana/plugin-e2e?activeTab=readme) package, it is highly recommended to run tests against a matrix of Grafana versions (as demonstrated in this [example](https://grafana.com/developers/plugin-tools/e2e-test-a-plugin/ci) in the documentation). Each test run in this matrix generates an HTML report. By uploading these reports to a static site hosting service, they become immediately accessible for direct browsing, eliminating the need to download and serve them locally. This enhances productivity and fosters collaborative troubleshooting by making the results easily shareable and reviewable.
+When testing a Grafana plugin using the [`@grafana/plugin-e2e`](https://www.npmjs.com/package/@grafana/plugin-e2e?activeTab=readme) package, it is highly recommended to run tests against a matrix of Grafana versions (as demonstrated in this [example](https://grafana.com/developers/plugin-tools/e2e-test-a-plugin/ci) in the documentation). Each test run in this matrix generates an HTML report. By uploading these reports to Google Cloud Storage, they become immediately accessible for direct browsing by Grafana staff, eliminating the need to download and serve them locally.
 
-This set of GitHub Actions streamlines the process of managing Playwright test reports. It automates uploading reports as artifacts, publishing them to GitHub Pages, and providing links in pull request comments. These actions work seamlessly together, enhancing collaboration, traceability, and test result management.
+This set of GitHub Actions streamlines the process of managing Playwright test reports. It automates uploading reports as artifacts, publishing them to GCS, and providing links in pull request comments.
 
 ## Overview
 
 The workflow consists of two main actions:
 
-1. **Upload Report Artifacts Action**: This action uploads test reports and summaries as GitHub artifacts. It can be used together with the `deploy-report-pages` action to publish the reports to GitHub Pages.
-2. **Deploy to GitHub Pages Action**: This action publishes the test artifacts to GitHub Pages and comments on the pull request with the results and corresponding links. It also cleans up and deletes old reports based on the specified retention policy.
+1. **Upload Report Artifacts Action**: Uploads test reports and summaries as GitHub artifacts. Used together with the `deploy-report-pages` action to publish the reports to GCS.
+2. **Deploy Playwright Reports to GCS Action**: Uploads the test artifacts to Google Cloud Storage and comments on the pull request with the results and corresponding links.
 
 ## Features
 
@@ -19,38 +19,38 @@ The workflow consists of two main actions:
   - Supports conditional uploading based on test outcomes.
   - Structures reports in a well-organized directory format, ensuring uniqueness for each test setup.
 
-- **Deploy to GitHub Pages Action**:
-  - Downloads test artifacts and publishes them to GitHub Pages.
+- **Deploy Playwright Reports to GCS Action**:
+  - Downloads test artifacts and uploads them to Google Cloud Storage.
   - Comments on the pull request with the test results and links to the reports.
-  - Supports retention of reports for a specified number of days.
+  - Reports are retained for **90 days** via the bucket's object lifecycle policy.
 
-## GitHub Pages Branch Configuration
+## GCS Bucket Configuration
 
-The `deploy-report-pages` Action publishes reports to the `gh-pages` branch by default. However, if GitHub Pages isn't already configured to serve content from this branch, you'll need to take an extra step to ensure your reports are accessible. Follow these steps:
+Reports are uploaded to a Grafana-managed GCS bucket. Each report is stored at the path:
 
-1. Navigate to the **Settings** tab of your repository.
-2. In the left-hand sidebar, click on **Pages**.
-3. Under **Source**, select **Deploy from a branch**, then choose `gh-pages`.
+```
+gs://{bucket}/{owner}/{repo}/{YYYYMMDD}/{pr-number-or-run-id}/{matrix-dir}/
+```
 
-This setup must be completed **manually** before GitHub Pages can build and serve reports from the `gh-pages` branch. Once configured, GitHub will automatically update the site whenever new reports are deployed.
+The bucket must be provisioned by Grafana infra with:
 
-If you’re already using GitHub Pages for other content, ensure that it does not overwrite reports published by the `upload-report-artifacts` Action.
+- **Object lifecycle rule** — auto-delete objects after 90 days.
+- **IAM** — `roles/storage.objectViewer` granted to the Grafana Google Workspace group; uniform bucket-level access enabled.
+- **WIF write access** — the GitHub Actions service account used by Grafana's org-wide Workload Identity provider must have object create/write on the bucket.
 
-## GitHub Pages Visibility
+## Viewing Reports
 
-By default, all GitHub Pages sites are publicly accessible on the Internet. Published Playwright reports can include HTML output, screenshots, traces, and internal URLs, so review the contents before enabling this workflow for sensitive repositories. GitHub Enterprise customers can restrict access by configuring access control for private and internal repositories. For more details, refer to the official GitHub [documentation](https://docs.github.com/en/enterprise-cloud@latest/pages/getting-started-with-github-pages/changing-the-visibility-of-your-github-pages-site#about-access-control-for-github-pages-sites).
+Report links in PR comments point to `https://storage.cloud.google.com/{bucket}/...`. Viewing them requires being signed into a Google account that is a member of the Grafana Google Workspace group. Users not in the group will see a 403 error.
 
 ## Permissions Needed
 
 Use job-scoped permissions instead of granting write access to the entire workflow:
 
 - Set `contents: read` at the workflow level so test jobs can check out the repository.
-- Add `contents: write` only to the job that publishes reports to the Pages branch.
+- Add `id-token: write` only to the job that publishes reports to GCS (required for Workload Identity Federation authentication).
 - Add `pull-requests: write` only if you want `deploy-report-pages` to manage a pull request comment. This permission is not needed when `pr-comment-summary: false`.
 
-The `playwright-gh-pages` actions do not use OIDC, so `id-token: write` is not required for report publishing.
-
-If your workflow runs on `pull_request`, remember that pull requests from forks receive a read-only `GITHUB_TOKEN`. In that case the publish job may be unable to push the Pages branch or update the PR comment. Avoid switching these examples to `pull_request_target` just to get a write-capable token unless you have separately reviewed the security implications of running untrusted code with elevated permissions.
+Note: `contents: write` is **not** required. This action does not push to any branch.
 
 ## Workflow usage
 
@@ -136,21 +136,20 @@ jobs:
         with:
           test-outcome: ${{ steps.run-tests.outcome }}
 
-  deploy-pages:
+  deploy-reports:
     if: ${{ always() && !cancelled() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false) }}
     needs: [playwright-tests]
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      id-token: write
       pull-requests: write
     steps:
-      - uses: actions/checkout@v4
-
-      # use deploy-report-pages Action to deploy the artifacts to GitHub Pages
+      # use deploy-report-pages Action to upload the artifacts to GCS
       - name: Publish report
         uses: grafana/plugin-actions/playwright-gh-pages/deploy-report-pages@main
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          bucket: your-gcs-bucket-name
 ```
 
 ### Example using a per-plugin matrix
@@ -208,26 +207,25 @@ jobs:
           test-outcome: ${{ steps.run-tests-latest.outcome }}
       # repeat steps but for another Grafana version if necessary
 
-  deploy-pages:
+  deploy-reports:
     if: ${{ always() && !cancelled() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false) }}
     needs: [e2e]
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      id-token: write
       pull-requests: write
     steps:
-      - uses: actions/checkout@v4
-
-      # use deploy-report-pages Action to deploy the artifacts to GitHub Pages
+      # use deploy-report-pages Action to upload the artifacts to GCS
       - name: Publish report
         uses: grafana/plugin-actions/playwright-gh-pages/deploy-report-pages@main
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          bucket: your-gcs-bucket-name
 ```
 
 ## Inputs
 
-For details on what the available inputs for the Actions, refer to the [README](./deploy-report-pages/README.md) of `deploy-report-pages` and the [README](./upload-report-artifacts/README.md) of `upload-report-artifacts`
+For details on available inputs for the Actions, refer to the [README](./deploy-report-pages/README.md) of `deploy-report-pages` and the [README](./upload-report-artifacts/README.md) of `upload-report-artifacts`.
 
 If you want to skip publishing for forked pull requests while still allowing scheduled runs, pushes, and same-repository pull requests, use this condition on the publish job:
 

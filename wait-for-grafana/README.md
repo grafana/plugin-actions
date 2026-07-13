@@ -22,11 +22,11 @@ The time to wait between each check, in seconds. Default is `0.5`.
 
 ### `startupTimeout` (optional)
 
-The maximum time to wait for the server's TCP port to bind, in seconds. Default is `300`.
+The maximum time to wait for the server's TCP port to bind, in seconds. Default is `60`.
 
 This covers the window between the container starting and Grafana's HTTP listener becoming active. During this phase the action polls every 5 seconds. Once the port responds (with any status other than `000`), normal health polling begins using the `timeout` and `interval` values above.
 
-On contested CI runners, Grafana's HTTP listener can take longer to bind than the default health-check window allows, regardless of Grafana version. Increasing this value gives the process more time to start without affecting the health-check phase.
+Raise this value only if Grafana genuinely takes longer than the default to start. A long default delays diagnosis of startup *crashes* (for example, a provisioning deadlock that prevents the HTTP listener from ever binding), since the action can only observe `000` and cannot distinguish "still booting" from "dead before booting." Pair this action with a separate diagnostic step that dumps container logs on failure to recover the real signal.
 
 ## How to use?
 

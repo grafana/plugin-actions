@@ -18,9 +18,9 @@ inputs:
     required: true
     default: "0.5"
   startupTimeout:
-    description: "Seconds to wait for the TCP port to bind before health polling begins. On contested CI runners, Grafana's HTTP listener can take longer to start than the default health-check window allows."
+    description: "Seconds to wait for the TCP port to bind before health polling begins. Raise this only if Grafana genuinely takes longer than the default to start — a long default delays diagnosis of startup crashes (e.g. provisioning deadlocks), which never recover no matter how long we wait."
     required: true
-    default: "300"
+    default: "60"
 runs:
   using: "composite"
   steps:

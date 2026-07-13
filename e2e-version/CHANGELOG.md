@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.0.2](https://github.com/grafana/plugin-actions/compare/e2e-version/v3.0.1...e2e-version/v3.0.2) (2026-07-13)
+
+
+### 🐛 Bug Fixes
+
+* harden package manager config ([#232](https://github.com/grafana/plugin-actions/issues/232)) ([10111b4](https://github.com/grafana/plugin-actions/commit/10111b4b25207dfa9a1ca9effc0ad69489e746ab))
+
+
+### 🔧 Chores
+
+* **deps:** bump undici ([#254](https://github.com/grafana/plugin-actions/issues/254)) ([2dc304a](https://github.com/grafana/plugin-actions/commit/2dc304a03b6ff38849cd20ea43a17e003b8f9ec0))
+
 ## [3.0.1](https://github.com/grafana/plugin-actions/compare/e2e-version/v3.0.0...e2e-version/v3.0.1) (2026-06-19)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4](https://github.com/grafana/plugin-actions/compare/is-compatible/v1.0.3...is-compatible/v1.0.4) (2026-07-13)
+
+
+### 🔧 Chores
+
+* **deps:** update actions/setup-node action to v6.4.0 ([#260](https://github.com/grafana/plugin-actions/issues/260)) ([3e30713](https://github.com/grafana/plugin-actions/commit/3e30713c15032f5f007990895f670109433ca871))
+
 ## [1.0.3](https://github.com/grafana/plugin-actions/compare/is-compatible/v1.0.2...is-compatible/v1.0.3) (2026-03-09)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4](https://github.com/grafana/plugin-actions/compare/bundle-types/v1.0.3...bundle-types/v1.0.4) (2026-07-13)
+
+
+### 🐛 Bug Fixes
+
+* **bundle-types:** migrate to GATB and use GitHub API for signed commits ([#242](https://github.com/grafana/plugin-actions/issues/242)) ([ecd09d3](https://github.com/grafana/plugin-actions/commit/ecd09d3a463b23927e5f6cb73c131e3f114ca451))
+
 ## [1.0.3](https://github.com/grafana/plugin-actions/compare/bundle-types/v1.0.2...bundle-types/v1.0.3) (2026-02-24)
 
 

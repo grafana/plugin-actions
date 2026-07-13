@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.5](https://github.com/grafana/plugin-actions/compare/wait-for-grafana/v1.0.4...wait-for-grafana/v1.0.5) (2026-07-13)
+
+
+### 🐛 Bug Fixes
+
+* **wait-for-grafana:** lower startupTimeout default from 300s to 60s ([#227](https://github.com/grafana/plugin-actions/issues/227)) ([d651790](https://github.com/grafana/plugin-actions/commit/d651790fef425eca2b3d57d0846c53660ce3fad0))
+
 ## [1.0.4](https://github.com/grafana/plugin-actions/compare/wait-for-grafana/v1.0.3...wait-for-grafana/v1.0.4) (2026-05-27)
 
 

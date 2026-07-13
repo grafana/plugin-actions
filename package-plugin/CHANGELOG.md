@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.1](https://github.com/grafana/plugin-actions/compare/package-plugin/v1.2.0...package-plugin/v1.2.1) (2026-07-13)
+
+
+### 🔧 Chores
+
+* **deps:** update actions/setup-go action to v6.5.0 ([#259](https://github.com/grafana/plugin-actions/issues/259)) ([e380ec7](https://github.com/grafana/plugin-actions/commit/e380ec7436974654035d88d8925c64f563b6dbf8))
+* **deps:** update actions/setup-node action to v6.4.0 ([#260](https://github.com/grafana/plugin-actions/issues/260)) ([3e30713](https://github.com/grafana/plugin-actions/commit/3e30713c15032f5f007990895f670109433ca871))
+
 ## [1.2.0](https://github.com/grafana/plugin-actions/compare/package-plugin/v1.1.0...package-plugin/v1.2.0) (2026-02-24)
 
 

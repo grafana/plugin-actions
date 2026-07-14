@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.0](https://github.com/grafana/plugin-actions/compare/package-manager-detect/v1.0.1...package-manager-detect/v1.1.0) (2026-07-14)
+
+
+### 🎉 Features
+
+* **package-manager-detect:** secure npx command by pinning pm-detect version ([4cf3371](https://github.com/grafana/plugin-actions/commit/4cf3371519fe9b49b9ab7bf09d9ada4c13749e0a))
+
+
+### 🐛 Bug Fixes
+
+* pin pm-detect ([#234](https://github.com/grafana/plugin-actions/issues/234)) ([4cf3371](https://github.com/grafana/plugin-actions/commit/4cf3371519fe9b49b9ab7bf09d9ada4c13749e0a))
+
 ## [1.0.1](https://github.com/grafana/plugin-actions/compare/package-manager-detect/v1.0.0...package-manager-detect/v1.0.1) (2025-12-12)
 
 

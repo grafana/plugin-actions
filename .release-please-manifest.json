@@ -1,6 +1,6 @@
 {
   "build-plugin": "1.2.0",
-  "bundle-size": "1.1.0",
+  "bundle-size": "1.1.1",
   "bundle-types": "1.0.5",
   "create-plugin-update": "2.0.2",
   "e2e-version": "3.0.2",

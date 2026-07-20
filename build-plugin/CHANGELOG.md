@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.2.1](https://github.com/grafana/plugin-actions/compare/build-plugin/v1.2.0...build-plugin/v1.2.1) (2026-07-20)
+
+
+### 🐛 Bug Fixes
+
+* **build-plugin:** use GitHub API to create signed changelog commit ([#241](https://github.com/grafana/plugin-actions/issues/241)) ([33a8775](https://github.com/grafana/plugin-actions/commit/33a8775f5df798793034b5e84a3f3214fe88c12f))
+
+
+### 🔧 Chores
+
+* **deps:** update actions/attest-build-provenance action to v4 ([#269](https://github.com/grafana/plugin-actions/issues/269)) ([712e581](https://github.com/grafana/plugin-actions/commit/712e58115b0db33336dd8f06f67a29ea93f16e74))
+* **deps:** update softprops/action-gh-release action to v2.6.2 ([#267](https://github.com/grafana/plugin-actions/issues/267)) ([f935469](https://github.com/grafana/plugin-actions/commit/f935469198ffe78f786ecaeead9fbec708718d57))
+
 ## [1.2.0](https://github.com/grafana/plugin-actions/compare/build-plugin/v1.1.0...build-plugin/v1.2.0) (2026-02-24)
 
 

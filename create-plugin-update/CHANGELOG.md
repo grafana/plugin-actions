@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.0.3](https://github.com/grafana/plugin-actions/compare/create-plugin-update/v2.0.2...create-plugin-update/v2.0.3) (2026-07-20)
+
+
+### 🐛 Bug Fixes
+
+* **create-plugin-update:** use GitHub API for signed commits ([#243](https://github.com/grafana/plugin-actions/issues/243)) ([e7454d7](https://github.com/grafana/plugin-actions/commit/e7454d721b60af8ac7e09468ebd8f8870586fc68))
+
+
+### 🔧 Chores
+
+* **deps:** update actions/checkout action to v7 ([#270](https://github.com/grafana/plugin-actions/issues/270)) ([fe60599](https://github.com/grafana/plugin-actions/commit/fe60599bf6453cc386cde73bffc54ef6c03aeecd))
+* **deps:** update actions/setup-node action to v6.4.0 ([#260](https://github.com/grafana/plugin-actions/issues/260)) ([3e30713](https://github.com/grafana/plugin-actions/commit/3e30713c15032f5f007990895f670109433ca871))
+* **deps:** update pnpm/action-setup action to v4.4.0 ([#263](https://github.com/grafana/plugin-actions/issues/263)) ([eca4d6d](https://github.com/grafana/plugin-actions/commit/eca4d6dc21545900d203739eb089bd3e803abc10))
+
 ## [2.0.2](https://github.com/grafana/plugin-actions/compare/create-plugin-update/v2.0.1...create-plugin-update/v2.0.2) (2026-03-09)
 
 

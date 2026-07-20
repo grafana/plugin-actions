@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.3](https://github.com/grafana/plugin-actions/compare/e2e-version/v3.0.2...e2e-version/v3.0.3) (2026-07-20)
+
+
+### 🏗️ Builds
+
+* add Makefile and GHA workflow to ensure dist folders are up-to-date ([#250](https://github.com/grafana/plugin-actions/issues/250)) ([fb5e15c](https://github.com/grafana/plugin-actions/commit/fb5e15c76707026bf6171d6808527fa2d838b781))
+
 ## [3.0.2](https://github.com/grafana/plugin-actions/compare/e2e-version/v3.0.1...e2e-version/v3.0.2) (2026-07-13)
 
 

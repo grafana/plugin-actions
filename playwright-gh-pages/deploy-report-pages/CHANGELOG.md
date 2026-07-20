@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.1](https://github.com/grafana/plugin-actions/compare/deploy-report-pages/v1.1.0...deploy-report-pages/v1.1.1) (2026-07-20)
+
+
+### 🔧 Chores
+
+* **deps:** update actions/checkout action to v7 ([#270](https://github.com/grafana/plugin-actions/issues/270)) ([fe60599](https://github.com/grafana/plugin-actions/commit/fe60599bf6453cc386cde73bffc54ef6c03aeecd))
+* **playwright-gh-pages:** narrow down permissions ([#222](https://github.com/grafana/plugin-actions/issues/222)) ([dce3738](https://github.com/grafana/plugin-actions/commit/dce3738930e8d27a158a8153d7b727c843a6d2ab))
+
 ## [1.1.0](https://github.com/grafana/plugin-actions/compare/deploy-report-pages/v1.0.2...deploy-report-pages/v1.1.0) (2025-11-12)
 
 

@@ -67,3 +67,30 @@ jobs:
         run: make check-drift ACTION="$ACTION_DIR"
         env:
           ACTION_DIR: ${{ matrix.dir }}
+
+  # The matrix check names change with the discovered actions, so branch
+  # protection requires this single stable check instead.
+  verify-dist-complete:
+    name: Verify dist complete
+    needs:
+      - discover-actions
+      - verify-dist
+    if: always()
+    runs-on: ubuntu-arm64-small
+    steps:
+      - name: Check results
+        env:
+          DISCOVER_RESULT: ${{ needs.discover-actions.result }}
+          VERIFY_RESULT: ${{ needs.verify-dist.result }}
+        run: |
+          echo "discover-actions: $DISCOVER_RESULT, verify-dist: $VERIFY_RESULT"
+          if [ "$DISCOVER_RESULT" != "success" ]; then
+            echo "::error::Discovering bundled actions failed, see the 'Discover actions' job log."
+            exit 1
+          fi
+          case "$VERIFY_RESULT" in
+            success|skipped) exit 0 ;;
+            *)
+              echo "::error::A 'Verify dist (<action>)' job failed: that action's checked-in dist/ is stale. Check out the branch, run 'make bundle ACTION=<action>' with the action's pinned Node version (.nvmrc), and commit the regenerated dist/. The failing job's log names the exact command. For Renovate PRs, apply the dependency update together with the rebuilt dist/ on a branch of your own instead: renovate/** branches are write-locked."
+              exit 1 ;;
+          esac

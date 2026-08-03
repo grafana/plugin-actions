@@ -1,7 +1,7 @@
 {
   "name": "grafana-e2e-versions",
   "version": "0.0.1",
-  "packageManager": "npm@12.0.1",
+  "packageManager": "npm@12.0.2",
   "description": "",
   "main": "index.mjs",
   "scripts": {

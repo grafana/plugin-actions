@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.2.2](https://github.com/grafana/plugin-actions/compare/package-plugin/v1.2.1...package-plugin/v1.2.2) (2026-08-04)
+
+
+### 🔧 Chores
+
+* **deps:** update actions/setup-go action to v7 ([#289](https://github.com/grafana/plugin-actions/issues/289)) ([ae0ab8f](https://github.com/grafana/plugin-actions/commit/ae0ab8fa5ee1f8052d06e6a3b4881c142a25bbc1))
+* **deps:** update actions/setup-node action to v6.5.0 ([#283](https://github.com/grafana/plugin-actions/issues/283)) ([89f1c1f](https://github.com/grafana/plugin-actions/commit/89f1c1f9c776caabdd2ae0f2a087a64d341a4866))
+* **deps:** update actions/setup-node action to v7 ([#297](https://github.com/grafana/plugin-actions/issues/297)) ([1e7bc28](https://github.com/grafana/plugin-actions/commit/1e7bc2891527edea2c5e682c8fe2e4451d4dab08))
+* **deps:** update magefile/mage-action action to v4 ([#278](https://github.com/grafana/plugin-actions/issues/278)) ([a0a6075](https://github.com/grafana/plugin-actions/commit/a0a6075ad093ee8c459b73e9f8aec8106f14acc2))
+
 ## [1.2.1](https://github.com/grafana/plugin-actions/compare/package-plugin/v1.2.0...package-plugin/v1.2.1) (2026-07-13)
 
 

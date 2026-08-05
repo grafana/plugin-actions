@@ -48,7 +48,7 @@ runs:
         LEVITATE_TARGETS: ${{ inputs.targets }}
 
     # find the current PR (if running in one)
-    - uses: jwalton/gh-find-current-pr@89ee5799558265a1e0e31fab792ebb4ee91c016b # v1.3.3
+    - uses: jwalton/gh-find-current-pr@f3d61b485d2801773f7a07b2aaa3306bd8f8e653 # v1.3.5
       id: finder
       if: (inputs.comment-pr == 'yes' && steps.run-levitate.outputs.code == 1) || (inputs.comment-pr == 'yes' && inputs.skip-comment-if-compatible == 'no')
 

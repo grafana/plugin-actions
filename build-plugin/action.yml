@@ -68,7 +68,7 @@ runs:
   steps:
     - name: Package plugin
       id: "package-plugin"
-      uses: grafana/plugin-actions/package-plugin@main # zizmor: ignore[unpinned-uses]
+      uses: grafana/plugin-actions/package-plugin@eriksundell/plugin-docs-build-step # zizmor: ignore[unpinned-uses]
       with:
         policy_token: ${{ inputs.policy_token }}
         sign_root_urls: ${{ inputs.sign_root_urls }}

@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.1.1](https://github.com/grafana/plugin-actions/compare/bundle-size/v1.1.0...bundle-size/v1.1.1) (2026-08-11)
+
+
+### 📝 Documentation
+
+* **bundle-size:** harden permisions in readme example ([d038198](https://github.com/grafana/plugin-actions/commit/d03819869ff83790bb6549d1b917cff7bb7278ae))
+
+
+### 🔧 Chores
+
+* **deps:** update actions/download-artifact action to v8 ([#275](https://github.com/grafana/plugin-actions/issues/275)) ([a7f3b6a](https://github.com/grafana/plugin-actions/commit/a7f3b6a1b267c838fd204d2f6a760fd9c75f45f2))
+* **deps:** update actions/github-script action to v9 ([#271](https://github.com/grafana/plugin-actions/issues/271)) ([da6bd66](https://github.com/grafana/plugin-actions/commit/da6bd665e143ad77fded82230772f3151e6f9bbd))
+* **deps:** update actions/setup-node action to v6.4.0 ([#260](https://github.com/grafana/plugin-actions/issues/260)) ([3e30713](https://github.com/grafana/plugin-actions/commit/3e30713c15032f5f007990895f670109433ca871))
+* **deps:** update actions/setup-node action to v6.5.0 ([#283](https://github.com/grafana/plugin-actions/issues/283)) ([89f1c1f](https://github.com/grafana/plugin-actions/commit/89f1c1f9c776caabdd2ae0f2a087a64d341a4866))
+* **deps:** update actions/setup-node action to v7 ([#297](https://github.com/grafana/plugin-actions/issues/297)) ([1e7bc28](https://github.com/grafana/plugin-actions/commit/1e7bc2891527edea2c5e682c8fe2e4451d4dab08))
+* **deps:** update actions/upload-artifact action to v7 ([#277](https://github.com/grafana/plugin-actions/issues/277)) ([f0d326f](https://github.com/grafana/plugin-actions/commit/f0d326feca6da03e87ef30d3dc099cf2f5a37d32))
+* harden permisions in bundle-stats readme example ([#221](https://github.com/grafana/plugin-actions/issues/221)) ([d038198](https://github.com/grafana/plugin-actions/commit/d03819869ff83790bb6549d1b917cff7bb7278ae))
+
 ## [1.1.0](https://github.com/grafana/plugin-actions/compare/bundle-size/v1.0.3...bundle-size/v1.1.0) (2025-11-13)
 
 

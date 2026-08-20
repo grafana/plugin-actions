@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.1.1](https://github.com/grafana/plugin-actions/compare/deploy-report-pages/v1.1.0...deploy-report-pages/v1.1.1) (2026-08-20)
+
+
+### 🔧 Chores
+
+* **deps:** update actions/checkout action to v7 ([#270](https://github.com/grafana/plugin-actions/issues/270)) ([fe60599](https://github.com/grafana/plugin-actions/commit/fe60599bf6453cc386cde73bffc54ef6c03aeecd))
+* **deps:** update actions/checkout action to v7.0.1 ([#299](https://github.com/grafana/plugin-actions/issues/299)) ([0efd642](https://github.com/grafana/plugin-actions/commit/0efd642217bbd40d2f2e10b7bd0553ea079b8b2d))
+* **deps:** update actions/download-artifact action to v8 ([#275](https://github.com/grafana/plugin-actions/issues/275)) ([a7f3b6a](https://github.com/grafana/plugin-actions/commit/a7f3b6a1b267c838fd204d2f6a760fd9c75f45f2))
+* **deps:** update peaceiris/actions-gh-pages action to v4.1.0 ([#274](https://github.com/grafana/plugin-actions/issues/274)) ([3e19a7c](https://github.com/grafana/plugin-actions/commit/3e19a7c0102c576612aa91d39658d8b04a54acf0))
+* **playwright-gh-pages:** narrow down permissions ([#222](https://github.com/grafana/plugin-actions/issues/222)) ([dce3738](https://github.com/grafana/plugin-actions/commit/dce3738930e8d27a158a8153d7b727c843a6d2ab))
+
 ## [1.1.0](https://github.com/grafana/plugin-actions/compare/deploy-report-pages/v1.0.2...deploy-report-pages/v1.1.0) (2025-11-12)
 
 

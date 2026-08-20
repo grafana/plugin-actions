@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/grafana/plugin-actions/compare/package-plugin/v1.2.2...package-plugin/v1.3.0) (2026-08-20)
+
+
+### 🎉 Features
+
+* build plugin docs as part of package-plugin when docsPath is set ([#219](https://github.com/grafana/plugin-actions/issues/219)) ([f81a167](https://github.com/grafana/plugin-actions/commit/f81a167354f4b7ed989c4efe0c00900aa2aea305))
+
 ## [1.2.2](https://github.com/grafana/plugin-actions/compare/package-plugin/v1.2.1...package-plugin/v1.2.2) (2026-08-04)
 
 

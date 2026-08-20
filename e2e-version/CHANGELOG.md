@@ -1,5 +1,23 @@
 # Changelog
 
+## [3.0.3](https://github.com/grafana/plugin-actions/compare/e2e-version/v3.0.2...e2e-version/v3.0.3) (2026-08-20)
+
+
+### 🏗️ Builds
+
+* add Makefile and GHA workflow to ensure dist folders are up-to-date ([#250](https://github.com/grafana/plugin-actions/issues/250)) ([fb5e15c](https://github.com/grafana/plugin-actions/commit/fb5e15c76707026bf6171d6808527fa2d838b781))
+* **e2e-version:** regenerate dist after the lockfile refresh ([#285](https://github.com/grafana/plugin-actions/issues/285)) ([0207fd8](https://github.com/grafana/plugin-actions/commit/0207fd804d7280d9098fa2a7a4c5682b2d6d76a9))
+
+
+### 🔧 Chores
+
+* **deps:** update dependency @vercel/ncc to v0.44.1 ([#292](https://github.com/grafana/plugin-actions/issues/292)) ([fcfce7c](https://github.com/grafana/plugin-actions/commit/fcfce7ced521320643c999fbfa88d2adbdaf6478))
+* **deps:** update dependency node to v24.18.1 ([#295](https://github.com/grafana/plugin-actions/issues/295)) ([425c64a](https://github.com/grafana/plugin-actions/commit/425c64ac165b59e1741b658d01ebd49efb7d5f72))
+* **deps:** update dependency node to v24.19.0 ([#301](https://github.com/grafana/plugin-actions/issues/301)) ([1dd6eae](https://github.com/grafana/plugin-actions/commit/1dd6eaef23956f8e83831ce4ab4b159e0723e0c1))
+* **deps:** update npm to v12 ([#280](https://github.com/grafana/plugin-actions/issues/280)) ([4003aec](https://github.com/grafana/plugin-actions/commit/4003aec12b259b020f165479443e297edb70f5fc))
+* **deps:** update npm to v12.0.2 ([#293](https://github.com/grafana/plugin-actions/issues/293)) ([5603086](https://github.com/grafana/plugin-actions/commit/5603086e7ed700d7cd3616d6f500affbd5441638))
+* **e2e-version:** update semver to 7.8.5 and regenerate dist ([#300](https://github.com/grafana/plugin-actions/issues/300)) ([21bf360](https://github.com/grafana/plugin-actions/commit/21bf360fa9c2d954ae30c7ad914e34675cc4f6e3))
+
 ## [3.0.2](https://github.com/grafana/plugin-actions/compare/e2e-version/v3.0.1...e2e-version/v3.0.2) (2026-07-13)
 
 

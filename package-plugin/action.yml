@@ -76,6 +76,8 @@ runs:
     - name: Build plugin documentation
       shell: bash
       run: |
+        sudo apt-get install jq
+
         DOCS_PATH=$(cat dist/plugin.json | jq -r '.docsPath // empty')
         if [ -n "$DOCS_PATH" ]; then
           npx --yes @grafana/plugin-docs-cli@0.2.0 build

@@ -27,8 +27,23 @@ runs:
       id: package-manager
       uses: grafana/plugin-actions/package-manager-detect@package-manager-detect/v1.0.1
 
-    - name: Install pnpm
+    - name: Check for packageManager field
+      id: pm-field
       if: steps.package-manager.outputs.name == 'pnpm'
+      run: |
+        if jq -e '.packageManager' package.json > /dev/null 2>&1; then
+          echo "present=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "present=false" >> "$GITHUB_OUTPUT"
+        fi
+      shell: bash
+
+    - name: Install pnpm (from packageManager field)
+      if: steps.package-manager.outputs.name == 'pnpm' && steps.pm-field.outputs.present == 'true'
+      uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+
+    - name: Install pnpm (from detected version)
+      if: steps.package-manager.outputs.name == 'pnpm' && steps.pm-field.outputs.present == 'false'
       uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
       with:
         version: ${{ steps.package-manager.outputs.version }}

@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.4](https://github.com/grafana/plugin-actions/compare/create-plugin-update/v2.0.3...create-plugin-update/v2.0.4) (2026-08-25)
+
+
+### 🐛 Bug Fixes
+
+* **create-plugin-update:** avoid pnpm version/packageManager collision ([#315](https://github.com/grafana/plugin-actions/issues/315)) ([efaf4cc](https://github.com/grafana/plugin-actions/commit/efaf4cca30d32077e019d57b109a809d58b10963))
+
 ## [2.0.3](https://github.com/grafana/plugin-actions/compare/create-plugin-update/v2.0.2...create-plugin-update/v2.0.3) (2026-08-20)
 
 

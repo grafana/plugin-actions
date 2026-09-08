@@ -32,6 +32,11 @@ inputs:
     required: false
     description: 'The maximum number of versions to resolve. Default is 6, 0 means no limit.'
     default: "6"
+  plugin-directory:
+    description: Directory of the plugin, if not in the root of the repository.
+    type: string
+    required: false
+    default: .
 
 output:
   matrix:

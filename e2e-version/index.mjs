@@ -9,6 +9,7 @@ const VersionResolverTypeInput = 'version-resolver-type';
 const GrafanaDependencyInput = 'grafana-dependency';
 const LimitInput = 'limit';
 const MatrixOutput = 'matrix';
+const PluginDirectoryInput = 'plugin-directory';
 
 const VersionResolverTypes = {
   PluginGrafanaDependency: 'plugin-grafana-dependency',
@@ -50,7 +51,7 @@ async function run() {
         break;
       default:
         const pluginDependency =
-          grafanaDependency === '' ? await getPluginGrafanaDependencyFromPluginJson() : grafanaDependency;
+          grafanaDependency === '' ? await getPluginGrafanaDependencyFromPluginJson(core.getInput(PluginDirectoryInput)) : grafanaDependency;
         console.log(`Found version requirement ${pluginDependency}`);
         for (const grafanaVersion of availableGrafanaVersions) {
           if (semver.satisfies(grafanaVersion.version, pluginDependency)) {
@@ -136,8 +137,11 @@ async function getGrafanaStableMinorVersions() {
   return Array.from(latestMinorVersions).map(([_, semver]) => semver);
 }
 
-async function getPluginGrafanaDependencyFromPluginJson() {
-  const file = await fs.readFile(path.resolve(path.join(process.cwd(), 'src'), 'plugin.json'), 'utf8');
+async function getPluginGrafanaDependencyFromPluginJson(pluginDirectory) {
+  if(pluginDirectory) {
+    console.log(`Reading plugin.json from ${pluginDirectory}`);
+  }
+  const file = await fs.readFile(path.resolve(path.join(process.cwd(), pluginDirectory ? pluginDirectory : 'src'), 'plugin.json'), 'utf8');
   const json = JSON.parse(file);
   if (!json.dependencies.grafanaDependency) {
     throw new Error('Could not find plugin grafanaDependency');

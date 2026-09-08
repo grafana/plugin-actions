@@ -104,3 +104,15 @@ describe('nightly image', () => {
     expect(images.every((i) => i.version !== 'nightly')).toBe(true);
   });
 });
+
+describe('non-default plugin directory', () => {
+  it('is used when plugin-directory is set', async () => {
+    getInput.mockImplementation((name) => {
+      if (name === 'plugin-directory') { return 'mocks'; }
+      if (name === 'limit') { return '2'; }
+      return '';
+    });
+    const images = await run();
+    expect(images.map((i) => i.version)).toEqual(['11.0.0', '10.4.3']);
+  });
+});

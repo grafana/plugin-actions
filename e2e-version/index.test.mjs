@@ -108,3 +108,17 @@ describe('nightly image', () => {
     expect(images.every((i) => i.version !== 'nightly')).toBe(true);
   });
 });
+
+describe('non-default plugin directory', () => {
+  it('is used when plugin-directory is set', async () => {
+    getInput.mockImplementation((name) => {
+      if (name === VersionResolverTypeInput) { return VersionResolverTypes.PluginGrafanaDependency; }
+      if (name === PluginDirectoryInput) { return 'mocks'; }
+      if (name === LimitInput) { return '2'; }
+      return '';
+    });
+    getBooleanInput.mockReturnValue(true);
+    const images = await run();
+    expect(images.map((i) => i.version)).toEqual(['11.0.0', '10.4.3']);
+  });
+});

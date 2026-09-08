@@ -139,6 +139,7 @@ async function getGrafanaStableMinorVersions() {
 
 async function getPluginGrafanaDependencyFromPluginJson(pluginDirectory) {
   if(pluginDirectory) {
+    pluginDirectory = path.join(pluginDirectory, 'src');
     console.log(`Reading plugin.json from ${pluginDirectory}`);
   }
   const file = await fs.readFile(path.resolve(path.join(process.cwd(), pluginDirectory ? pluginDirectory : 'src'), 'plugin.json'), 'utf8');

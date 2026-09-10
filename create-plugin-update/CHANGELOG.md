@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.5](https://github.com/grafana/plugin-actions/compare/create-plugin-update/v2.0.4...create-plugin-update/v2.0.5) (2026-09-10)
+
+
+### 🔧 Chores
+
+* **deps:** update pnpm/action-setup action to v6.1.0 ([#328](https://github.com/grafana/plugin-actions/issues/328)) ([ef33748](https://github.com/grafana/plugin-actions/commit/ef33748db11b29337ad14dfc01e3ec9db7e5f106))
+
 ## [2.0.4](https://github.com/grafana/plugin-actions/compare/create-plugin-update/v2.0.3...create-plugin-update/v2.0.4) (2026-08-25)
 
 

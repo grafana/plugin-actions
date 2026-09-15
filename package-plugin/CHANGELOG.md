@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/grafana/plugin-actions/compare/package-plugin/v1.3.0...package-plugin/v1.3.1) (2026-09-15)
+
+
+### 🐛 Bug Fixes
+
+* bump plugin-docs-cli to latest ([#335](https://github.com/grafana/plugin-actions/issues/335)) ([3b65b9b](https://github.com/grafana/plugin-actions/commit/3b65b9b5de0d510dbe8ca324e0c77a37a0a1ece2))
+
 ## [1.3.0](https://github.com/grafana/plugin-actions/compare/package-plugin/v1.2.2...package-plugin/v1.3.0) (2026-08-20)
 
 

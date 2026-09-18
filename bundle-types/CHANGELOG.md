@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.7](https://github.com/grafana/plugin-actions/compare/bundle-types/v1.0.6...bundle-types/v1.0.7) (2026-09-17)
+
+
+### 🔧 Chores
+
+* **deps:** update grafana/shared-workflows/create-github-app-token action to v1.0 ([#340](https://github.com/grafana/plugin-actions/issues/340)) ([3ed6f36](https://github.com/grafana/plugin-actions/commit/3ed6f3627b87e1739f3cc98df20c0cf2d9a557da))
+
 ## [1.0.6](https://github.com/grafana/plugin-actions/compare/bundle-types/v1.0.5...bundle-types/v1.0.6) (2026-08-04)
 
 

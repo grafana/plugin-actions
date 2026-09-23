@@ -1,6 +1,9 @@
 name: Verify dists are up to date
 description: >
-  Verify that the checked-in `dist/` of every bundled JS action is up to date with its source.
+  Rebuild the checked-in `dist/` of a bundled JS action on its release-please PR, and commit it back when it changed.
+  Consumers pin actions to release commits, so dist/ only has to match its source there. Other PRs (Renovate bumps,
+  lock file maintenance, source changes) don't need to touch dist/: Renovate can't run the bundler and can't push to
+  its own branches, so checking dist/ on every PR left those PRs stuck.
 
 on:
   pull_request:
@@ -17,9 +20,8 @@ permissions:
   contents: read
 
 jobs:
-  # Discover every directory whose package.json defines a `bundle` script, so
-  # each bundled action is verified individually and new ones are picked up
-  # automatically without editing this workflow.
+  # On a release-please PR, find the released component's directory if it is a bundled action
+  # (its package.json defines a `bundle` script). Any other PR gets an empty list.
   discover-actions:
     name: Discover actions
     runs-on: ubuntu-arm64
@@ -31,14 +33,32 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Find actions with a bundle script
+      - name: Find the bundled action released by this PR
         id: find
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
         run: |
-          dirs=$(find . -name package.json -not -path '*/node_modules/*' -print0 \
-            | xargs -0 -I{} sh -c 'jq -e ".scripts.bundle" "{}" >/dev/null 2>&1 && dirname "{}"' \
-            | sed 's|^\./||' \
-            | jq -R -s -c 'split("\n") | map(select(length > 0))')
-          echo "Bundled actions found: $dirs"
+          prefix='release-please--branches--main--components--'
+          if [ "$HEAD_REPO" != "$GITHUB_REPOSITORY" ] \
+            || [ "$PR_AUTHOR" != 'grafana-plugins-platform-bot[bot]' ] \
+            || [ "${HEAD_REF#"$prefix"}" = "$HEAD_REF" ]; then
+            echo "Not a release-please PR: nothing to verify"
+            echo "dirs=[]" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          component="${HEAD_REF#"$prefix"}"
+          dir=$(jq -r --arg c "$component" \
+            '.packages | to_entries[] | select((.value["package-name"] // .key) == $c) | .key' \
+            release-please-config.json)
+          if [ -n "$dir" ] && jq -e '.scripts.bundle' "$dir/package.json" >/dev/null 2>&1; then
+            echo "Release PR for bundled action: $dir"
+            dirs=$(jq -n -c --arg d "$dir" '[$d]')
+          else
+            echo "Release PR for '$component', which has no bundled dist/"
+            dirs='[]'
+          fi
           echo "dirs=$dirs" >> "$GITHUB_OUTPUT"
 
   verify-dist:
@@ -47,6 +67,9 @@ jobs:
       - discover-actions
     if: needs.discover-actions.outputs.dirs != '[]'
     runs-on: ubuntu-arm64
+    permissions:
+      contents: read
+      id-token: write # Needed to generate the GitHub App token
     strategy:
       fail-fast: false
       matrix:
@@ -55,6 +78,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          # The PR head, not the merge commit: a regenerated dist/ is committed on top of it.
+          ref: ${{ github.event.pull_request.head.sha }}
           persist-credentials: false
 
       - name: Setup Node.js
@@ -63,10 +88,72 @@ jobs:
           node-version-file: ${{ matrix.dir }}/.nvmrc
           cache-dependency-path: ${{ matrix.dir }}/package-lock.json
 
-      - name: Verify dist is up to date
-        run: make check-drift ACTION="$ACTION_DIR"
+      - name: Rebuild dist
+        run: make bundle ACTION="$ACTION_DIR"
         env:
           ACTION_DIR: ${{ matrix.dir }}
+
+      - name: Check for changes
+        id: changes
+        env:
+          ACTION_DIR: ${{ matrix.dir }}
+        run: |
+          if [ -z "$(git status --porcelain -- "$ACTION_DIR/dist")" ]; then
+            echo "OK: '$ACTION_DIR/dist' is up to date."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git status --short -- "$ACTION_DIR/dist"
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Generate GitHub token
+        id: generate-github-token
+        if: steps.changes.outputs.changed == 'true'
+        uses: grafana/shared-workflows/actions/create-github-app-token@5bbb526b1728ca57fbe1750c4c27ab6ab06171c2 # create-github-app-token/v1.0
+        with:
+          github_app: grafana-plugins-platform-bot
+          permission_set: release-please
+
+      # Commits through the GraphQL API so the commit is signed by GitHub (branches require signed commits).
+      # Pushing with the app token also triggers a new run of this workflow, which then finds dist/ up to date.
+      # expectedHeadOid makes the commit fail instead of clobbering the branch if release-please rewrote it meanwhile.
+      - name: Commit regenerated dist
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ steps.generate-github-token.outputs.token }}
+          ACTION_DIR: ${{ matrix.dir }}
+          HEAD_REF: ${{ github.head_ref }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          work=$(mktemp -d)
+          : > "$work/additions.jsonl"
+          : > "$work/deletions.jsonl"
+          git ls-files --modified --others --exclude-standard -- "$ACTION_DIR/dist" | sort -u | while IFS= read -r f; do
+            if [ -f "$f" ]; then
+              # Contents go through files, not arguments: a bundled dist/ is larger than the per-argument limit.
+              base64 -w0 "$f" > "$work/contents"
+              jq -n -c --arg path "$f" --rawfile contents "$work/contents" '{path: $path, contents: $contents}' >> "$work/additions.jsonl"
+            else
+              jq -n -c --arg path "$f" '{path: $path}' >> "$work/deletions.jsonl"
+            fi
+          done
+          jq -n \
+            --arg repo "$GITHUB_REPOSITORY" \
+            --arg branch "$HEAD_REF" \
+            --arg oid "$HEAD_SHA" \
+            --arg headline "chore($ACTION_DIR): regenerate dist" \
+            --slurpfile additions "$work/additions.jsonl" \
+            --slurpfile deletions "$work/deletions.jsonl" \
+            '{
+              query: "mutation($input: CreateCommitOnBranchInput!) { createCommitOnBranch(input: $input) { commit { url } } }",
+              variables: {input: {
+                branch: {repositoryNameWithOwner: $repo, branchName: $branch},
+                expectedHeadOid: $oid,
+                message: {headline: $headline},
+                fileChanges: {additions: $additions, deletions: $deletions}
+              }}
+            }' > "$work/payload.json"
+          gh api graphql --input "$work/payload.json" --jq '"Committed regenerated dist: \(.data.createCommitOnBranch.commit.url)"'
 
   # The matrix check names change with the discovered actions, so branch
   # protection requires this single stable check instead.
@@ -91,6 +178,6 @@ jobs:
           case "$VERIFY_RESULT" in
             success|skipped) exit 0 ;;
             *)
-              echo "::error::A 'Verify dist (<action>)' job failed: that action's checked-in dist/ is stale. Check out the branch, run 'make bundle ACTION=<action>' with the action's pinned Node version (.nvmrc), and commit the regenerated dist/. The failing job's log names the exact command. For Renovate PRs, apply the dependency update together with the rebuilt dist/ on a branch of your own instead: renovate/** branches are write-locked."
+              echo "::error::The 'Verify dist (<action>)' job could not rebuild or commit the release PR's dist/. See that job's log. To fix it by hand, check out the release branch, run 'make bundle ACTION=<action>' with the action's pinned Node version (.nvmrc) and commit the regenerated dist/."
               exit 1 ;;
           esac

@@ -80,7 +80,7 @@ runs:
 
         DOCS_PATH=$(cat dist/plugin.json | jq -r '.docsPath // empty')
         if [ -n "$DOCS_PATH" ]; then
-          npx --yes @grafana/plugin-docs-cli@latest build
+          npx --yes @grafana/plugin-docs-cli@0.3.0 build
         fi
 
     - name: Check for backend
@@ -163,7 +163,7 @@ runs:
 
     - name: Validate plugin
       run: |
-        npx -y @grafana/plugin-validator@latest -sourceCodeUri file://./ $PLUGIN_ARCHIVE
+        npx -y @grafana/plugin-validator@0.49.5 -sourceCodeUri file://./ $PLUGIN_ARCHIVE
       shell: bash
       env:
         PLUGIN_ARCHIVE: ${{ steps.metadata.outputs.archive }}

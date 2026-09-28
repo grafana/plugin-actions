@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.2](https://github.com/grafana/plugin-actions/compare/package-plugin/v1.3.1...package-plugin/v1.3.2) (2026-09-28)
+
+
+### 🐛 Bug Fixes
+
+* **package-plugin:** pin plugin-validator and plugin-docs-cli versions ([#345](https://github.com/grafana/plugin-actions/issues/345)) ([09d83a8](https://github.com/grafana/plugin-actions/commit/09d83a88272356a6437d57aec472c2ae7cf0b88a))
+
 ## [1.3.1](https://github.com/grafana/plugin-actions/compare/package-plugin/v1.3.0...package-plugin/v1.3.1) (2026-09-15)
 
 

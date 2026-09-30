@@ -13,6 +13,10 @@ inputs:
     description: "Version of node"
     required: false
     default: "20"
+  working-directory:
+    description: "Relative path to the plugin directory within the repository. Defaults to the repository root."
+    required: false
+    default: "."
 
 runs:
   using: "composite"
@@ -26,10 +30,13 @@ runs:
     - name: Detect package manager
       id: package-manager
       uses: grafana/plugin-actions/package-manager-detect@package-manager-detect/v1.0.1
+      with:
+        working-directory: ${{ inputs.working-directory }}
 
     - name: Check for packageManager field
       id: pm-field
       if: steps.package-manager.outputs.name == 'pnpm'
+      working-directory: ${{ inputs.working-directory }}
       run: |
         if jq -e '.packageManager' package.json > /dev/null 2>&1; then
           echo "present=true" >> "$GITHUB_OUTPUT"
@@ -41,6 +48,8 @@ runs:
     - name: Install pnpm (from packageManager field)
       if: steps.package-manager.outputs.name == 'pnpm' && steps.pm-field.outputs.present == 'true'
       uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+      with:
+        package_json_file: ${{ inputs.working-directory }}/package.json
 
     - name: Install pnpm (from detected version)
       if: steps.package-manager.outputs.name == 'pnpm' && steps.pm-field.outputs.present == 'false'
@@ -57,12 +66,14 @@ runs:
 
     - name: Get latest version of create-plugin package
       id: get-latest-version
+      working-directory: ${{ inputs.working-directory }}
       run: |
         echo "latest_version=$(npx -y @grafana/create-plugin@latest version | sed 's/.*@//' | sed 's/ *$//' | sed '/^$/d')" >> "$GITHUB_OUTPUT"
       shell: bash
 
     - name: Get version from .config/.cprc.json
       id: get-config-version
+      working-directory: ${{ inputs.working-directory }}
       run: |
         echo "config_version=$(jq -r '.version' .config/.cprc.json)" >> "$GITHUB_OUTPUT"
       shell: bash
@@ -87,11 +98,13 @@ runs:
 
     - name: Install dependencies
       if: steps.compare-versions.outputs.update_needed == 'true'
+      working-directory: ${{ inputs.working-directory }}
       run: ${{ steps.package-manager.outputs.frozenInstallCmd }}
       shell: bash
 
     - name: Update the configs
       if: steps.compare-versions.outputs.update_needed == 'true'
+      working-directory: ${{ inputs.working-directory }}
       run: |
         ${{ steps.package-manager.outputs.execCmd }} @grafana/create-plugin update
       shell: bash

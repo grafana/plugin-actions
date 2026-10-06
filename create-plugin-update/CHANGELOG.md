@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.1.0](https://github.com/grafana/plugin-actions/compare/create-plugin-update/v2.0.4...create-plugin-update/v2.1.0) (2026-10-06)
+
+
+### 🎉 Features
+
+* **create-plugin-update:** add working-directory input ([#353](https://github.com/grafana/plugin-actions/issues/353)) ([1a6b0ec](https://github.com/grafana/plugin-actions/commit/1a6b0ec6db19f81cb0bbc1edb67106ff6129b685))
+
+
+### 🔧 Chores
+
+* **deps:** update pnpm/action-setup action to v6.1.0 ([#328](https://github.com/grafana/plugin-actions/issues/328)) ([ef33748](https://github.com/grafana/plugin-actions/commit/ef33748db11b29337ad14dfc01e3ec9db7e5f106))
+
 ## [2.0.4](https://github.com/grafana/plugin-actions/compare/create-plugin-update/v2.0.3...create-plugin-update/v2.0.4) (2026-08-25)
 
 

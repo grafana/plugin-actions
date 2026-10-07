@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.3](https://github.com/grafana/plugin-actions/compare/package-plugin/v1.3.2...package-plugin/v1.3.3) (2026-10-07)
+
+
+### 🔧 Chores
+
+* **package-plugin:** bump plugin-docs-cli to 0.5.0 ([#356](https://github.com/grafana/plugin-actions/issues/356)) ([fdd0502](https://github.com/grafana/plugin-actions/commit/fdd05021386f4f79c953698810f01d8f9340f476))
+
 ## [1.3.2](https://github.com/grafana/plugin-actions/compare/package-plugin/v1.3.1...package-plugin/v1.3.2) (2026-09-28)
 
 

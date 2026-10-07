@@ -1,5 +1,21 @@
 # Changelog
 
+## [3.1.1](https://github.com/grafana/plugin-actions/compare/e2e-version/v3.1.0...e2e-version/v3.1.1) (2026-10-07)
+
+
+### 🐛 Bug Fixes
+
+* **deps:** bump dependencies ([#350](https://github.com/grafana/plugin-actions/issues/350)) ([329e405](https://github.com/grafana/plugin-actions/commit/329e405585b4b5ffe0c79269895a8f9fd4013a5c))
+
+
+### 🔧 Chores
+
+* **deps:** lock file maintenance ([#306](https://github.com/grafana/plugin-actions/issues/306)) ([edea5a2](https://github.com/grafana/plugin-actions/commit/edea5a2801635981e4a5e2a04fcee8fd51c1362d))
+* **deps:** lock file maintenance ([#354](https://github.com/grafana/plugin-actions/issues/354)) ([4a16ed5](https://github.com/grafana/plugin-actions/commit/4a16ed593fa5c8f7b8f10a529372083c7cafd4a4))
+* **deps:** lock file maintenance ([#355](https://github.com/grafana/plugin-actions/issues/355)) ([613a036](https://github.com/grafana/plugin-actions/commit/613a0361142648e6fecfd5f5719e5a283e7faf52))
+* **deps:** update dependency node to v24.21.0 ([#333](https://github.com/grafana/plugin-actions/issues/333)) ([06170cd](https://github.com/grafana/plugin-actions/commit/06170cd60eeec10dd26a11f304364198aa594552))
+* **deps:** update npm to v12.1.0 ([#349](https://github.com/grafana/plugin-actions/issues/349)) ([e8cc510](https://github.com/grafana/plugin-actions/commit/e8cc510abc4a7f1a79e5d45b8757a619276b2e64))
+
 ## [3.1.0](https://github.com/grafana/plugin-actions/compare/e2e-version/v3.0.2...e2e-version/v3.1.0) (2026-09-08)
 
 

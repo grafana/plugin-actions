@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.3](https://github.com/grafana/plugin-actions/compare/e2e-version/v3.1.2...e2e-version/v3.1.3) (2026-10-08)
+
+
+### 🔧 Chores
+
+* **deps:** lock file maintenance ([#361](https://github.com/grafana/plugin-actions/issues/361)) ([981d689](https://github.com/grafana/plugin-actions/commit/981d689eab76baac4fb8aa9729fedd26b30e3596))
+
 ## [3.1.2](https://github.com/grafana/plugin-actions/compare/e2e-version/v3.1.1...e2e-version/v3.1.2) (2026-10-08)
 
 

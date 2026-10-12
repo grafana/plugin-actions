@@ -194,9 +194,9 @@ When using the `plugin-grafana-dependency` resolver type, you can optionally use
 ## Development
 
 ```bash
-cd e2e-versions
-npm i
-
-#before pushing to main
-npm run bundle
+cd e2e-version
+npm ci
+npm test
 ```
+
+This is a composite action that runs `index.mjs` from source, so there is no bundle to build or commit. To try a change in a plugin's workflow, point `uses:` at your branch, e.g. `grafana/plugin-actions/e2e-version@my-branch`.

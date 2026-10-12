@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.2.0](https://github.com/grafana/plugin-actions/compare/e2e-version/v3.1.3...e2e-version/v3.2.0) (2026-10-12)
+
+
+### 🎉 Features
+
+* **e2e-version:** run as a composite action instead of a bundled dist ([#346](https://github.com/grafana/plugin-actions/issues/346)) ([9ba6b97](https://github.com/grafana/plugin-actions/commit/9ba6b9760aa251c397b67182c5186e182b8a02cd))
+
+
+### 🔧 Chores
+
+* **deps:** lock file maintenance ([#363](https://github.com/grafana/plugin-actions/issues/363)) ([70a6fd1](https://github.com/grafana/plugin-actions/commit/70a6fd167eb619a4abb9c052037a1b58ed53fa11))
+
 ## [3.1.3](https://github.com/grafana/plugin-actions/compare/e2e-version/v3.1.2...e2e-version/v3.1.3) (2026-10-08)
 
 

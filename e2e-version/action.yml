@@ -37,10 +37,40 @@ inputs:
     description: 'The maximum number of versions to resolve. Default is 6, 0 means no limit.'
     default: "6"
 
-output:
+outputs:
   matrix:
     description: 'Versions to test against'
+    value: ${{ steps.resolve.outputs.matrix }}
 
 runs:
-  using: node24
-  main: ./dist/index.mjs
+  using: composite
+  steps:
+    # setup-node resolves node-version-file against GITHUB_WORKSPACE, not the action's own directory
+    - name: Read Node.js version
+      id: node-version
+      shell: bash
+      run: echo "version=$(cat "$GITHUB_ACTION_PATH/.nvmrc")" >> "$GITHUB_OUTPUT"
+
+    - name: Setup Node.js
+      uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      with:
+        node-version: ${{ steps.node-version.outputs.version }}
+        package-manager-cache: false
+
+    - name: Install dependencies
+      shell: bash
+      working-directory: ${{ github.action_path }}
+      run: npm ci --omit=dev --no-audit --no-fund
+
+    # Composite actions don't set INPUT_* for their inputs, so pass them the way @actions/core reads them
+    - name: Resolve versions
+      id: resolve
+      shell: bash
+      env:
+        INPUT_SKIP-GRAFANA-NIGHTLY-IMAGE: ${{ inputs.skip-grafana-nightly-image }}
+        INPUT_SKIP-GRAFANA-DEV-IMAGE: ${{ inputs.skip-grafana-dev-image }}
+        INPUT_VERSION-RESOLVER-TYPE: ${{ inputs.version-resolver-type }}
+        INPUT_GRAFANA-DEPENDENCY: ${{ inputs.grafana-dependency }}
+        INPUT_PLUGIN-DIRECTORY: ${{ inputs.plugin-directory }}
+        INPUT_LIMIT: ${{ inputs.limit }}
+      run: node "$GITHUB_ACTION_PATH/index.mjs"

@@ -1,0 +1,44 @@
+name: Test e2e-version
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test e2e-version
+    runs-on: ubuntu-arm64-small
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # Runs the action the way consumers do, so a broken action.yml or dependency fails here
+      - name: Run action
+        id: resolve
+        uses: ./e2e-version
+        with:
+          grafana-dependency: '>=11.0.0'
+
+      - name: Check output
+        env:
+          MATRIX: ${{ steps.resolve.outputs.matrix }}
+        run: |
+          echo "$MATRIX" | jq -e 'length > 1 and .[0].version == "nightly"'
+
+      - name: Unit tests
+        working-directory: e2e-version
+        run: |
+          npm ci --no-audit --no-fund
+          npm test

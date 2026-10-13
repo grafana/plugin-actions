@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/grafana/plugin-actions/compare/upload-report-artifacts/v1.0.2...upload-report-artifacts/v1.0.3) (2026-10-13)
+
+
+### 🔧 Chores
+
+* **deps:** update actions/upload-artifact action to v7.0.2 ([#369](https://github.com/grafana/plugin-actions/issues/369)) ([553ce37](https://github.com/grafana/plugin-actions/commit/553ce3713eb962a009adce9d22cc5a6eb00ddf81))
+
 ## [1.0.2](https://github.com/grafana/plugin-actions/compare/upload-report-artifacts/v1.0.1...upload-report-artifacts/v1.0.2) (2026-08-11)
 
 

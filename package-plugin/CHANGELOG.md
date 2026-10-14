@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.4](https://github.com/grafana/plugin-actions/compare/package-plugin/v1.3.3...package-plugin/v1.3.4) (2026-10-14)
+
+
+### 🔧 Chores
+
+* **deps:** update dependency @grafana/plugin-validator to v0.49.13 ([#371](https://github.com/grafana/plugin-actions/issues/371)) ([438d8ea](https://github.com/grafana/plugin-actions/commit/438d8eaf412e703a516e954f8aa7d14688b1747f))
+
 ## [1.3.3](https://github.com/grafana/plugin-actions/compare/package-plugin/v1.3.2...package-plugin/v1.3.3) (2026-10-07)
 
 

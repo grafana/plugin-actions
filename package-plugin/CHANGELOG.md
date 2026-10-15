@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.3.5](https://github.com/grafana/plugin-actions/compare/package-plugin/v1.3.4...package-plugin/v1.3.5) (2026-10-15)
+
+
+### 🔧 Chores
+
+* **deps:** update actions/setup-node action to v7.1.0 ([#375](https://github.com/grafana/plugin-actions/issues/375)) ([424d2aa](https://github.com/grafana/plugin-actions/commit/424d2aa5cc9b580ffc102090577cd4793a0f0b6e))
+* **deps:** update dependency @grafana/plugin-docs-cli to v0.6.0 ([#376](https://github.com/grafana/plugin-actions/issues/376)) ([60221cd](https://github.com/grafana/plugin-actions/commit/60221cde93872517c5acca74f35ee5a7c66b14cf))
+* **deps:** update dependency @grafana/plugin-validator to v0.49.14 ([#382](https://github.com/grafana/plugin-actions/issues/382)) ([647490b](https://github.com/grafana/plugin-actions/commit/647490b094366ef17079e42015f60a9e9cacc505))
+
 ## [1.3.4](https://github.com/grafana/plugin-actions/compare/package-plugin/v1.3.3...package-plugin/v1.3.4) (2026-10-14)
 
 

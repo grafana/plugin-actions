@@ -29,7 +29,7 @@ runs:
 
     - name: Detect package manager
       id: package-manager
-      uses: grafana/plugin-actions/package-manager-detect@package-manager-detect/v1.0.1
+      uses: grafana/plugin-actions/package-manager-detect@b33da838ef709061a6b6f69308d54925520dd433 # package-manager-detect/v1.0.1
       with:
         working-directory: ${{ inputs.working-directory }}
 

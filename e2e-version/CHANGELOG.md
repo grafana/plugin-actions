@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.2.1](https://github.com/grafana/plugin-actions/compare/e2e-version/v3.2.0...e2e-version/v3.2.1) (2026-10-15)
+
+
+### 🔧 Chores
+
+* **deps:** lock file maintenance ([#365](https://github.com/grafana/plugin-actions/issues/365)) ([0034b8a](https://github.com/grafana/plugin-actions/commit/0034b8a2bab81e00f3f56d7b84693478a44ebf11))
+* **deps:** update actions/setup-node action to v7.1.0 ([#375](https://github.com/grafana/plugin-actions/issues/375)) ([424d2aa](https://github.com/grafana/plugin-actions/commit/424d2aa5cc9b580ffc102090577cd4793a0f0b6e))
+* **deps:** update npm to v12.2.0 ([#377](https://github.com/grafana/plugin-actions/issues/377)) ([1b4f702](https://github.com/grafana/plugin-actions/commit/1b4f702710708ebdbffbbd41db1627f3a4337f54))
+
 ## [3.2.0](https://github.com/grafana/plugin-actions/compare/e2e-version/v3.1.3...e2e-version/v3.2.0) (2026-10-12)
 
 

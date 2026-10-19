@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.1](https://github.com/grafana/plugin-actions/compare/create-plugin-update/v2.1.0...create-plugin-update/v2.1.1) (2026-10-19)
+
+
+### 🔧 Chores
+
+* **deps:** update actions/setup-node action to v7.1.0 ([#375](https://github.com/grafana/plugin-actions/issues/375)) ([424d2aa](https://github.com/grafana/plugin-actions/commit/424d2aa5cc9b580ffc102090577cd4793a0f0b6e))
+
 ## [2.1.0](https://github.com/grafana/plugin-actions/compare/create-plugin-update/v2.0.4...create-plugin-update/v2.1.0) (2026-10-06)
 
 

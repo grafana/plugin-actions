@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.8](https://github.com/grafana/plugin-actions/compare/bundle-types/v1.0.7...bundle-types/v1.0.8) (2026-10-20)
+
+
+### 🔧 Chores
+
+* **deps:** update actions/setup-node action to v7.1.0 ([#375](https://github.com/grafana/plugin-actions/issues/375)) ([424d2aa](https://github.com/grafana/plugin-actions/commit/424d2aa5cc9b580ffc102090577cd4793a0f0b6e))
+
 ## [1.0.7](https://github.com/grafana/plugin-actions/compare/bundle-types/v1.0.6...bundle-types/v1.0.7) (2026-09-17)
 
 

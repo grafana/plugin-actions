@@ -163,7 +163,7 @@ runs:
 
     - name: Validate plugin
       run: |
-        npx -y @grafana/plugin-validator@0.50.0 -sourceCodeUri file://./ $PLUGIN_ARCHIVE
+        npx -y @grafana/plugin-validator@0.51.0 -sourceCodeUri file://./ $PLUGIN_ARCHIVE
       shell: bash
       env:
         PLUGIN_ARCHIVE: ${{ steps.metadata.outputs.archive }}

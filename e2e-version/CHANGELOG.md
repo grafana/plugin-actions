@@ -1,5 +1,20 @@
 # Changelog
 
+## [3.2.1](https://github.com/grafana/plugin-actions/compare/e2e-version/v3.2.0...e2e-version/v3.2.1) (2026-10-22)
+
+
+### 🔧 Chores
+
+* **deps:** lock file maintenance ([#365](https://github.com/grafana/plugin-actions/issues/365)) ([0034b8a](https://github.com/grafana/plugin-actions/commit/0034b8a2bab81e00f3f56d7b84693478a44ebf11))
+* **deps:** lock file maintenance ([#383](https://github.com/grafana/plugin-actions/issues/383)) ([ba39a6f](https://github.com/grafana/plugin-actions/commit/ba39a6f746cb6c0469d001842f84270d72c8b8b0))
+* **deps:** lock file maintenance ([#384](https://github.com/grafana/plugin-actions/issues/384)) ([4495c2b](https://github.com/grafana/plugin-actions/commit/4495c2b226860607b747078b988acfde03bab355))
+* **deps:** lock file maintenance ([#389](https://github.com/grafana/plugin-actions/issues/389)) ([7658f19](https://github.com/grafana/plugin-actions/commit/7658f19edfcf2290f82ed2f16e92dee4b3f1b098))
+* **deps:** lock file maintenance ([#391](https://github.com/grafana/plugin-actions/issues/391)) ([73fc800](https://github.com/grafana/plugin-actions/commit/73fc800962cc6865469ee04d312d8360496adbc9))
+* **deps:** update actions/setup-node action to v7.1.0 ([#375](https://github.com/grafana/plugin-actions/issues/375)) ([424d2aa](https://github.com/grafana/plugin-actions/commit/424d2aa5cc9b580ffc102090577cd4793a0f0b6e))
+* **deps:** update dependency node to v24.22.0 ([#388](https://github.com/grafana/plugin-actions/issues/388)) ([97b36f7](https://github.com/grafana/plugin-actions/commit/97b36f7e52f8f986211b08498e06ea22932737a0))
+* **deps:** update npm to v12.2.0 ([#377](https://github.com/grafana/plugin-actions/issues/377)) ([1b4f702](https://github.com/grafana/plugin-actions/commit/1b4f702710708ebdbffbbd41db1627f3a4337f54))
+* **deps:** update npm to v12.2.1 ([#393](https://github.com/grafana/plugin-actions/issues/393)) ([49e924d](https://github.com/grafana/plugin-actions/commit/49e924df4e915afcd25f9e7508b5a263911b7ce2))
+
 ## [3.2.0](https://github.com/grafana/plugin-actions/compare/e2e-version/v3.1.3...e2e-version/v3.2.0) (2026-10-12)
 
 

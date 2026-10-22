@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.2](https://github.com/grafana/plugin-actions/compare/bundle-size/v1.1.1...bundle-size/v1.1.2) (2026-10-22)
+
+
+### 🔧 Chores
+
+* **deps:** update actions/download-artifact action to v8.0.2 ([#368](https://github.com/grafana/plugin-actions/issues/368)) ([5aed4e1](https://github.com/grafana/plugin-actions/commit/5aed4e19b5c4ce08a69a9edfa98e007a11c738ca))
+* **deps:** update actions/setup-node action to v7.1.0 ([#375](https://github.com/grafana/plugin-actions/issues/375)) ([424d2aa](https://github.com/grafana/plugin-actions/commit/424d2aa5cc9b580ffc102090577cd4793a0f0b6e))
+* **deps:** update actions/upload-artifact action to v7.0.2 ([#369](https://github.com/grafana/plugin-actions/issues/369)) ([553ce37](https://github.com/grafana/plugin-actions/commit/553ce3713eb962a009adce9d22cc5a6eb00ddf81))
+
 ## [1.1.1](https://github.com/grafana/plugin-actions/compare/bundle-size/v1.1.0...bundle-size/v1.1.1) (2026-08-11)
 
 

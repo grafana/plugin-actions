@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.3.5](https://github.com/grafana/plugin-actions/compare/package-plugin/v1.3.4...package-plugin/v1.3.5) (2026-10-30)
+
+
+### 🔧 Chores
+
+* **deps:** update actions/setup-node action to v7.1.0 ([#375](https://github.com/grafana/plugin-actions/issues/375)) ([424d2aa](https://github.com/grafana/plugin-actions/commit/424d2aa5cc9b580ffc102090577cd4793a0f0b6e))
+* **deps:** update dependency @grafana/plugin-docs-cli to v0.13.0 ([#404](https://github.com/grafana/plugin-actions/issues/404)) ([ab3c87e](https://github.com/grafana/plugin-actions/commit/ab3c87e7473a206ed316997cc9dc0484ac2de16b))
+* **deps:** update dependency @grafana/plugin-docs-cli to v0.6.0 ([#376](https://github.com/grafana/plugin-actions/issues/376)) ([60221cd](https://github.com/grafana/plugin-actions/commit/60221cde93872517c5acca74f35ee5a7c66b14cf))
+* **deps:** update dependency @grafana/plugin-docs-cli to v0.8.0 ([#386](https://github.com/grafana/plugin-actions/issues/386)) ([ca95f46](https://github.com/grafana/plugin-actions/commit/ca95f46301b7d9fcc9597c744eda59eb9d24d9a5))
+* **deps:** update dependency @grafana/plugin-validator to v0.49.14 ([#382](https://github.com/grafana/plugin-actions/issues/382)) ([647490b](https://github.com/grafana/plugin-actions/commit/647490b094366ef17079e42015f60a9e9cacc505))
+* **deps:** update dependency @grafana/plugin-validator to v0.50.0 ([#387](https://github.com/grafana/plugin-actions/issues/387)) ([9504027](https://github.com/grafana/plugin-actions/commit/9504027e89171669198f7c55539266d0e477b5af))
+* **deps:** update dependency @grafana/plugin-validator to v0.51.0 ([#394](https://github.com/grafana/plugin-actions/issues/394)) ([33cf601](https://github.com/grafana/plugin-actions/commit/33cf6010fae62d392bf7a3ec3dcf9d988bbd084e))
+* **deps:** update dependency @grafana/plugin-validator to v0.51.3 ([#399](https://github.com/grafana/plugin-actions/issues/399)) ([3403985](https://github.com/grafana/plugin-actions/commit/34039855406964d59882fd382bc60bfaa2259917))
+
 ## [1.3.4](https://github.com/grafana/plugin-actions/compare/package-plugin/v1.3.3...package-plugin/v1.3.4) (2026-10-14)
 
 

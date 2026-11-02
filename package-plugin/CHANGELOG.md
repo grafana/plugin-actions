@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.6](https://github.com/grafana/plugin-actions/compare/package-plugin/v1.3.5...package-plugin/v1.3.6) (2026-11-02)
+
+
+### 🐛 Bug Fixes
+
+* **package-plugin:** bump plugin-validator to 0.53.0 ([#408](https://github.com/grafana/plugin-actions/issues/408)) ([33726a2](https://github.com/grafana/plugin-actions/commit/33726a2c743cacbb23126483c153f8550d81e201))
+
 ## [1.3.5](https://github.com/grafana/plugin-actions/compare/package-plugin/v1.3.4...package-plugin/v1.3.5) (2026-11-02)
 
 

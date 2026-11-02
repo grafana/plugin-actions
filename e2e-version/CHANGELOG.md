@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.2](https://github.com/grafana/plugin-actions/compare/e2e-version/v3.2.1...e2e-version/v3.2.2) (2026-11-02)
+
+
+### 🔧 Chores
+
+* **deps:** update dependency node to v24.22.2 ([#412](https://github.com/grafana/plugin-actions/issues/412)) ([1fa81ad](https://github.com/grafana/plugin-actions/commit/1fa81adab3f7514e3aab8a4a48e228b813ae616f))
+
 ## [3.2.1](https://github.com/grafana/plugin-actions/compare/e2e-version/v3.2.0...e2e-version/v3.2.1) (2026-11-02)
 
 

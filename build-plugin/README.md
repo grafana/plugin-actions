@@ -153,7 +153,7 @@ If your plugin requires a different Go version than the default, you can specify
 - `policy_token`: Grafana access policy token. https://grafana.com/developers/plugin-tools/publish-a-plugin/sign-a-plugin#generate-an-access-policy-token
 - `grafana_token`: [deprecated] Grafana API Key to sign a plugin. Prefer `policy_token`. See https://grafana.com/developers/plugin-tools/publish-a-plugin/sign-a-plugin
 - `go-version`: (Optional) Go version to use for building backend plugins. Defaults to "1.25". Example: `go-version: '1.23'`
-- `node-version`: (Optional) Node.js version to use. Defaults to "20".
+- `node-version`: (Optional) Node.js version to use. Defaults to "22".
 - `attestation`: If `true`, create a verifiable attestation for the plugin using sigstore. See [attestation of plugin package](#attestation-of-plugin-package)
 - `use_changelog_generator`: If `true`, generate a changelog for the plugin and commit it to the repository. See [changelog generation](#changelog-generation)
 

@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/grafana/plugin-actions/compare/build-plugin/v1.2.1...build-plugin/v2.0.0) (2026-11-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* default to Node 22 in the Node-based actions ([#419](https://github.com/grafana/plugin-actions/issues/419))
+
+### 🎉 Features
+
+* default to Node 22 in the Node-based actions ([#419](https://github.com/grafana/plugin-actions/issues/419)) ([e7a39d2](https://github.com/grafana/plugin-actions/commit/e7a39d2fcaab23b3e31b86d6491a1da50c0317a2))
+
 ## [1.2.1](https://github.com/grafana/plugin-actions/compare/build-plugin/v1.2.0...build-plugin/v1.2.1) (2026-10-14)
 
 

@@ -1,5 +1,5 @@
 {
-  "build-plugin": "1.2.1",
+  "build-plugin": "2.0.0",
   "bundle-size": "1.1.1",
   "bundle-types": "1.0.8",
   "create-plugin-update": "2.1.1",

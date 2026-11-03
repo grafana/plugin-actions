@@ -18,7 +18,7 @@ inputs:
   node-version:
     description: "Version of node"
     required: false
-    default: "20"
+    default: "22"
   plugin-json-path:
     description: "A path to the plugins plugin.json file."
     required: false

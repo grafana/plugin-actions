@@ -12,7 +12,7 @@ inputs:
   node-version:
     description: "Version of node"
     required: false
-    default: "20"
+    default: "22"
   working-directory:
     description: "Relative path to the plugin directory within the repository. Defaults to the repository root."
     required: false

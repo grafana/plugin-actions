@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.2.3](https://github.com/grafana/plugin-actions/compare/e2e-version/v3.2.2...e2e-version/v3.2.3) (2026-11-03)
+
+
+### 🔧 Chores
+
+* **deps:** lock file maintenance ([#410](https://github.com/grafana/plugin-actions/issues/410)) ([c84c1ae](https://github.com/grafana/plugin-actions/commit/c84c1ae0999a460eab0bf0b1c792b2d503262409))
+* **deps:** lock file maintenance ([#417](https://github.com/grafana/plugin-actions/issues/417)) ([36bb5bd](https://github.com/grafana/plugin-actions/commit/36bb5bdf15ecf385a1deac61b5d932d2f9c3d9d8))
+* **deps:** lock file maintenance ([#426](https://github.com/grafana/plugin-actions/issues/426)) ([a0042cf](https://github.com/grafana/plugin-actions/commit/a0042cfddfea8482d532cf1f3c72798a9be2fa82))
+* **deps:** update dependency node to v26 ([#414](https://github.com/grafana/plugin-actions/issues/414)) ([2130063](https://github.com/grafana/plugin-actions/commit/2130063b61cb61a2286a5dc260bbc1b8d894312b))
+
 ## [3.2.2](https://github.com/grafana/plugin-actions/compare/e2e-version/v3.2.1...e2e-version/v3.2.2) (2026-11-02)
 
 

@@ -43,16 +43,16 @@ fi
 
 # Define build commands
 if [ -f yarn.lock ]; then
-	build_pr_cmd=("yarn" "build" "--profile" "--json" "pr-stats.json")
-	build_main_cmd=("yarn" "build" "--profile" "--json" "stats.json")
+	build_pr_cmd=("yarn" "build" "--json" "pr-stats.json")
+	build_main_cmd=("yarn" "build" "--json" "stats.json")
 elif [ -f package-lock.json ]; then
-	build_pr_cmd=("npm" "run" "build" "--" "--profile" "--json" "pr-stats.json")
-	build_main_cmd=("npm" "run" "build" "--" "--profile" "--json" "stats.json")
+	build_pr_cmd=("npm" "run" "build" "--" "--json" "pr-stats.json")
+	build_main_cmd=("npm" "run" "build" "--" "--json" "stats.json")
 else
 	echo "Defaulting to pnpm for build command."
 	install_pnpm_if_not_present
-	build_pr_cmd=("pnpm" "build" "--profile" "--json" "pr-stats.json")
-	build_main_cmd=("pnpm" "build" "--profile" "--json" "stats.json")
+	build_pr_cmd=("pnpm" "build" "--json" "pr-stats.json")
+	build_main_cmd=("pnpm" "build" "--json" "stats.json")
 fi
 
 # Run the provided command with the detected package manager

@@ -1,16 +1,34 @@
 # Bundle size action
 
-This GitHub Action compares two webpack compilation stats files and comments on PRs with a description of the difference. It can run against two gh events: pull_request and push.
+This GitHub Action compares two Webpack or Rspack compilation stats files and comments on PRs with a description of the difference. It can run against two gh events: pull_request and push.
 
 ## Features
 
-- Builds webpack stat files for main and PRs.
+- Builds Webpack or Rspack stats files for main and PRs.
 - Compares the build stats of main against build stats of the PR
 - Reports the result in markdown tables in a PR comment
 
 ## Usage
 
 - Add a workflow to your Github repository as in the example below.
+
+The action appends `--json <file>` to your build script.
+
+### Rspack configuration
+
+For Rspack, enable these fields in the configuration returned by your root `rspack.config.ts`, keeping any other stats settings:
+
+```ts
+stats: {
+  assets: true,
+  chunks: true,
+  chunkModules: true,
+  nestedModules: true,
+  entrypoints: true,
+},
+```
+
+These fields provide the asset, entrypoint, and module sizes used by the report. Rspack 2.3.0's default stats omit this data, even with `--json`.
 
 ## Workflow example
 <!-- x-release-please-start-version -->

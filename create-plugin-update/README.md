@@ -31,7 +31,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: grafana/plugin-actions/create-plugin-update@create-plugin-update/v2.1.1
+      - uses: grafana/plugin-actions/create-plugin-update@create-plugin-update/v3.0.0
         with:
           token: ${{ secrets.GH_PAT_TOKEN }}
 ```

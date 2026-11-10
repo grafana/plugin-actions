@@ -80,7 +80,7 @@ runs:
 
         DOCS_PATH=$(cat dist/plugin.json | jq -r '.docsPath // empty')
         if [ -n "$DOCS_PATH" ]; then
-          npx --yes @grafana/plugin-docs-cli@0.14.0 build
+          npx --yes @grafana/plugin-docs-cli@0.14.1 build
         fi
 
     - name: Check for backend

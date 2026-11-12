@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.3](https://github.com/grafana/plugin-actions/compare/package-plugin/v2.0.2...package-plugin/v2.0.3) (2026-11-10)
+
+
+### 🔧 Chores
+
+* **deps:** update dependency @grafana/plugin-docs-cli to v0.14.1 ([#445](https://github.com/grafana/plugin-actions/issues/445)) ([26e8c11](https://github.com/grafana/plugin-actions/commit/26e8c1112dda1ec02dde32e0e1ee9dfd91543448))
+
 ## [2.0.2](https://github.com/grafana/plugin-actions/compare/package-plugin/v2.0.1...package-plugin/v2.0.2) (2026-11-03)
 
 

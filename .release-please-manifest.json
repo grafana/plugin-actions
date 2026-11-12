@@ -1,9 +1,9 @@
 {
-  "build-plugin": "2.0.1",
+  "build-plugin": "2.0.0",
   "bundle-size": "1.1.2",
   "bundle-types": "2.0.0",
   "create-plugin-update": "2.1.1",
-  "e2e-version": "3.2.5",
+  "e2e-version": "3.2.6",
   "is-compatible": "1.1.0",
   "package-plugin": "2.0.3",
   "playwright-gh-pages/deploy-report-pages": "1.1.0",

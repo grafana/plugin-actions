@@ -1,5 +1,21 @@
 # Changelog
 
+## [3.0.0](https://github.com/grafana/plugin-actions/compare/create-plugin-update/v2.1.1...create-plugin-update/v3.0.0) (2026-11-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* default to Node 22 in the Node-based actions ([#419](https://github.com/grafana/plugin-actions/issues/419))
+
+### 🎉 Features
+
+* default to Node 22 in the Node-based actions ([#419](https://github.com/grafana/plugin-actions/issues/419)) ([e7a39d2](https://github.com/grafana/plugin-actions/commit/e7a39d2fcaab23b3e31b86d6491a1da50c0317a2))
+
+
+### 🔧 Chores
+
+* **deps:** update pnpm/action-setup action to v6.1.1 ([#440](https://github.com/grafana/plugin-actions/issues/440)) ([3a3c7b2](https://github.com/grafana/plugin-actions/commit/3a3c7b24545d8427541d0f0761e407a1bfa10a3e))
+
 ## [2.1.1](https://github.com/grafana/plugin-actions/compare/create-plugin-update/v2.1.0...create-plugin-update/v2.1.1) (2026-10-19)
 
 

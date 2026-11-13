@@ -2,7 +2,7 @@
   "build-plugin": "2.0.0",
   "bundle-size": "1.1.2",
   "bundle-types": "2.0.0",
-  "create-plugin-update": "2.1.1",
+  "create-plugin-update": "3.0.0",
   "e2e-version": "3.2.6",
   "is-compatible": "1.1.0",
   "package-plugin": "2.0.3",

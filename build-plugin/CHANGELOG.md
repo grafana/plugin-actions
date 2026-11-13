@@ -1,6 +1,6 @@
 # Changelog
 
-## [2.0.1](https://github.com/grafana/plugin-actions/compare/build-plugin/v2.0.0...build-plugin/v2.0.1) (2026-11-10)
+## [2.0.1](https://github.com/grafana/plugin-actions/compare/build-plugin/v2.0.0...build-plugin/v2.0.1) (2026-11-12)
 
 
 ### 🔧 Chores

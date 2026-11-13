@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.0.1](https://github.com/grafana/plugin-actions/compare/build-plugin/v2.0.0...build-plugin/v2.0.1) (2026-11-13)
+
+
+### 🔧 Chores
+
+* **deps:** update softprops/action-gh-release action to v3.0.4 ([#441](https://github.com/grafana/plugin-actions/issues/441)) ([3819129](https://github.com/grafana/plugin-actions/commit/381912956f5fa48f004c3dc75bc2543a83af2c78))
+* **main:** release build-plugin 2.0.1 ([#443](https://github.com/grafana/plugin-actions/issues/443)) ([2f27a3f](https://github.com/grafana/plugin-actions/commit/2f27a3fa1821583cb64627495d927773646c728f))
+* **main:** release build-plugin 2.0.1 ([#450](https://github.com/grafana/plugin-actions/issues/450)) ([d2c98b1](https://github.com/grafana/plugin-actions/commit/d2c98b19cfa5e243355470efbd675150315aa2bd))
+
 ## [2.0.1](https://github.com/grafana/plugin-actions/compare/build-plugin/v2.0.0...build-plugin/v2.0.1) (2026-11-12)
 
 

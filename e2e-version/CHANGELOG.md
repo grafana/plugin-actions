@@ -1,5 +1,16 @@
 # Changelog
 
+## [4.0.0](https://github.com/grafana/plugin-actions/compare/e2e-version/v3.2.7...e2e-version/v4.0.0) (2026-11-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* **e2e-version:** default to oss image, add grafana-image input ([#454](https://github.com/grafana/plugin-actions/issues/454))
+
+### 🎉 Features
+
+* **e2e-version:** default to oss image, add grafana-image input ([#454](https://github.com/grafana/plugin-actions/issues/454)) ([e88cfde](https://github.com/grafana/plugin-actions/commit/e88cfdea546e5ae5a272034938aea87d2825318a))
+
 ## [3.2.7](https://github.com/grafana/plugin-actions/compare/e2e-version/v3.2.6...e2e-version/v3.2.7) (2026-11-16)
 
 

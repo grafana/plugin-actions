@@ -53,7 +53,9 @@ runs:
       id: detect-package-manager
       run: |
         # Run pm-detect and capture the JSON output
-        PM_OUTPUT=$(npx -y pm-detect@0.6.0 --working-dir "$WORKING_DIRECTORY")
+        # Do this outside the project so npm does not enforce devEngines
+        TARGET_DIRECTORY=$(cd -- "$WORKING_DIRECTORY" && pwd)
+        PM_OUTPUT=$(cd -- "$RUNNER_TEMP" && npx -y pm-detect@0.6.0 --working-dir "$TARGET_DIRECTORY")
 
         # Parse the JSON and extract individual values
         NAME=$(echo "$PM_OUTPUT" | jq -r '.name')

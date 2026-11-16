@@ -1,0 +1,74 @@
+name: Test package-manager-detect
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test package-manager-detect
+    runs-on: ubuntu-arm64-small
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: action
+          persist-credentials: false
+
+      - name: Create test projects
+        run: |
+          mkdir -p 'yarn project' npm-project
+          printf '%s\n' '{"packageManager":"pnpm@9.0.0","devEngines":{"packageManager":{"name":"pnpm","onFail":"error"}}}' > package.json
+          printf '%s\n' '{"packageManager":"yarn@1.22.22"}' > 'yarn project/package.json'
+          printf '%s\n' '{"packageManager":"npm@10.0.0"}' > npm-project/package.json
+          touch pnpm-lock.yaml 'yarn project/yarn.lock' npm-project/package-lock.json
+
+      - name: Detect pnpm in the workspace
+        id: pnpm
+        uses: ./action/package-manager-detect
+
+      - name: Detect yarn in a relative directory
+        id: yarn
+        uses: ./action/package-manager-detect
+        with:
+          working-directory: yarn project
+
+      - name: Detect npm in an absolute directory
+        id: npm
+        uses: ./action/package-manager-detect
+        with:
+          working-directory: ${{ github.workspace }}/npm-project
+
+      - name: Check outputs
+        env:
+          PNPM_NAME: ${{ steps.pnpm.outputs.name }}
+          PNPM_VERSION: ${{ steps.pnpm.outputs.version }}
+          PNPM_LOCK: ${{ steps.pnpm.outputs.lockFilePath }}
+          PNPM_INSTALL: ${{ steps.pnpm.outputs.frozenInstallCmd }}
+          YARN_NAME: ${{ steps.yarn.outputs.name }}
+          YARN_VERSION: ${{ steps.yarn.outputs.version }}
+          YARN_LOCK: ${{ steps.yarn.outputs.lockFilePath }}
+          NPM_NAME: ${{ steps.npm.outputs.name }}
+          NPM_VERSION: ${{ steps.npm.outputs.version }}
+          NPM_LOCK: ${{ steps.npm.outputs.lockFilePath }}
+        run: |
+          test "$PNPM_NAME" = pnpm
+          test "$PNPM_VERSION" = 9.0.0
+          test "$PNPM_LOCK" = "$GITHUB_WORKSPACE/pnpm-lock.yaml"
+          test "$PNPM_INSTALL" = "pnpm install --frozen-lockfile"
+          test "$YARN_NAME" = yarn
+          test "$YARN_VERSION" = 1.22.22
+          test "$YARN_LOCK" = "$GITHUB_WORKSPACE/yarn project/yarn.lock"
+          test "$NPM_NAME" = npm
+          test "$NPM_VERSION" = 10.0.0
+          test "$NPM_LOCK" = "$GITHUB_WORKSPACE/npm-project/package-lock.json"

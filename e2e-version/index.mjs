@@ -5,6 +5,7 @@ import path from 'node:path';
 
 const SkipGrafanaNightlyImageInput = 'skip-grafana-nightly-image';
 const SkipGrafanaDevImageInput = 'skip-grafana-dev-image';
+const GrafanaImageInput = 'grafana-image';
 const VersionResolverTypeInput = 'version-resolver-type';
 const GrafanaDependencyInput = 'grafana-dependency';
 const PluginDirectoryInput = 'plugin-directory';
@@ -16,8 +17,21 @@ const VersionResolverTypes = {
   VersionSupportPolicy: 'version-support-policy',
 };
 
+const GrafanaImages = {
+  Grafana: 'grafana',
+  GrafanaEnterprise: 'grafana-enterprise',
+};
+
 async function run() {
   try {
+    const grafanaImage = core.getInput(GrafanaImageInput) || GrafanaImages.Grafana;
+    if (!Object.values(GrafanaImages).includes(grafanaImage)) {
+      core.setFailed(
+        `Invalid ${GrafanaImageInput} "${grafanaImage}". Expected one of: ${Object.values(GrafanaImages).join(', ')}`
+      );
+      return;
+    }
+
     // skip-grafana-dev-image is a deprecated alias for skip-grafana-nightly-image
     const skipGrafanaNightlyImage =
       core.getBooleanInput(SkipGrafanaNightlyImageInput) || core.getBooleanInput(SkipGrafanaDevImageInput);
@@ -26,7 +40,7 @@ async function run() {
     const pluginPath = core.getInput(PluginDirectoryInput);
     const versionResolverType = core.getInput(VersionResolverTypeInput) || VersionResolverTypes.PluginGrafanaDependency;
     const limit = parseInt(core.getInput(LimitInput));
-    const availableGrafanaVersions = await getGrafanaStableMinorVersions();
+    const availableGrafanaVersions = await getGrafanaStableMinorVersions(grafanaImage);
     if (availableGrafanaVersions.length === 0) {
       core.setFailed('Could not find any stable Grafana versions');
       return;
@@ -67,14 +81,13 @@ async function run() {
       versions = evenlyPickVersions(versions, stableVersionLimit);
     }
 
-    // official grafana-enterprise image
     const images = versions.map((version) => ({
-      name: 'grafana-enterprise',
+      name: grafanaImage,
       version,
     }));
 
     if (!skipGrafanaNightlyImage) {
-      images.unshift({ name: 'grafana-enterprise', version: 'nightly' });
+      images.unshift({ name: grafanaImage, version: 'nightly' });
     }
 
     console.log('Resolved images: ', images);
@@ -109,10 +122,10 @@ function evenlyPickVersions(allItems, limit) {
   return semver.rsort(result);
 }
 
-async function getGrafanaStableMinorVersions() {
+async function getGrafanaStableMinorVersions(grafanaImage) {
   const latestMinorVersions = new Map();
 
-  const response = await fetch('https://grafana.com/api/grafana-enterprise/versions');
+  const response = await fetch(`https://grafana.com/api/${grafanaImage}/versions`);
   const json = await response.json();
   const grafanaVersions = json.items;
 
@@ -150,4 +163,13 @@ async function getPluginGrafanaDependencyFromPluginJson(pluginPath) {
 }
 run();
 
-export { run, VersionResolverTypeInput, VersionResolverTypes, GrafanaDependencyInput, PluginDirectoryInput, LimitInput };
+export {
+  run,
+  GrafanaImageInput,
+  GrafanaImages,
+  VersionResolverTypeInput,
+  VersionResolverTypes,
+  GrafanaDependencyInput,
+  PluginDirectoryInput,
+  LimitInput,
+};

@@ -4,9 +4,29 @@ This Action resolves what Grafana image names and versions to use when E2E testi
 
 ## Inputs
 
+### `grafana-image`
+
+The Grafana image to resolve versions for. Defaults to `grafana` (the open source `grafana/grafana` image). Set it to `grafana-enterprise` to use the `grafana/grafana-enterprise` image instead, for example if the plugin relies on enterprise-only features.
+
+<!-- x-release-please-start-version -->
+
+```yaml
+- name: Resolve Grafana E2E versions
+  id: resolve-versions
+  uses: grafana/plugin-actions/e2e-version@e2e-version/v3.2.6
+  with:
+    version-resolver-type: plugin-grafana-dependency
+    grafana-image: grafana-enterprise
+```
+<!-- x-release-please-end-version -->
+
+The chosen value is used as the `name` of every entry in the output, including the nightly one.
+
+> **Migrating from earlier versions:** the action used to always resolve `grafana-enterprise` images. If your plugin needs them, set `grafana-image: grafana-enterprise`. Otherwise the job names in your matrix change from `grafana-enterprise@<version>` to `grafana@<version>`, so update any required status checks that reference the old names.
+
 ### `skip-grafana-nightly-image`
 
-By default, this action includes the `grafana-enterprise:nightly` image in the test matrix. To exclude it, set `skip-grafana-nightly-image` to `true`.
+By default, this action includes the `nightly` image in the test matrix. To exclude it, set `skip-grafana-nightly-image` to `true`.
 
 > **Deprecated:** The old `skip-grafana-dev-image` input is still accepted as an alias but will be removed in a future release.
 
@@ -18,21 +38,24 @@ The maximum number of versions to resolve. Default is 6, 0 means no limit.
 
 Only applies when using `plugin-grafana-dependency` mode without a `grafana-dependency` override. Path to the plugin root directory — the directory that contains the `src/plugin.json` file. Defaults to the repository root. Use this when the plugin is in a subdirectory rather than at the root of the repository.
 
+<!-- x-release-please-start-version -->
+
 ```yaml
 - name: Resolve Grafana E2E versions
   id: resolve-versions
-  uses: grafana/plugin-actions/e2e-version@e2e-version/v1.2.1
+  uses: grafana/plugin-actions/e2e-version@e2e-version/v3.2.6
   with:
     version-resolver-type: plugin-grafana-dependency
     plugin-directory: plugin
 ```
+<!-- x-release-please-end-version -->
 
 ### `version-resolver-type`
 
 The action supports two modes.
 
 **plugin-grafana-dependency (default)**
-This will return the `grafana-enterprise:nightly` image and all the latest patch releases of every minor version of Grafana Enterprise that satisfies the range specified in the [dependencies.grafanaDependency](https://grafana.com/developers/plugin-tools/reference/plugin-json#properties-1) property in plugin.json. This requires the plugin.json file to be placed in the `<root>/src` directory. To avoid starting too many jobs, the output will be capped at 6 versions.
+This will return the `nightly` image and all the latest patch releases of every minor version of Grafana that satisfies the range specified in the [dependencies.grafanaDependency](https://grafana.com/developers/plugin-tools/reference/plugin-json#properties-1) property in plugin.json. This requires the plugin.json file to be placed in the `<root>/src` directory. To avoid starting too many jobs, the output will be capped at 6 versions.
 
 ### Example
 
@@ -41,27 +64,27 @@ At the time of writing, the most recent release of Grafana is 10.3.1. If the plu
 ```json
 [
   {
-    "name": "grafana-enterprise",
+    "name": "grafana",
     "version": "nightly"
   },
   {
-    "name": "grafana-enterprise",
+    "name": "grafana",
     "version": "10.3.1"
   },
   {
-    "name": "grafana-enterprise",
+    "name": "grafana",
     "version": "10.0.10"
   },
   {
-    "name": "grafana-enterprise",
+    "name": "grafana",
     "version": "9.2.20"
   },
   {
-    "name": "grafana-enterprise",
+    "name": "grafana",
     "version": "8.4.11"
   },
   {
-    "name": "grafana-enterprise",
+    "name": "grafana",
     "version": "8.1.8"
   }
 ]
@@ -70,7 +93,7 @@ At the time of writing, the most recent release of Grafana is 10.3.1. If the plu
 Please note that the output changes as new versions of Grafana are being released.
 
 **version-support-policy**
-Except for including the `grafana-enterprise:nightly` image, this will resolve versions according to Grafana's plugin compatibility support policy. Specifically, it retrieves the latest patch release for each minor version within the current major version of Grafana. Additionally, it includes the most recent release for the latest minor version of the previous major Grafana version.
+Except for including the `nightly` image, this will resolve versions according to Grafana's plugin compatibility support policy. Specifically, it retrieves the latest patch release for each minor version within the current major version of Grafana. Additionally, it includes the most recent release for the latest minor version of the previous major Grafana version.
 
 ### Example
 
@@ -79,27 +102,27 @@ At the time of writing, the most recent release of Grafana is 10.2.2. The output
 ```json
 [
   {
-    "name": "grafana-enterprise",
+    "name": "grafana",
     "version": "nightly"
   },
   {
-    "name": "grafana-enterprise",
+    "name": "grafana",
     "version": "10.3.1"
   },
   {
-    "name": "grafana-enterprise",
+    "name": "grafana",
     "version": "10.2.3"
   },
   {
-    "name": "grafana-enterprise",
+    "name": "grafana",
     "version": "10.1.6"
   },
   {
-    "name": "grafana-enterprise",
+    "name": "grafana",
     "version": "10.0.10"
   },
   {
-    "name": "grafana-enterprise",
+    "name": "grafana",
     "version": "9.5.15"
   }
 ]

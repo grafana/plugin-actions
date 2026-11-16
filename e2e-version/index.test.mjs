@@ -1,13 +1,14 @@
-import { jest, describe, it, expect } from '@jest/globals';
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import mockVersions from './mocks/versions.js';
 
 const getInput = jest.fn();
 const getBooleanInput = jest.fn();
+const setFailed = jest.fn();
 
 jest.unstable_mockModule('@actions/core', () => ({
   getInput,
   getBooleanInput,
-  setFailed: jest.fn(),
+  setFailed,
   setOutput: jest.fn(),
 }));
 
@@ -17,8 +18,16 @@ global.fetch = jest.fn(() =>
   })
 );
 
-const { run, VersionResolverTypeInput, VersionResolverTypes, GrafanaDependencyInput, PluginDirectoryInput, LimitInput } =
-  await import('./index.mjs');
+const {
+  run,
+  GrafanaImageInput,
+  GrafanaImages,
+  VersionResolverTypeInput,
+  VersionResolverTypes,
+  GrafanaDependencyInput,
+  PluginDirectoryInput,
+  LimitInput,
+} = await import('./index.mjs');
 
 describe('plugin-grafana-dependency mode', () => {
   it.each([
@@ -81,7 +90,7 @@ describe('nightly image', () => {
     });
     getBooleanInput.mockReturnValue(false);
     const images = await run();
-    expect(images[0]).toEqual({ name: 'grafana-enterprise', version: 'nightly' });
+    expect(images[0]).toEqual({ name: 'grafana', version: 'nightly' });
   });
 
   it('is skipped when skip-grafana-nightly-image is true', async () => {
@@ -120,5 +129,54 @@ describe('non-default plugin directory', () => {
     getBooleanInput.mockReturnValue(true);
     const images = await run();
     expect(images.map((i) => i.version)).toEqual(['11.0.0', '10.4.3']);
+  });
+});
+
+describe('grafana-image input', () => {
+  const mockInputs = (grafanaImage) => {
+    getInput.mockImplementation((name) => {
+      if (name === GrafanaImageInput) {
+        return grafanaImage;
+      }
+      if (name === VersionResolverTypeInput) {
+        return VersionResolverTypes.PluginGrafanaDependency;
+      }
+      if (name === GrafanaDependencyInput) {
+        return '>=10.4.0';
+      }
+      if (name === LimitInput) {
+        return '6';
+      }
+      return '';
+    });
+    getBooleanInput.mockReturnValue(false);
+  };
+
+  beforeEach(() => {
+    global.fetch.mockClear();
+    setFailed.mockClear();
+  });
+
+  it('defaults to the grafana image', async () => {
+    mockInputs('');
+    const images = await run();
+    expect(images.every((i) => i.name === GrafanaImages.Grafana)).toBe(true);
+    expect(global.fetch).toHaveBeenCalledWith('https://grafana.com/api/grafana/versions');
+  });
+
+  it('uses grafana-enterprise for versions and nightly when set', async () => {
+    mockInputs(GrafanaImages.GrafanaEnterprise);
+    const images = await run();
+    expect(images[0]).toEqual({ name: 'grafana-enterprise', version: 'nightly' });
+    expect(images.every((i) => i.name === GrafanaImages.GrafanaEnterprise)).toBe(true);
+    expect(global.fetch).toHaveBeenCalledWith('https://grafana.com/api/grafana-enterprise/versions');
+  });
+
+  it('fails on an unknown image', async () => {
+    mockInputs('grafana-dev');
+    const images = await run();
+    expect(images).toBeUndefined();
+    expect(setFailed).toHaveBeenCalledWith(expect.stringContaining('Invalid grafana-image'));
+    expect(global.fetch).not.toHaveBeenCalled();
   });
 });

@@ -13,6 +13,17 @@ inputs:
     description: 'Deprecated: use skip-grafana-nightly-image instead'
     deprecationMessage: 'skip-grafana-dev-image is deprecated, use skip-grafana-nightly-image instead'
     type: boolean
+  grafana-image:
+    required: false
+    default: grafana
+    description: >
+      The Grafana Docker image to resolve versions for.
+      grafana: The open source image (grafana/grafana).
+      grafana-enterprise: The enterprise image (grafana/grafana-enterprise).
+    type: choice
+    options:
+      - grafana
+      - grafana-enterprise
   version-resolver-type:
     required: true
     type: choice
@@ -69,6 +80,7 @@ runs:
       env:
         INPUT_SKIP-GRAFANA-NIGHTLY-IMAGE: ${{ inputs.skip-grafana-nightly-image }}
         INPUT_SKIP-GRAFANA-DEV-IMAGE: ${{ inputs.skip-grafana-dev-image }}
+        INPUT_GRAFANA-IMAGE: ${{ inputs.grafana-image }}
         INPUT_VERSION-RESOLVER-TYPE: ${{ inputs.version-resolver-type }}
         INPUT_GRAFANA-DEPENDENCY: ${{ inputs.grafana-dependency }}
         INPUT_PLUGIN-DIRECTORY: ${{ inputs.plugin-directory }}

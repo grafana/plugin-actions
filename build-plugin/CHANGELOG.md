@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.0.2](https://github.com/grafana/plugin-actions/compare/build-plugin/v2.0.1...build-plugin/v2.0.2) (2026-11-17)
+
+
+### 🔧 Chores
+
+* **main:** release build-plugin 2.0.1 ([#450](https://github.com/grafana/plugin-actions/issues/450)) ([d2c98b1](https://github.com/grafana/plugin-actions/commit/d2c98b19cfa5e243355470efbd675150315aa2bd))
+* **main:** release build-plugin 2.0.1 ([#452](https://github.com/grafana/plugin-actions/issues/452)) ([0ef4c65](https://github.com/grafana/plugin-actions/commit/0ef4c6578f9cf4b7fdb1f13cddb381e527d18039))
+
 ## [2.0.1](https://github.com/grafana/plugin-actions/compare/build-plugin/v2.0.0...build-plugin/v2.0.1) (2026-11-16)
 
 

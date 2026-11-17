@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/grafana/plugin-actions/compare/package-manager-detect/v1.1.0...package-manager-detect/v1.1.1) (2026-11-17)
+
+
+### 🐛 Bug Fixes
+
+* **package-manager-detect:** run npx outside working dir to avoid devEngines ([#457](https://github.com/grafana/plugin-actions/issues/457)) ([69938c6](https://github.com/grafana/plugin-actions/commit/69938c67dbc33447b195e1dd4a68b45d774dbac1))
+
 ## [1.1.0](https://github.com/grafana/plugin-actions/compare/package-manager-detect/v1.0.1...package-manager-detect/v1.1.0) (2026-07-14)
 
 

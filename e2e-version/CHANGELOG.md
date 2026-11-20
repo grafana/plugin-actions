@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.2](https://github.com/grafana/plugin-actions/compare/e2e-version/v4.0.1...e2e-version/v4.0.2) (2026-11-20)
+
+
+### 🔧 Chores
+
+* **deps:** lock file maintenance ([#468](https://github.com/grafana/plugin-actions/issues/468)) ([2d94bed](https://github.com/grafana/plugin-actions/commit/2d94bed3b0179ab5fc010e1a06e210a9c34b27ca))
+
 ## [4.0.1](https://github.com/grafana/plugin-actions/compare/e2e-version/v4.0.0...e2e-version/v4.0.1) (2026-11-17)
 
 

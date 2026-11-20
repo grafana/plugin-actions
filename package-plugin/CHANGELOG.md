@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.0.4](https://github.com/grafana/plugin-actions/compare/package-plugin/v2.0.3...package-plugin/v2.0.4) (2026-11-20)
+
+
+### 🔧 Chores
+
+* **deps:** update dependency @grafana/plugin-docs-cli to v1 ([#463](https://github.com/grafana/plugin-actions/issues/463)) ([180f00d](https://github.com/grafana/plugin-actions/commit/180f00df67a1e078272c31b08587c04c25528fb6))
+* **deps:** update dependency @grafana/plugin-validator to v0.53.6 ([#460](https://github.com/grafana/plugin-actions/issues/460)) ([1033389](https://github.com/grafana/plugin-actions/commit/103338980a7c0b582e528db8bd560d10eace1419))
+
 ## [2.0.3](https://github.com/grafana/plugin-actions/compare/package-plugin/v2.0.2...package-plugin/v2.0.3) (2026-11-10)
 
 

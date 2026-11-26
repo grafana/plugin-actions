@@ -40,6 +40,7 @@ runs:
         node-version: ${{ inputs.node-version }}
 
     - name: Install dependencies
+      working-directory: ${{ inputs.working-directory }}
       run: ${{ github.action_path }}/pm.sh install
       shell: bash
 

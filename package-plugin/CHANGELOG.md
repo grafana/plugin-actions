@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.0.4](https://github.com/grafana/plugin-actions/compare/package-plugin/v2.0.3...package-plugin/v2.0.4) (2026-11-27)
+
+
+### 🔧 Chores
+
+* **deps:** update actions/setup-go action to v7.1.0 ([#474](https://github.com/grafana/plugin-actions/issues/474)) ([9acdf28](https://github.com/grafana/plugin-actions/commit/9acdf28fece8a37719ec6b0bf07dfc55ab2caf8f))
+* **deps:** update dependency @grafana/plugin-docs-cli to v1 ([#463](https://github.com/grafana/plugin-actions/issues/463)) ([180f00d](https://github.com/grafana/plugin-actions/commit/180f00df67a1e078272c31b08587c04c25528fb6))
+* **deps:** update dependency @grafana/plugin-validator to v0.53.11 ([#472](https://github.com/grafana/plugin-actions/issues/472)) ([b154f62](https://github.com/grafana/plugin-actions/commit/b154f62148e71eb64d4e09cc4fce499bf49946b7))
+* **deps:** update dependency @grafana/plugin-validator to v0.53.6 ([#460](https://github.com/grafana/plugin-actions/issues/460)) ([1033389](https://github.com/grafana/plugin-actions/commit/103338980a7c0b582e528db8bd560d10eace1419))
+* **deps:** update dependency @grafana/plugin-validator to v0.54.0 ([#479](https://github.com/grafana/plugin-actions/issues/479)) ([bc81b61](https://github.com/grafana/plugin-actions/commit/bc81b613a547cbbca8eeb39ddcce6c24cd74fd63))
+* **deps:** update dependency @grafana/plugin-validator to v0.54.1 ([#483](https://github.com/grafana/plugin-actions/issues/483)) ([0044fa1](https://github.com/grafana/plugin-actions/commit/0044fa1c01ad22a9e2d3e53518db1ebb1476ec7f))
+
 ## [2.0.3](https://github.com/grafana/plugin-actions/compare/package-plugin/v2.0.2...package-plugin/v2.0.3) (2026-11-10)
 
 

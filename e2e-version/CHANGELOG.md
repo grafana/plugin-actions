@@ -1,5 +1,17 @@
 # Changelog
 
+## [4.0.2](https://github.com/grafana/plugin-actions/compare/e2e-version/v4.0.1...e2e-version/v4.0.2) (2026-11-27)
+
+
+### 🔧 Chores
+
+* **deps:** lock file maintenance ([#468](https://github.com/grafana/plugin-actions/issues/468)) ([2d94bed](https://github.com/grafana/plugin-actions/commit/2d94bed3b0179ab5fc010e1a06e210a9c34b27ca))
+* **deps:** lock file maintenance ([#470](https://github.com/grafana/plugin-actions/issues/470)) ([e7fea9f](https://github.com/grafana/plugin-actions/commit/e7fea9f6ced4d81042a138dd8afe2997120f1f2a))
+* **deps:** lock file maintenance ([#476](https://github.com/grafana/plugin-actions/issues/476)) ([8defd0e](https://github.com/grafana/plugin-actions/commit/8defd0e6a757e95dea3b97a5f93211d0dbb98e3e))
+* **deps:** lock file maintenance ([#482](https://github.com/grafana/plugin-actions/issues/482)) ([1d3a060](https://github.com/grafana/plugin-actions/commit/1d3a06073ffb85fb6e6687737007624f4cdb8353))
+* **deps:** lock file maintenance ([#485](https://github.com/grafana/plugin-actions/issues/485)) ([a1a3dcb](https://github.com/grafana/plugin-actions/commit/a1a3dcb0012d7e9844b12e6d9e8fe87f5be1a5ef))
+* **deps:** update npm to v12.2.3 ([#473](https://github.com/grafana/plugin-actions/issues/473)) ([cf3cfcc](https://github.com/grafana/plugin-actions/commit/cf3cfcc27f9fdc2b89f435f95286d8ce6ce4571b))
+
 ## [4.0.1](https://github.com/grafana/plugin-actions/compare/e2e-version/v4.0.0...e2e-version/v4.0.1) (2026-11-17)
 
 
